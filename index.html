@@ -1494,14 +1494,32 @@ const teamsRef = database.ref('teams');
 teamsRef.on('value', (snapshot) => {
     updateLeaderboard(snapshot, teamsList, timestampElement);
 });
-        // Adiciona a função de Tela Cheia ao clicar no botão
+// ADICIONE ESTE NOVO BLOCO
 fullscreenBtn.addEventListener('click', () => {
-    if (videoContainer.requestFullscreen) {
-        videoContainer.requestFullscreen();
-    } else if (videoContainer.webkitRequestFullscreen) { /* Safari */
-        videoContainer.webkitRequestFullscreen();
-    } else if (videoContainer.msRequestFullscreen) { /* IE11 */
-        videoContainer.msRequestFullscreen();
+    // Verifica se JÁ existe um elemento em tela cheia no documento
+    const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement;
+
+    // SE NÃO ESTIVER em tela cheia...
+    if (!isFullscreen) {
+        // ...então, entra em tela cheia.
+        if (videoContainer.requestFullscreen) {
+            videoContainer.requestFullscreen();
+        } else if (videoContainer.webkitRequestFullscreen) { /* Safari */
+            videoContainer.webkitRequestFullscreen();
+        } else if (videoContainer.msRequestFullscreen) { /* IE11 */
+            videoContainer.msRequestFullscreen();
+        }
+    } 
+    // SE JÁ ESTIVER em tela cheia...
+    else {
+        // ...então, sai da tela cheia.
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) { /* Safari */
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) { /* IE11 */
+            document.msExitFullscreen();
+        }
     }
 });
         });
