@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Painel de Controle do Torneio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+    font-family: 'Roboto', sans-serif;
+    color: #f0f0f0;
+    padding: 20px;
+    
+    /* INÍCIO DA ALTERAÇÃO */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://i.postimg.cc/CMCsSNkS/5ZuHria.gif');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    /* FIM DA ALTERAÇÃO */
+}
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { font-family: 'Creepster', cursive; color: #ff4d4d; text-align: center; font-size: 3rem; }
+        .admin-panel {
+    display: grid;
+    /* Força o layout de uma coluna única */
+    grid-template-columns: 1fr; 
+    /* Define uma largura máxima para a coluna não ficar excessivamente larga em telas grandes */
+    max-width: 700px; 
+    /* Centraliza a coluna no container */
+    margin: 0 auto; 
+    gap: 40px;
+}
+        .panel-section { background-color: #2c2c2c; padding: 20px; border-radius: 10px; }
+        h2 { font-family: 'Creepster', cursive; color: #ff4d4d; border-bottom: 1px solid #4a0e0e; padding-bottom: 10px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input { width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #555; background-color: #1a1a1a; color: #f0f0f0; font-size: 1rem; box-sizing: border-box; }
+        button { padding: 10px 15px; border-radius: 5px; border: none; background-color: #8B0000; color: white; cursor: pointer; transition: background-color 0.3s; }
+        button:hover:not(:disabled) { background-color: #ff4d4d; }
+        button:disabled { background-color: #555; cursor: not-allowed; }
+        .btn-delete { background-color: #444; }
+        #status { text-align: center; margin-top: 20px; font-weight: bold; min-height: 20px; }
+        .entry-list { list-style: none; padding: 0; }
+        .entry-list li { background-color: #3a3a3a; padding: 10px; border-radius: 5px; margin-bottom: 10px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; }
+        .entry-list .info { flex-grow: 1; }
+        .entry-list input { width: 80px; margin: 0 10px; }
+        .entry-list .actions { display: flex; gap: 10px; }
+        @media (max-width: 900px) { .admin-panel { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Painel de Controle - Placar de Equipes</h1>
+        
+        <div class="form-group">
+            <label for="password">Senha de Administrador</label>
+            <input type="password" id="password" placeholder="Digite a senha para habilitar os controles">
+        </div>
+        <p id="status"></p>
+
+        <div class="admin-panel">
+            <div class="panel-section">
+                <h2>Gerenciar Equipes</h2>
+                <div class="form-group">
+                    <label for="equipe-name">Nome da Nova Equipe</label>
+                    <input type="text" id="equipe-name">
+                </div>
+                <div class="form-group">
+                    <label for="equipe-score">Pontuação Inicial</label>
+                    <input type="number" id="equipe-score" value="0">
+                </div>
+                <button id="add-equipe-btn" disabled>Adicionar Equipe</button>
+                <hr style="border-color: #4a0e0e; margin: 20px 0;">
+                <h3>Equipes Atuais</h3>
+                <ul id="equipes-list" class="entry-list"></ul>
+            </div>
+            </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script>
+    // --- COLE AQUI A MESMA CONFIGURAÇÃO DO FIREBASE ---
+const firebaseConfig = {
+    apiKey: "AIzaSyA_eqbuIT9Pe3z1NlTG6EQIForIM3uNv_c",
+    authDomain: "placar-dbd-torneio.firebaseapp.com",
+    databaseURL: "https://placar-dbd-torneio-default-rtdb.firebaseio.com",
+    projectId: "placar-dbd-torneio",
+    storageBucket: "placar-dbd-torneio.appspot.com",
+    messagingSenderId: "704704412861",
+    appId: "1:704704412861:web:0a9214ac40b9518fa64bd4",
+    measurementId: "G-SJL640013X"
+};
+// --- FIM DA CONFIGURAÇÃO ---
+
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
+document.addEventListener('DOMContentLoaded', function() {
+    const ADMIN_PASSWORD = "@Mateus2024"; // Sua senha
+    
+    // --- Referências do DOM ---
+    const passwordInput = document.getElementById('password');
+    const statusElement = document.getElementById('status');
+    
+    // 🔧 Referência à chave 'teams' no Firebase (a única que precisamos agora)
+    const teamsRef = database.ref('teams');
+
+    // 🔧 Variáveis para o formulário de equipes
+    const addEquipeBtn = document.getElementById('add-equipe-btn');
+    const equipeNameInput = document.getElementById('equipe-name');
+    const equipeScoreInput = document.getElementById('equipe-score');
+    const equipesList = document.getElementById('equipes-list');
+
+    // --- Lógica de Autenticação ---
+    passwordInput.addEventListener('input', () => {
+        const isPasswordCorrect = passwordInput.value === ADMIN_PASSWORD;
+        document.querySelectorAll('button').forEach(btn => {
+            btn.disabled = !isPasswordCorrect;
+        });
+        
+        if (isPasswordCorrect) {
+            statusElement.textContent = "Acesso liberado.";
+            statusElement.style.color = "#4CAF50";
+        } else {
+            statusElement.textContent = "";
+        }
+    });
+
+    // --- Função para renderizar a lista de equipes ---
+    function createListUpdater(ref, listElement) {
+        ref.on('value', (snapshot) => {
+            const isPasswordCorrect = passwordInput.value === ADMIN_PASSWORD;
+            listElement.innerHTML = ''; // Limpa a lista antes de recriar
+            const data = snapshot.val();
+            if (data) {
+                Object.keys(data).forEach((key) => {
+                    const entry = data[key];
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <span class="info">${entry.name}</span>
+                        <div class="actions">
+                            <input type="number" value="${entry.score}" id="score-${key}">
+                            <button id="update-${key}">Atualizar</button>
+                            <button id="delete-${key}" class="btn-delete">Remover</button>
+                        </div>
+                    `;
+                    listElement.appendChild(li);
+                    
+                    const updateBtn = document.getElementById(`update-${key}`);
+                    const deleteBtn = document.getElementById(`delete-${key}`);
+
+                    updateBtn.disabled = !isPasswordCorrect;
+                    deleteBtn.disabled = !isPasswordCorrect;
+
+                    updateBtn.addEventListener('click', () => {
+                        const newScore = document.getElementById(`score-${key}`).value;
+                        ref.child(key).update({ score: parseInt(newScore, 10) });
+                    });
+
+                    deleteBtn.addEventListener('click', () => {
+                        if (confirm(`Tem certeza que deseja remover "${entry.name}"?`)) {
+                            ref.child(key).remove();
+                        }
+                    });
+                });
+            }
+        });
+    }
+    
+    // 🔧 Chamamos a função apenas UMA VEZ, para a lista de equipes
+    createListUpdater(teamsRef, equipesList);
+    
+    // --- Lógica para adicionar uma nova equipe ---
+    addEquipeBtn.addEventListener('click', () => {
+        const name = equipeNameInput.value;
+        const score = parseInt(equipeScoreInput.value, 10);
+        if (name) {
+            teamsRef.push({ name, score });
+            equipeNameInput.value = '';
+            equipeScoreInput.value = '0';
+        }
+    });
+});
+    </script>
+</body>
+</html>
