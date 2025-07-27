@@ -630,6 +630,17 @@ footer {
 /* --- INÍCIO: ESTILOS PARA DISPOSITIVOS MÓVEIS --- */
 /* =================================================== */
 @media (max-width: 800px) {
+    #transmissao {
+    padding-left: 0;
+    padding-right: 0;
+    border-left: none;  /* Remove bordas laterais se houver */
+    border-right: none;
+}
+    #transmissao .section-title,
+#transmissao #stream-switcher {
+    padding-left: 15px;
+    padding-right: 15px;
+}
     /* Diminui o tamanho da fonte dos números */
 .time-value {
     font-size: 1.4rem; /* Valor original era 2.5rem. Ajuste como preferir. */
@@ -892,7 +903,7 @@ footer {
         </nav>
     </header>
     <main>
-        <section class="section-container">
+        <section class="section-container" id="transmissao">
             <h2 class="section-title">Acompanhe Ao Vivo</h2>
             <div id="live-section">
                 <div class="video-container">
