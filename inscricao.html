@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscrição para o Torneio de Dead by Daylight</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --killer-red: #e02424;
+            --killer-border: #6d0000;
+            --killer-shadow: rgba(212, 20, 20, 0.7);
+            --warning-yellow: #ffd700;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            color: #f0f0f0;
+            background-image: url('https://i.imgur.com/1953XDW.jpeg');
+            background-color: #000;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            backdrop-filter: blur(3px) brightness(0.6);
+            -webkit-backdrop-filter: blur(3px) brightness(0.6);
+            overflow-x: hidden;
+        }
+
+        .form-container {
+            background-color: rgba(10, 0, 0, 0.88);
+            padding: 40px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 800px;
+            margin: 40px 20px;
+            z-index: 10;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid var(--killer-border);
+            box-shadow: 0 0 35px var(--killer-shadow);
+        }
+        
+        #killer-animation-wrapper {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            pointer-events: none;
+            z-index: 11;
+        }
+
+        #walking-killer-gif {
+            position: absolute;
+            bottom: -15px;
+            height: 90px;
+            animation: walk-across 20s linear infinite;
+        }
+
+        @keyframes walk-across {
+            0%   { left: -120px; transform: scaleX(1); }
+            49%  { left: calc(100% - 50px); transform: scaleX(1); }
+            50%  { left: calc(100% - 50px); transform: scaleX(-1); }
+            99%  { left: -120px; transform: scaleX(-1); }
+            100% { left: -120px; transform: scaleX(1); }
+        }
+
+        .form-header h1 {
+            font-family: 'Creepster', cursive;
+            font-size: 3.5rem;
+            margin: 0 0 25px 0;
+            text-align: center;
+            color: var(--killer-red);
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
+        }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #ddd; font-size: 0.9rem; text-transform: uppercase; }
+        .form-group input { width: 100%; padding: 12px; background-color: rgba(0, 0, 0, 0.4); border: 1px solid #555; border-radius: 5px; color: #fff; font-size: 1rem; transition: border-color 0.3s, box-shadow 0.3s; box-sizing: border-box; }
+        .form-group input:focus { outline: none; border-color: var(--killer-red); box-shadow: 0 0 10px var(--killer-shadow); }
+
+        .team-section h2 { font-family: 'Creepster', cursive; font-size: 2rem; margin: 30px 0 15px 0; text-align: center; color: var(--killer-red); }
+        .member-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
+        .member-card { background-color: rgba(0, 0, 0, 0.3); padding: 20px; border-radius: 5px; border: 1px solid #333; }
+        
+        .captain-select { margin-top: 15px; display: flex; align-items: center; cursor: pointer; }
+        .captain-select input[type="radio"] { appearance: none; -webkit-appearance: none; width: 20px; height: 20px; border: 2px solid #888; border-radius: 50%; margin-right: 10px; cursor: pointer; position: relative; transition: all 0.2s; }
+        .captain-select input[type="radio"]:checked { border-color: var(--killer-red); }
+        .captain-select input[type="radio"]:checked::after { content: ''; display: block; width: 10px; height: 10px; background-color: var(--killer-red); border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: pulse-captain 1s; }
+        @keyframes pulse-captain { from { transform: translate(-50%, -50%) scale(0.5); } to { transform: translate(-50%, -50%) scale(1); } }
+        .captain-select label { color: #ccc; cursor: pointer; font-weight: normal; }
+
+        .disclaimer { margin-top: 30px; padding: 15px; background-color: rgba(255, 215, 0, 0.1); border: 1px solid var(--warning-yellow); border-radius: 5px; text-align: center; color: var(--warning-yellow); font-size: 0.9rem; }
+        .disclaimer strong { text-transform: uppercase; }
+
+        .submit-btn { position: relative; width: 100%; padding: 15px; border: 2px solid var(--killer-border); border-radius: 5px; background-color: var(--killer-border); color: #fff; font-family: 'Creepster', cursive; font-size: 1.8rem; cursor: pointer; margin-top: 30px; letter-spacing: 2px; transition: background-color 0.2s; }
+        .submit-btn:hover { background-color: var(--killer-red); animation: glitch 1s linear infinite; }
+        .submit-btn:hover::before, .submit-btn:hover::after { content: 'COMEÇAR A CAÇADA'; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--killer-red); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .submit-btn:hover::before { left: 2px; text-shadow: -1px 0 #ff00c1; animation: glitch-2 1s linear infinite reverse; }
+        .submit-btn:hover::after { left: -2px; text-shadow: -1px 0 #00fff9, 1px 0 #ff0000; animation: glitch-2 1s linear infinite; }
+        @keyframes glitch { 2%, 64% { transform: translate(2px, 0) skew(0deg); } 4%, 60% { transform: translate(-2px, 0) skew(0deg); } 62% { transform: translate(0, 0) skew(5deg); } }
+        @keyframes glitch-2 { 0%, 100% { clip-path: inset(0 0 98% 0); } 25% { clip-path: inset(25% 0 55% 0); } 50% { clip-path: inset(50% 0 15% 0); } 75% { clip-path: inset(80% 0 5% 0); } }
+        
+        #popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(5px); }
+        .popup-content { background-color: #1a1a1a; padding: 30px 40px; border-radius: 10px; text-align: center; border: 2px solid var(--killer-border); box-shadow: 0 0 30px var(--killer-shadow); animation: popup-anim 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); transform: scale(0); }
+        @keyframes popup-anim { 0% { transform: scale(0.7); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .popup-content h2 { font-family: 'Creepster', cursive; color: var(--killer-red); font-size: 2.5rem; margin-top: 0; }
+        .popup-content p { color: #ccc; font-size: 1.1rem; max-width: 400px; }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        
+        <div class="form-header">
+            <h1>Inscrição de Equipe</h1>
+        </div>
+
+        <form id="team-form" action="https://formspree.io/f/mgvolbyv" method="POST">
+            <input type="text" name="Tipo de Inscrição" value="Equipe Completa" hidden>
+
+            <div class="form-group">
+                <label for="team-name-input">Nome da Equipe</label>
+                <input type="text" id="team-name-input" name="Nome da Equipe" required>
+            </div>
+
+            <div class="team-section">
+                <h2>Membros da Equipe (5 Jogadores)</h2>
+                <div class="member-grid">
+                    <div class="member-card" data-member-id="1">
+                        <div class="form-group"><label>Discord do Jogador 1</label><input type="text" class="member-name-input" name="Membro 1 - Nome" required></div>
+                        <div class="form-group"><label>Nickname</label><input type="text" name="Membro 1 - Nickname" required></div>
+                        <div class="captain-select"><input type="radio" class="captain-radio" name="Capitao da Equipe" required><label>Tornar Capitão</label></div>
+                    </div>
+                    <div class="member-card" data-member-id="2">
+                        <div class="form-group"><label>Discord do Jogador 2</label><input type="text" class="member-name-input" name="Membro 2 - Nome" required></div>
+                        <div class="form-group"><label>Nickname</label><input type="text" name="Membro 2 - Nickname" required></div>
+                        <div class="captain-select"><input type="radio" class="captain-radio" name="Capitao da Equipe" required><label>Tornar Capitão</label></div>
+                    </div>
+                    <div class="member-card" data-member-id="3">
+                        <div class="form-group"><label>Discord do Jogador 3</label><input type="text" class="member-name-input" name="Membro 3 - Nome" required></div>
+                        <div class="form-group"><label>Nickname</label><input type="text" name="Membro 3 - Nickname" required></div>
+                        <div class="captain-select"><input type="radio" class="captain-radio" name="Capitao da Equipe" required><label>Tornar Capitão</label></div>
+                    </div>
+                    <div class="member-card" data-member-id="4">
+                        <div class="form-group"><label>Discord do Jogador 4</label><input type="text" class="member-name-input" name="Membro 4 - Nome" required></div>
+                        <div class="form-group"><label>Nickname</label><input type="text" name="Membro 4 - Nickname" required></div>
+                        <div class="captain-select"><input type="radio" class="captain-radio" name="Capitao da Equipe" required><label>Tornar Capitão</label></div>
+                    </div>
+                    <div class="member-card" data-member-id="5">
+                        <div class="form-group"><label>Discord do Jogador 5</label><input type="text" class="member-name-input" name="Membro 5 - Nome" required></div>
+                        <div class="form-group"><label>Nickname</label><input type="text" name="Membro 5 - Nickname" required></div>
+                        <div class="captain-select"><input type="radio" class="captain-radio" name="Capitao da Equipe" required><label>Tornar Capitão</label></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="disclaimer">
+                <strong>Atenção:</strong> A equipe deve estar completa no momento dos jogos. A ausência de qualquer membro resultará na <strong>desclassificação automática</strong> da equipe.
+            </div>
+
+            <button type="submit" class="submit-btn">Começar a Caçada</button>
+        </form>
+
+        <div id="killer-animation-wrapper">
+            <img id="walking-killer-gif" src="" alt="Killer andando">
+        </div>
+    </div>
+
+    <div id="popup">
+        <div class="popup-content">
+            <h2 id="popup-title">Inscrição Enviada!</h2>
+            <p id="popup-message">Sua equipe foi registrada. Você será redirecionado para o Discord em breve para aguardar as próximas instruções.</p>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const walkingKillerGif = document.getElementById('walking-killer-gif');
+        const killerGifs = [
+            'https://i.postimg.cc/L4L7K5Kr/sadako.gif', 'https://i.postimg.cc/vB9PsqjW/ghost.gif',
+            'https://i.postimg.cc/prHsXQb3/myers.gif', 'https://i.postimg.cc/sx4wBB3x/freddy.gif',
+            'https://i.postimg.cc/Pqgbrd0T/trapper.gif' 
+        ];
+        let lastKillerIndex = -1;
+        function chooseRandomKillerGif() {
+            let randomIndex;
+            do {
+                randomIndex = Math.floor(Math.random() * killerGifs.length);
+            } while (killerGifs.length > 1 && randomIndex === lastKillerIndex);
+            lastKillerIndex = randomIndex;
+            walkingKillerGif.src = killerGifs[randomIndex];
+        }
+        chooseRandomKillerGif();
+        setInterval(chooseRandomKillerGif, 20000);
+
+        const memberCards = document.querySelectorAll('.member-card');
+        memberCards.forEach(card => {
+            const nameInput = card.querySelector('.member-name-input');
+            const radioInput = card.querySelector('.captain-radio');
+            nameInput.addEventListener('input', () => {
+                // Atualiza o valor do radio button com o nome digitado, garantindo que o nome do capitão seja enviado
+                radioInput.value = nameInput.value.trim() === '' ? 'Não preenchido' : nameInput.value;
+            });
+        });
+
+        const form = document.getElementById('team-form');
+        const popup = document.getElementById('popup');
+        const popupContent = popup.querySelector('.popup-content');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // --- VALIDAÇÃO DO CAPITÃO ---
+            // Verifica se um radio button com o nome 'Capitao da Equipe' está selecionado
+            const selectedCaptain = document.querySelector('input[name="Capitao da Equipe"]:checked');
+            if (!selectedCaptain) {
+                // Se nenhum capitão foi selecionado, exibe um alerta e impede o envio.
+                alert('Por favor, selecione um capitão para a equipe antes de enviar.');
+                return; // Para a execução da função aqui.
+            }
+            // --- FIM DA VALIDAÇÃO ---
+
+            const formData = new FormData(form);
+            const action = form.getAttribute('action');
+            
+            fetch(action, {
+                method: 'POST',
+                body: formData,
+                headers: { 'Accept': 'application/json' }
+            }).then(response => {
+                if (response.ok) {
+                    popup.style.display = 'flex';
+                    popupContent.style.transform = 'scale(1)';
+                    setTimeout(() => {
+                        window.location.href = 'https://discord.gg/SEU_LINK_AQUI'; 
+                    }, 4000);
+                } else {
+                    response.json().then(data => {
+                        if (Object.hasOwn(data, 'errors')) {
+                            alert(data["errors"].map(error => error["message"]).join(", "));
+                        } else {
+                            alert('Ocorreu um erro ao enviar a inscrição. Tente novamente.');
+                        }
+                    })
+                }
+            }).catch(error => {
+                alert('Ocorreu um erro de conexão. Verifique sua internet e tente novamente.');
+            });
+        });
+    });
+    </script>
+</body>
+</html>
