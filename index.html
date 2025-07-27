@@ -864,6 +864,43 @@ footer {
     .feedback-popup .form-row .form-group {
         margin-bottom: 20px;
     }
+/* --- ESTILO PARA O BOTÃO DE TELA CHEIA CUSTOMIZADO --- */
+
+#custom-fullscreen-btn {
+    position: absolute; /* Para sobrepor o vídeo */
+    top: 10px;
+    right: 10px;
+    z-index: 25; /* Garante que fique acima do vídeo */
+    
+    background-color: rgba(0, 0, 0, 0.6);
+    border: none;
+    border-radius: 5px;
+    padding: 8px;
+    cursor: pointer;
+    
+    /* POR PADRÃO, O BOTÃO FICA ESCONDIDO NO PC */
+    display: none; 
+    transition: background-color 0.2s;
+}
+
+#custom-fullscreen-btn:hover {
+    background-color: rgba(255, 0, 0, 0.7);
+}
+
+/* Estilo do ícone SVG dentro do botão */
+#custom-fullscreen-btn svg {
+    width: 20px;
+    height: 20px;
+    fill: #ffffff;
+    display: block;
+}
+
+/* A MÁGICA PARA APARECER SÓ NO MOBILE */
+@media (max-width: 800px) {
+    #custom-fullscreen-btn {
+        /* Apenas em telas menores, o botão passa a ser visível */
+        display: block; 
+    }
 }
     </style>
 </head>
@@ -912,6 +949,11 @@ footer {
                          <img id="offline-image" src="https://i.postimg.cc/q7zY97QC/ca-adora.jpg" alt="Transmissão Offline">
                     </div>
                     <div id="live-indicator-wrapper" class="hidden"><div class="live-indicator">AO VIVO</div></div>
+                    <button id="custom-fullscreen-btn" class="hidden" title="Tela Cheia">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M5 5h5v2H7v3H5V5m9 0h5v5h-2V7h-3V5m3 9h2v5h-5v-2h3v-3m-7 3v-2H5v5h5v-3H8z"/>
+        </svg>
+    </button>
                 </div>
               <div id="stream-switcher">
     <button class="stream-btn active" data-stream="stream1">Transmissão Principal</button>
@@ -1018,7 +1060,7 @@ footer {
 
    // ✨ NOVO: Objeto para armazenar os IDs das suas 3 transmissões
 const STREAM_IDS = {
-    stream1: 'COLAR_ID_DA_LIVE_1', // SUBSTITUA PELO ID REAL DA SUA LIVE PRINCIPAL
+    stream1: 'clnE-xPxLis', // SUBSTITUA PELO ID REAL DA SUA LIVE PRINCIPAL
     stream2: 'COLAR_ID_DA_LIVE_2', // SUBSTITUA PELO ID REAL DA LIVE 2
     stream3: 'COLAR_ID_DA_LIVE_3'  // SUBSTITUA PELO ID REAL DA LIVE 3
 };
@@ -1035,6 +1077,8 @@ window.onYouTubeIframeAPIReady = function() {
 };
 
     document.addEventListener('DOMContentLoaded', function() {
+        const fullscreenBtn = document.getElementById('custom-fullscreen-btn');
+const videoContainer = document.querySelector('.video-container');
        // ✨ NOVO: Lógica para trocar a transmissão
     const streamSwitcher = document.getElementById('stream-switcher');
     const streamButtons = document.querySelectorAll('.stream-btn');
@@ -1334,13 +1378,20 @@ window.onYouTubeIframeAPIReady = function() {
         const unmuteNoBtn = document.getElementById('unmute-no-btn');
         let popupShown = false;
         window.onPlayerStateChange = function(event) {
-            if (event.data === YT.PlayerState.PLAYING && !popupShown) {
-                offlineOverlay.classList.add('hidden');
-                liveIndicator.classList.remove('hidden');
-                unmutePopup.classList.add('show');
-                popupShown = true;
-            }
+    if (event.data === YT.PlayerState.PLAYING) { // Removi o !popupShown para o botão sempre aparecer
+        offlineOverlay.classList.add('hidden');
+        liveIndicator.classList.remove('hidden');
+        fullscreenBtn.classList.remove('hidden'); // LINHA ADICIONADA AQUI
+
+        if (!popupShown) { // Movi o popup para uma verificação separada
+            unmutePopup.classList.add('show');
+            popupShown = true;
         }
+    } else {
+        // Esconde nosso botão de tela cheia se o vídeo não estiver tocando
+        fullscreenBtn.classList.add('hidden');
+    }
+}
         unmuteYesBtn.addEventListener('click', (event) => {
             event.preventDefault();
             unmutePopup.classList.remove('show');
@@ -1444,6 +1495,16 @@ teamsRef.on('value', (snapshot) => {
     updateLeaderboard(snapshot, teamsList, timestampElement);
 });
     });
+        // Adiciona a função de Tela Cheia ao clicar no botão
+fullscreenBtn.addEventListener('click', () => {
+    if (videoContainer.requestFullscreen) {
+        videoContainer.requestFullscreen();
+    } else if (videoContainer.webkitRequestFullscreen) { /* Safari */
+        videoContainer.webkitRequestFullscreen();
+    } else if (videoContainer.msRequestFullscreen) { /* IE11 */
+        videoContainer.msRequestFullscreen();
+    }
+});
         document.addEventListener('DOMContentLoaded', function() {
     const openFeedbackBtnHeader = document.getElementById('open-feedback-btn');
     const openFeedbackBtnFooter = document.getElementById('open-feedback-btn-footer');
