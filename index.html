@@ -1060,7 +1060,7 @@ footer {
 
    // ✨ NOVO: Objeto para armazenar os IDs das suas 3 transmissões
 const STREAM_IDS = {
-    stream1: 'clnE-xPxLis', // SUBSTITUA PELO ID REAL DA SUA LIVE PRINCIPAL
+    stream1: 'KjTRA7_UdAU', // SUBSTITUA PELO ID REAL DA SUA LIVE PRINCIPAL
     stream2: 'COLAR_ID_DA_LIVE_2', // SUBSTITUA PELO ID REAL DA LIVE 2
     stream3: 'COLAR_ID_DA_LIVE_3'  // SUBSTITUA PELO ID REAL DA LIVE 3
 };
@@ -1494,7 +1494,6 @@ const teamsRef = database.ref('teams');
 teamsRef.on('value', (snapshot) => {
     updateLeaderboard(snapshot, teamsList, timestampElement);
 });
-    });
         // Adiciona a função de Tela Cheia ao clicar no botão
 fullscreenBtn.addEventListener('click', () => {
     if (videoContainer.requestFullscreen) {
@@ -1505,6 +1504,7 @@ fullscreenBtn.addEventListener('click', () => {
         videoContainer.msRequestFullscreen();
     }
 });
+        });
         document.addEventListener('DOMContentLoaded', function() {
     const openFeedbackBtnHeader = document.getElementById('open-feedback-btn');
     const openFeedbackBtnFooter = document.getElementById('open-feedback-btn-footer');
