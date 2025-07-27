@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O Grimório dos Killers - Regras do Torneio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cor-fundo: #0a0a0a; --cor-container: #141414;
+            --cor-borda: #4a0e0e; --cor-vermelho: #ff4d4d;
+            --cor-vermelho-escuro: #8B0000; --cor-texto: #f0f0f0;
+            --sombra-vermelha: rgba(255, 0, 0, 0.2);
+            --tier-s: #ff4757; --tier-a: #ff7f50;
+            --tier-b: #9b59b6; --tier-c: #3498db; --tier-d: #7f8c8d;
+        }
+        body {
+            font-family: 'Roboto', sans-serif; background-color: var(--cor-fundo);
+            color: var(--cor-texto); margin: 0; padding: 25px;
+            background-image: linear-gradient(rgba(10, 10, 10, 0.8), rgba(10, 10, 10, 0.9)), url('https://i.imgur.com/QS6LJcg.jpeg');
+            background-size: cover; background-attachment: fixed;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 { font-family: 'Creepster', cursive; font-size: 3.5rem; color: var(--cor-vermelho); margin: 0; }
+        .header p { font-size: 1.1rem; color: #ccc; max-width: 800px; margin: 10px auto 0; }
+        .tier-section { margin-bottom: 50px; }
+        .tier-title {
+            font-family: 'Creepster', cursive; font-size: 2.8rem;
+            display: flex; align-items: center; gap: 20px;
+            border-bottom: 3px solid var(--cor-borda); padding-bottom: 15px; margin-bottom: 30px;
+        }
+        .tier-letter {
+            font-size: 3.5rem; display: flex; align-items: center;
+            justify-content: center; width: 80px; height: 80px;
+            border-radius: 10px; color: white;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.7);
+        }
+        .tier.s { background-color: var(--tier-s); box-shadow: 0 0 20px var(--tier-s); }
+        .tier.a { background-color: var(--tier-a); box-shadow: 0 0 20px var(--tier-a); }
+        .tier.b { background-color: var(--tier-b); box-shadow: 0 0 20px var(--tier-b); }
+        .tier.c { background-color: var(--tier-c); box-shadow: 0 0 20px var(--tier-c); }
+        .tier.d { background-color: var(--tier-d); box-shadow: 0 0 20px var(--tier-d); }
+        
+        .content-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+    gap: 30px;
+}
+        
+     /* SUBSTITUA sua regra .killer-card antiga por esta */
+.killer-card {
+    background-color: #000000; /* Fundo preto/cinza escuro sólido */
+    border: 1px solid #333; /* Borda cinza sutil */
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    display: grid;
+    grid-template-rows: auto 1fr;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transição suave para o hover */
+}
+.killer-card:hover {
+    transform: scale(1.03); /* Aumenta levemente o card */
+    box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.5); /* Sombra um pouco mais forte */
+}
+        .killer-header {
+            margin-bottom: 20px;
+        }
+       .killer-header img {
+    width: 150px; /* Largura fixa */
+    height: 150px; /* Altura fixa */
+    object-fit: cover; /* A imagem cobre o container, cortando se necessário */
+    display: block;
+    margin: 0 auto 15px auto;
+    border-radius: 8px; /* Opcional: para deixar as imagens redondas ou com bordas arredondadas */
+    filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));
+}
+        /* ADICIONE ESTAS REGRAS NOVAS (ou substitua as antigas) */
+
+.killer-header {
+    grid-row: 1; /* Coloca o header na primeira linha da nossa grade */
+    margin-bottom: 20px;
+}
+
+.killer-header h4 {
+    font-family: 'Creepster', cursive;
+    font-size: 2.2rem;
+    margin: 0;
+    color: #fff;
+    line-height: 1.2;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    
+    /* Altura fixa para a área do nome, garantindo alinhamento */
+    height: 80px; 
+    
+    /* Alinhamento vertical para o conteúdo dentro do h4 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.ban-section {
+    grid-row: 2; /* Coloca a seção de regras na segunda linha da grade */
+    border-top: 2px solid var(--cor-borda);
+    padding-top: 15px;
+    text-align: left;
+
+    /* Isso garante que esta seção se alinhe com as outras */
+    display: flex;
+    flex-direction: column;
+}
+        .ban-list { list-style: none; padding-left: 25px; margin: 0; }
+        .ban-list li { position: relative; padding: 5px 0; }
+        .ban-list.allowed li::before { content: '✅'; color: #2ecc71; position: absolute; left: -25px; }
+        .ban-list.banned li::before { content: '🚫'; color: var(--cor-vermelho); position: absolute; left: -25px; }
+        .ban-list.mandatory li::before { content: '❗'; color: #f1c40f; font-weight: bold; position: absolute; left: -25px; }
+        /* ADICIONE ESTE BLOCO DE CÓDIGO AO FINAL DA SUA SEÇÃO <style> */
+
+.difficulty {
+    font-size: 0.9rem; /* Deixa o texto pequeno e sutil */
+    font-family: 'Roboto', sans-serif;
+    font-style: italic;
+    opacity: 0.8;
+    margin-top: 5px; /* Cria um espaço abaixo do nome do Killer */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* --- Cores baseadas na dificuldade --- */
+.difficulty.easy { 
+    color: #2ecc71; /* Verde */
+}
+.difficulty.moderate { 
+    color: #f1c40f; /* Amarelo */
+}
+.difficulty.hard { 
+    color: #e67e22; /* Laranja */
+}
+.difficulty.very-hard { 
+    color: #e74c3c; /* Vermelho */
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>O Grimório dos Killers</h1>
+            <p>Estas são as regras de balanceamento para o torneio. Killers mais fortes possuem mais restrições, enquanto Killers mais fracos recebem ajuda através de proibições para os sobreviventes, buscando uma competição justa e estratégica.</p>
+        </header>
+
+        <section class="tier-section" id="tier-s">
+            <h2 class="tier-title"><span class="tier-letter tier s">S</span>Nível Special</h2>
+            <div class="content-grid">
+                <div class="killer-card">
+                    <div class="killer-header">
+                        <img src="https://i.imgur.com/fRvVDEi.jpeg" alt="A Enfermeira">
+                        <h4>A Enfermeira <br><span class="difficulty very-hard">(Muito Difícil)</span></h4>
+                    </div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list mandatory"><li>Mapas Obrigatórios: Jardim da Alegria, Bosque Vermelho, Fazenda Coldwind.</li></ul>
+                        <h5>Perks de Killer Proibidas</h5><ul class="ban-list banned"><li>Opressão</li><li>Dor Ressonante</li><li>Escalação</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list allowed"><li>Nenhuma - Todas são permitidas</li></ul>
+                    </div>
+                </div>
+                <div class="killer-card">
+                    <div class="killer-header">
+                        <img src="https://i.imgur.com/C4PSsEZ.jpeg" alt="O Destruidor">
+                        <h4>O Destruidor <br><span class="difficulty very-hard">(Muito Difícil)</span></h4>
+                    </div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list mandatory"><li>Mapas Obrigatórios: Haddonfield, Ninho dos Corvos, Sanatório Crotus Prenn.</li></ul>
+                        <h5>Perks de Killer Proibidas</h5><ul class="ban-list banned"><li>Tinkerer</li><li>Intervenção Corrupta</li><li>Sem Saída</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list allowed"><li>Nenhuma - Todas são permitidas</li></ul>
+                    </div>
+                </div>
+                <div class="killer-card">
+                    <div class="killer-header">
+                        <img src="https://i.imgur.com/hhab4vP.jpeg" alt="O Caipira">
+                        <h4>O Caipira <span class="difficulty moderate">(Moderado)</span></h4>
+                    </div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list mandatory"><li>Mapas Obrigatórios: Instituto de Tratamento Léry, O Jogo, Escola Primária de Midwich.</li></ul>
+                        <h5>Perks de Killer Proibidas</h5><ul class="ban-list banned"><li>Bambolê</li><li>Churrasco & Chili</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list allowed"><li>Nenhuma - Todas são permitidas</li></ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="tier-section" id="tier-a">
+            <h2 class="tier-title"><span class="tier-letter tier a">A</span>Nível Amazing</h2>
+            <div class="content-grid">
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/hQKOojR.jpeg" alt="O Lacaio"><h4>O Lacaio (Ghoul)<br><span class="difficulty moderate">(Médio)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list banned"><li>Mapas Proibidos: O Jogo.</li></ul>
+                        <h5>Perks de Killer Proibidas</h5><ul class="ban-list banned"><li>Devoção ao Sofrimento</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Espinha Arrepiada</li></ul>
+                    </div>
+                </div>
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/nU5kb4R.jpeg" alt="O Espírito"><h4>O Espírito<br><span class="difficulty hard">(Difícil)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list banned"><li>Mapas Proibidos: Fazenda Coldwind.</li></ul>
+                        <h5>Perks de Killer Proibidas</h5><ul class="ban-list banned"><li>Tânatosfobia</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Autocura</li></ul>
+                    </div>
+                </div>
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/pYdNbsA.jpeg" alt="O Espectro"><h4>O Espectro<br><span class="difficulty easy">(Fácil)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list banned"><li>Mapas Proibidos: Jardim da Alegria.</li></ul>
+                        <h5>Perks de Killer Proibidas</h5><ul class="ban-list banned"><li>Ninguém Escapa da Morte (NOED)</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Premonição</li></ul>
+                    </div>
+                </div>
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/7pHZO76.jpeg" alt="O Lich"><h4>O Lich<br><span class="difficulty moderate">(Médio)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list banned"><li>Mapas Proibidos: Midwich.</li></ul>
+                        <h5>Perks de Killer Proibidas</h5><ul class="ban-list banned"><li>Feitiço: Ruína</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Círculo de Cura</li></ul>
+                    </div>
+                </div>
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/IKrhmQk.jpeg" alt="O Lorde Sombrio"><h4>O Lorde Sombrio<br><span class="difficulty hard">(Difícil)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list banned"><li>Mapas Proibidos: Ninho dos Corvos.</li></ul>
+                        <h5>Perks de Killer Proibidas</h5><ul class="ban-list banned"><li>Intervenção Corrupta</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Oferecimento Ousado</li></ul>
+                    </div>
+                </div>
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/1pwYqj4.jpeg" alt="A Caçadora"><h4>A Caçadora<br><span class="difficulty moderate">(Moderado)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list banned"><li>Mapas Proibidos: Instituto de Tratamento Léry.</li></ul>
+                        <h5>Perks de Killer Proibidas</h5><ul class="ban-list banned"><li>Escuridão Revelada</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Adrenalina</li></ul>
+                    </div>
+                </div>
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/AZ81idl.jpeg" alt="O Xenomorfo"><h4>O Xenomorfo<br><span class="difficulty moderate">(Moderado)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list banned"><li>Mapas Proibidos: Bosque Vermelho.</li></ul>
+                        <h5>Perks de Killer Proibidas</h5><ul class="ban-list banned"><li>Agitação</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Força Interior</li></ul>
+                    </div>
+                </div>
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/GuxmmZV.jpeg" alt="O Carrasco"><h4>O Carrasco<br><span class="difficulty very-hard">(Muito Difícil)</span></h4></div>
+                     <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list banned"><li>Mapas Proibidos: Fazenda Coldwind.</li></ul>
+                        <h5>Perks de Killer Proibidas</h5><ul class="ban-list banned"><li>Eu Estou Ouvindo</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Tempo Emprestado</li></ul>
+                    </div>
+                </div>
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/j5rI81e.jpeg" alt="O Mastermind"><h4>O Mastermind<br><span class="difficulty moderate">(Moderado)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list banned"><li>Mapas Proibidos: Haddonfield.</li></ul>
+                        <h5>Perks de Killer Proibidas</h5><ul class="ban-list banned"><li>Agilidade</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Vantagem Dramática</li></ul>
+                    </div>
+                </div>
+                 <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/zY259vs.jpeg" alt="O Cara Legal"><h4>O Cara Legal (Chucky)<br><span class="difficulty moderate">(Moderado)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list banned"><li>Mapas Proibidos: Ninho dos Corvos.</li></ul>
+                        <h5>Perks de Killer Proibidas</h5><ul class="ban-list banned"><li>Salmoura</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Qualquer Meio Necessário</li></ul>
+                    </div>
+                </div>
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/w2WusmS.jpeg" alt="O Pesadelo"><h4>O Pesadelo<br><span class="difficulty moderate">(Moderado)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list banned"><li>Mapas Proibidos: O Jogo.</li></ul>
+                        <h5>Perks de Killer Proibidas</h5><ul class="ban-list banned"><li>Lembre-se de Mim</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Vigilante</li></ul>
+                    </div>
+                </div>
+                 <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/LcUWljY.jpeg" alt="O Animatrônico"><h4>O Animatrônico<br><span class="difficulty moderate">(Moderado)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list banned"><li>Mapas Proibidos: Depósito de Sucata Autohaven.</li></ul>
+                        <h5>Perks de Killer Proibidas</h5><ul class="ban-list banned"><li>Surto</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Déjà Vu</li></ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="tier-section" id="tier-b">
+            <h2 class="tier-title"><span class="tier-letter tier b">B</span>Nível Balanced</h2>
+            <div class="content-grid">
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/AFUqKPM.jpeg" alt="O Mestre de Cães"><h4>O Mestre de Cães<br><span class="difficulty moderate">(Moderado)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list allowed"><li>Permitidos: Todos, exceto Jardim da Alegria e Midwich.</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Passo Leve</li><li>Distorção</li></ul>
+                    </div>
+                </div>
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/mqBeloe.jpeg" alt="O Desconhecido"><h4>O Desconhecido<br><span class="difficulty hard">(Difícil)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list allowed"><li>Permitidos: Todos, exceto Fazenda Coldwind e O Jogo.</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Visão Obscura</li><li>Alerta</li></ul>
+                    </div>
+                </div>
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/MQKqDKe.jpeg" alt="O Trapaceiro"><h4>O Trapaceiro<br><span class="difficulty moderate">(Moderado)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list allowed"><li>Permitidos: Todos, exceto Bosque Vermelho e Léry.</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Autocura</li><li>Laços</li></ul>
+                    </div>
+                </div>
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/dKxBc4V.jpeg" alt="O Cavaleiro"><h4>O Cavaleiro<br><span class="difficulty moderate">(Moderado)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list allowed"><li>Permitidos: Todos, exceto Haddonfield e Midwich.</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Prova de Valor</li><li>Laços</li></ul>
+                    </div>
+                </div>
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/NdLTpDE.jpeg" alt="O Médico"><h4>O Médico<br><span class="difficulty hard">(Difícil)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list allowed"><li>Permitidos: Todos, exceto Fazenda Coldwind e O Jogo.</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Calma, Espírito</li><li>Força Interior</li></ul>
+                    </div>
+                </div>
+                 <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/psdA2O3.jpeg" alt="O Nêmesis"><h4>O Nêmesis<br><span class="difficulty hard">(Difícil)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list allowed"><li>Permitidos: Todos, exceto os mais extremos.</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Vantagem Dramática</li><li>Adrenalina</li></ul>
+                    </div>
+                </div>
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/mj27Txp.jpeg" alt="A Artista"><h4>A Artista<br><span class="difficulty moderate">(Moderado)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list allowed"><li>Permitidos: Todos, exceto os mais extremos.</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Alerta</li><li>Laços</li></ul>
+                    </div>
+                </div>
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/cnrH1or.jpeg" alt="A Singularidade"><h4>A Singularidade<br><span class="difficulty hard">(Difícil)</span></h4></div>
+                     <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list allowed"><li>Permitidos: Todos, exceto os mais extremos.</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Distorção</li><li>Névoa Espessa</li></ul>
+                    </div>
+                </div>
+                 <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/6UF0wJY.jpeg" alt="O Dredge"><h4>O Dredge<br><span class="difficulty moderate">(Moderado)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list allowed"><li>Permitidos: Todos, exceto Fazenda Coldwind.</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Visão Obscura</li><li>Premonição</li></ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="tier-section" id="tier-c">
+            <h2 class="tier-title"><span class="tier-letter tier c">C</span>Nível Casual</h2>
+            <div class="content-grid">
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/XqsJIrJ.jpeg" alt="O Legião"><h4>O Legião<br><span class="difficulty easy">(Fácil)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list banned"><li>Mapas Proibidos: Jardim da Alegria, Bosque Vermelho.</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Adrenalina</li><li>Resiliência</li><li>Não Vamos Viver Para Sempre</li></ul>
+                    </div>
+                </div>
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/3emz3Mu.jpeg" alt="A Praga"><h4>A Praga<br><span class="difficulty hard">(Difícil)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list banned"><li>Mapas Proibidos: Fazenda Coldwind.</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Força Interior</li><li>Círculo de Cura</li><li>Autocura</li></ul>
+                    </div>
+                </div>
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/sDMeaMt.jpeg" alt="A Bruxa"><h4>A Bruxa<br><span class="difficulty very-hard">(Muito Difícil)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list banned"><li>Mapas Proibidos: Ninho dos Corvos.</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Calma, Espírito</li><li>Flexibilidade</li><li>Laços</li></ul>
+                    </div>
+                </div>
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/nIHG5HP.jpeg" alt="O Mercenário"><h4>O Mercenário<br><span class="difficulty hard">(Difícil)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list banned"><li>Mapas Proibidos: Fazenda Coldwind.</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Adrenalina</li><li>Feito para Isso</li><li>Oferecimento Ousado</li></ul>
+                    </div>
+                </div>
+                 <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/TmgIYGW.jpeg" alt="O Oni"><h4>O Oni<br><span class="difficulty very-hard">(Muito Difícil)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list banned"><li>Mapas Proibidos: Haddonfield.</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Distorção</li><li>Força Interior</li><li>Autocura</li></ul>
+                    </div>
+                </div>
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/0S9Ol4j.jpeg" alt="As Gêmeas"><h4>As Gêmeas<br><span class="difficulty very-hard">(Muito Difícil)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list banned"><li>Mapas Proibidos: Bosque Vermelho.</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Laços</li><li>Empatia</li><li>Inquebrável</li></ul>
+                    </div>
+                </div>
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/yp9rWcA.jpeg" alt="A Porca"><h4>A Porca<br><span class="difficulty hard">(Difícil)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list allowed"><li>Permitidos: Todos, exceto os mapas mais abertos.</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Déjà Vu</li><li>Resiliência</li><li>Calma, Espírito</li></ul>
+                    </div>
+                </div>
+                 <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/81WuyrP.jpeg" alt="O Palhaço"><h4>O Palhaço<br><span class="difficulty moderate">(Moderado)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list banned"><li>Mapas Proibidos: Fazenda Coldwind.</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Qualquer perk de Exaustão</li><li>Flexibilidade</li></ul>
+                    </div>
+                </div>
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/kv2lITP.jpeg" alt="O Ghost Face"><h4>O Ghost Face<br><span class="difficulty hard">(Difícil)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list banned"><li>Mapas Proibidos: Ninho dos Corvos.</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Premonição</li><li>Espinha Arrepiada</li><li>Visão Obscura</li></ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="tier-section" id="tier-d">
+            <h2 class="tier-title"><span class="tier-letter tier d">D</span>Nível Dull</h2>
+            <div class="content-grid">
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/TPd06tN.jpeg" alt="O Canibal"><h4>O Canibal<br><span class="difficulty moderate">(Moderado)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list mandatory"><li>Mapas Obrigatórios: Escola Primária de Midwich, O Jogo, Asilo Crotus Prenn.</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Adrenalina</li><li>Oferecimento Ousado</li><li>Qualquer perk de Exaustão</li><li>Laços</li></ul>
+                    </div>
+                </div>
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/gxCBhwv.jpeg" alt="A Forma"><h4>A Forma<br><span class="difficulty moderate">(Moderado)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list mandatory"><li>Mapas Obrigatórios: Instituto de Tratamento Léry, O Jogo.</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Distorção</li><li>Espinha Arrepiada</li><li>Visão Obscura</li><li>Laços</li></ul>
+                    </div>
+                </div>
+                 <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/WeFvylt.jpeg" alt="O Demogorgon"><h4>O Demogorgon<br><span class="difficulty hard">(Difícil)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list mandatory"><li>Mapas Obrigatórios: O Submundo, Midwich.</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Adrenalina</li><li>Laços</li><li>Calma, Espírito</li></ul>
+                    </div>
+                </div>
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/Pw9Uyjm.jpeg" alt="A Onryō"><h4>A Onryō<br><span class="difficulty hard">(Difícil)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list mandatory"><li>Mapas Obrigatórios: O Jogo, Léry, Midwich.</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Hiperfoco</li><li>Prova de Valor</li><li>Déjà Vu</li></ul>
+                    </div>
+                </div>
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/SoXo5uD.jpeg" alt="O Cenobita"><h4>O Cenobita<br><span class="difficulty very-hard">(Muito Difícil)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list mandatory"><li>Mapas Obrigatórios: Midwich, Léry.</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Hiperfoco</li><li>Laços</li><li>Visão Obscura</li></ul>
+                    </div>
+                </div>
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/x3HOZpq.jpeg" alt="O Caçador"><h4>O Caçador<br><span class="difficulty easy">(Fácil)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list mandatory"><li>Mapas Obrigatórios: Ferro-Velho (Autohaven), Capela do Padre Campbell, O Jogo.</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Sabotador</li><li>Laços</li><li>Caixa de Ferramentas (Item)</li><li>Calma, Espírito</li></ul>
+                    </div>
+                </div>
+                <div class="killer-card">
+                    <div class="killer-header"><img src="https://i.imgur.com/9JaF3ot.jpeg" alt="A Negociante de Crânios"><h4>A Negociante de Crânios<br><span class="difficulty hard">(Difícil)</span></h4></div>
+                    <div class="ban-section">
+                        <h5>Regras de Mapa</h5><ul class="ban-list mandatory"><li>Mapas Obrigatórios: Instituto de Tratamento Léry, O Jogo, Midwich.</li></ul>
+                        <h5>Perks de Sobrevivente Proibidas</h5><ul class="ban-list banned"><li>Déjà Vu</li><li>Resiliência</li><li>Hiperfoco</li><li>Prova de Valor</li></ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
