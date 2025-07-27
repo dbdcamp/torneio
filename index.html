@@ -187,6 +187,39 @@
         .leaderboard-list li:nth-child(odd) { background-color: rgba(255,255,255,0.05); }
         .leaderboard-list .name { font-weight: bold; }
         .leaderboard-list .score { color: var(--cor-principal); font-weight: bold; }
+        /* ===== NOVO LAYOUT DO CHAT (STATUS ACIMA, MENSAGEM AO LADO) ===== */
+.chat-message {
+    line-height: 1.4;
+    margin-bottom: 15px;
+    word-wrap: break-word;
+}
+
+.chat-message .name {
+    /* Estilo do Nome de usuário */
+    font-weight: bold;
+    line-height: 1.2;
+    margin-right: 8px; /* <-- Voltamos a ter uma margem à direita */
+}
+
+.watching-indicator {
+    /* Status discreto ACIMA do nome */
+    display: block;
+    font-size: 0.7rem;
+    color: #888; /* Um pouco mais claro que antes para ser legível */
+    font-style: italic;
+    line-height: 1;
+    margin-bottom: 4px; /* Espaço entre o status e a linha do nome/mensagem */
+    font-weight: normal;
+}
+
+.chat-message .text {
+    /* O texto da mensagem volta a fluir normalmente */
+    font-size: 0.95rem;
+    display: inline; /* <-- Garante que fique ao lado do nome */
+    padding-top: 0;
+}
+/* ================================================================= */
+/* ======================================================= */
         @media (max-width: 768px) { .score-display { grid-template-columns: 1fr; } }
         /* --- INÍCIO: ESTILOS DA CONTAGEM REGRESSIVA --- */
 #countdown-container {
@@ -901,6 +934,56 @@ footer {
         /* Apenas em telas menores, o botão passa a ser visível */
         display: block; 
     }
+/* --- ESTILO PARA A ANIMAÇÃO DE CARREGAMENTO DO VÍDEO --- */
+
+#video-loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 15; /* Abaixo do indicador de "AO VIVO" e botão, mas acima da imagem */
+    
+    background-color: rgba(10, 10, 10, 0.7);
+    backdrop-filter: blur(3px); /* Efeito de vidro para desfocar a imagem de fundo */
+
+    /* Centraliza o conteúdo da animação */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#video-loader .loader-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+/* O spinner (círculo que gira) */
+#video-loader .loader-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(255, 255, 255, 0.3); /* Círculo cinza claro */
+    border-top-color: var(--cor-principal); /* Parte de cima vermelha, que vai girar */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* O texto */
+#video-loader span {
+    color: var(--cor-texto);
+    font-weight: bold;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* A animação de rotação do spinner */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
     </style>
 </head>
@@ -948,6 +1031,12 @@ footer {
                     <div id="offline-overlay">
                          <img id="offline-image" src="https://i.postimg.cc/q7zY97QC/ca-adora.jpg" alt="Transmissão Offline">
                     </div>
+                    <div id="video-loader" class="hidden">
+    <div class="loader-content">
+        <div class="loader-spinner"></div>
+        <span>CARREGANDO A CAÇADA...</span>
+    </div>
+</div>
                     <div id="live-indicator-wrapper" class="hidden"><div class="live-indicator">AO VIVO</div></div>
                     <button id="custom-fullscreen-btn" class="hidden" title="Tela Cheia">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -1057,6 +1146,7 @@ footer {
 
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
+    const isLiveNow = true; // MUDE PARA false QUANDO NÃO HOUVER LIVE
 
    // ✨ NOVO: Objeto para armazenar os IDs das suas 3 transmissões
 const STREAM_IDS = {
@@ -1069,13 +1159,20 @@ let player;
 let currentStreamKey = 'stream1'; // Define a transmissão padrão que será carregada primeiro
 
 window.onYouTubeIframeAPIReady = function() {
-    player = new YT.Player('player-wrapper', {
-        videoId: STREAM_IDS[currentStreamKey], // Carrega a live padrão
-        playerVars: { 'autoplay': 1, 'mute': 1, 'playsinline': 1, 'controls': 1 },
-        events: { 'onStateChange': onPlayerStateChange }
-    });
-};
+    // Se a variável isLiveNow for true...
+    if (isLiveNow) {
+        // ...mostra a nossa animação de carregamento...
+        document.getElementById('video-loader').classList.remove('hidden');
 
+        // ...e então cria o player do YouTube.
+        player = new YT.Player('player-wrapper', {
+            videoId: STREAM_IDS[currentStreamKey], // Carrega a live padrão
+            playerVars: { 'autoplay': 1, 'mute': 1, 'playsinline': 1, 'controls': 1 },
+            events: { 'onStateChange': onPlayerStateChange }
+        });
+    }
+    // Se isLiveNow for false, nada acontece, e a imagem offline continua visível por padrão.
+};
     document.addEventListener('DOMContentLoaded', function() {
         const fullscreenBtn = document.getElementById('custom-fullscreen-btn');
 const videoContainer = document.querySelector('.video-container');
@@ -1282,38 +1379,70 @@ const videoContainer = document.querySelector('.video-container');
 
 
             if (currentUser && message) {
-                messagesRef.push({
-                    name: currentUser,
-                    message: message,
-                    timestamp: firebase.database.ServerValue.TIMESTAMP
-                });
+                const streamStatus = isLiveNow ? currentStreamKey : 'offline';
+
+messagesRef.push({
+    name: currentUser,
+    message: message,
+    timestamp: firebase.database.ServerValue.TIMESTAMP,
+    watchingStream: streamStatus // Envia o status correto
+});
                 chatMessageInput.value = '';
             }
         });
         
-        messagesRef.limitToLast(100).on('child_added', (snapshot) => {
-            const msg = snapshot.val();
-            if (!msg || !msg.name || !msg.message) return;
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('chat-message');
-            messageElement.id = `msg-${snapshot.key}`;
-            if (!userColors[msg.name]) {
-                userColors[msg.name] = getRandomColor();
-            }
-            const nameSpan = document.createElement('span');
-            nameSpan.className = 'name';
-            nameSpan.textContent = msg.name + ':';
-            nameSpan.style.color = userColors[msg.name];
-            const messageSpan = document.createElement('span');
-            messageSpan.className = 'text';
-            const sanitizedMessage = escapeHTML(msg.message);
-            const finalHTML = sanitizedMessage.replace(/@([\wÀ-ú]+)/g, '<span class="mention">@$1</span>');
-            messageSpan.innerHTML = finalHTML;
-            messageElement.appendChild(nameSpan);
-            messageElement.appendChild(messageSpan);
-            chatMessages.appendChild(messageElement);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        });
+        // SUBSTITUA A FUNÇÃO INTEIRA PELA VERSÃO ABAIXO
+messagesRef.limitToLast(100).on('child_added', (snapshot) => {
+    const msg = snapshot.val();
+    if (!msg || !msg.name || !msg.message) return;
+
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('chat-message');
+    messageElement.id = `msg-${snapshot.key}`;
+
+    // ===== NOVA LÓGICA DE MONTAGEM =====
+
+    // 1. PRIMEIRO, verifica e adiciona o status da transmissão.
+    // Como o CSS do indicador tem "display: block", ele ocupará a primeira linha.
+    if (msg.watchingStream) {
+        const streamIndicator = document.createElement('span');
+        streamIndicator.className = 'watching-indicator';
+        
+        // Substitua pelo bloco abaixo:
+if (msg.watchingStream === 'offline') {
+    streamIndicator.textContent = 'Sem live ativa';
+} else {
+    // Pega o número do final da string (ex: "stream1" -> "1")
+    const streamNumber = msg.watchingStream.slice(-1);
+    streamIndicator.textContent = `Na tela ${streamNumber}`;
+}
+        messageElement.appendChild(streamIndicator);
+    }
+
+    // 2. SEGUNDO, adiciona o nome do usuário.
+    if (!userColors[msg.name]) {
+        userColors[msg.name] = getRandomColor();
+    }
+    const nameSpan = document.createElement('span');
+    nameSpan.className = 'name';
+    nameSpan.textContent = msg.name + ':';
+    nameSpan.style.color = userColors[msg.name];
+    messageElement.appendChild(nameSpan);
+
+    // 3. TERCEIRO, adiciona o texto da mensagem.
+    // Como o CSS do nome e do texto não têm "display: block", eles ficarão lado a lado.
+    const messageSpan = document.createElement('span');
+    messageSpan.className = 'text';
+    const sanitizedMessage = escapeHTML(msg.message);
+    const finalHTML = sanitizedMessage.replace(/@([\wÀ-ú]+)/g, '<span class="mention">@$1</span>');
+    messageSpan.innerHTML = finalHTML;
+    messageElement.appendChild(messageSpan);
+    
+    // ===================================
+    
+    chatMessages.appendChild(messageElement);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+});
 
         messagesRef.on('child_removed', (snapshot) => {
             const messageId = `msg-${snapshot.key}`;
@@ -1381,6 +1510,7 @@ const videoContainer = document.querySelector('.video-container');
     if (event.data === YT.PlayerState.PLAYING) { // Removi o !popupShown para o botão sempre aparecer
         offlineOverlay.classList.add('hidden');
         liveIndicator.classList.remove('hidden');
+        document.getElementById('video-loader').classList.add('hidden'); // Esconde a animação
         fullscreenBtn.classList.remove('hidden'); // LINHA ADICIONADA AQUI
 
         if (!popupShown) { // Movi o popup para uma verificação separada
