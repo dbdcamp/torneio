@@ -626,6 +626,156 @@ footer {
         order: -1; 
     }
 }
+        /* =================================================== */
+/* --- INÍCIO: ESTILOS PARA DISPOSITIVOS MÓVEIS --- */
+/* =================================================== */
+@media (max-width: 800px) {
+
+    /* --- GERAL E CONTEÚDO PRINCIPAL --- */
+    main {
+        padding: 20px 15px; /* Menos espaço nas laterais */
+    }
+
+    .section-container {
+        padding: 20px; /* Menos espaçamento interno nos containers */
+    }
+
+    .section-title {
+        font-size: 2.2rem; /* Título um pouco menor */
+        margin-bottom: 20px;
+    }
+
+    /* --- CABEÇALHO --- */
+    header {
+        flex-direction: column; /* Empilha os itens do cabeçalho */
+        gap: 15px;
+        padding: 15px;
+        position: static; /* Remove o 'sticky' para não ocupar espaço fixo */
+    }
+    
+    #visitor-counter {
+        margin-top: 0; /* Remove a margem superior */
+        transform: translateX(0); /* Reseta o posicionamento */
+        order: 3; /* Coloca o contador no final */
+    }
+
+    .logo h1 {
+        font-size: 2rem; /* Título principal menor */
+    }
+
+    .nav-buttons {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* --- BOTÕES DE TROCA DE TRANSMISSÃO --- */
+    #stream-switcher {
+        flex-direction: column; /* Empilha os botões */
+        align-items: stretch; /* Faz os botões ocuparem toda a largura */
+        gap: 10px;
+    }
+
+    /* --- PLACAR E FEEDBACK (POP-UPS) --- */
+    .scoreboard-popup,
+    .feedback-popup {
+        padding: 25px 20px; /* Menos espaçamento nos pop-ups */
+        width: 95%; /* Garante que não fique colado nas bordas */
+    }
+    
+    .scoreboard-popup h2,
+    .feedback-popup h2 {
+        font-size: 2.3rem; /* Títulos dos pop-ups menores */
+    }
+
+    .score-display {
+        gap: 20px;
+    }
+    
+    .leaderboard-list {
+        min-height: 250px; /* Altura menor no mobile */
+    }
+
+    .scoreboard-fab {
+        right: 15px;
+        bottom: 15px;
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+
+    .scoreboard-fab img {
+        width: 40px;
+        height: 40px;
+    }
+
+    /* --- REGRAS --- */
+    #regras li {
+        padding: 15px;
+        font-size: 0.9rem;
+    }
+    #regras li::before {
+        margin-right: 10px;
+    }
+
+    /* --- RODAPÉ --- */
+    footer {
+        position: static; /* Remove o 'fixed' para que o rodapé fique no final do conteúdo */
+        margin-top: 30px;
+    }
+    
+    .footer-content {
+        /* A regra que você já tem para flex-direction: column em 850px vai funcionar aqui */
+        grid-template-columns: 1fr; /* Muda o grid para uma única coluna */
+        justify-items: center; /* Centraliza tudo */
+        gap: 15px;
+    }
+    .footer-logo {
+        grid-row: 2; /* Move o logo para o meio */
+    }
+    .footer-copyright {
+        order: 0; /* Ordem padrão */
+        grid-row: 1; /* Move o copyright para cima */
+    }
+    .footer-links {
+        justify-self: center; /* Centraliza os links */
+        grid-row: 3; /* Move os links para baixo */
+    }
+}
+
+/* Ajustes finos para telas bem pequenas */
+@media (max-width: 480px) {
+    .logo h1 {
+        font-size: 1.8rem;
+    }
+    .section-title {
+        font-size: 2rem;
+    }
+    .scoreboard-popup h2,
+    .feedback-popup h2 {
+        font-size: 2rem;
+    }
+    
+    /* Empilha o formulário do chat */
+    #chat-form .form-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+    #chat-form button {
+        width: 100%;
+    }
+    
+    #live-section {
+        max-width: 100%; /* Permite que o vídeo ocupe todo o espaço disponível */
+    }
+
+    /* Ajusta o formulário de feedback que já tinha media query */
+    .feedback-popup .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    .feedback-popup .form-row .form-group {
+        margin-bottom: 20px;
+    }
+}
     </style>
 </head>
 <body>
