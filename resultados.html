@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Torneio - DBD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cor-fundo: #0a0a0a; --cor-container: rgba(15, 15, 15, 0.9);
+            --cor-borda: #4a0e0e; --cor-vermelho: #ff4d4d;
+            --cor-vermelho-escuro: #8B0000; --cor-texto: #f0f0f0;
+            --sombra-vermelha: rgba(255, 0, 0, 0.3); --cor-ouro: #ffd700;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Roboto', sans-serif; background-color: var(--cor-fundo);
+            background-image: url('https://i.postimg.cc/PqB0s4Z1/FUNDO-INICIAL-DBD.gif');
+            background-size: cover; background-position: center;
+            background-attachment: fixed; color: var(--cor-texto);
+            margin: 0; padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .section {
+            background-color: var(--cor-container); border: 2px solid var(--cor-borda);
+            border-radius: 10px; padding: 20px;
+            margin-bottom: 30px; box-shadow: 0 0 25px var(--sombra-vermelha);
+        }
+        h1, h2, h3 {
+            font-family: 'Creepster', cursive; text-align: center;
+            color: var(--cor-vermelho); text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
+        }
+        h1 { font-size: 3rem; }
+        h2 { font-size: 2.2rem; margin-top: 1.5em; border-top: 2px solid var(--cor-borda); padding-top: 1em; }
+        h3 { font-size: 1.8rem; margin-bottom: 15px; color: #ccc; }
+        h4 { font-family: 'Creepster', cursive; text-align: center; color: var(--cor-ouro); font-size: 1.5rem; margin-top: 20px;}
+        .controls-container { text-align: center; }
+        #team-list {
+            width: 80%; max-width: 500px; height: 120px; background-color: rgba(0, 0, 0, 0.4);
+            border: 1px solid #555; border-radius: 5px; color: #fff; font-size: 1rem;
+            padding: 10px; box-sizing: border-box; resize: vertical; margin-bottom: 15px;
+        }
+        .action-button {
+            background-color: var(--cor-vermelho-escuro); color: var(--cor-texto);
+            font-family: 'Creepster', cursive; font-size: 1.5rem; padding: 12px 25px;
+            border: 2px solid var(--cor-borda); border-radius: 5px; cursor: pointer;
+            transition: all 0.3s ease; margin-top: 10px;
+        }
+        .action-button:hover { background-color: var(--cor-vermelho); transform: scale(1.05); }
+        .phase-container { display: flex; flex-wrap: wrap; justify-content: space-around; gap: 20px; align-items: flex-start; }
+        .group, .phase {
+            background-color: #1a1a1a; padding: 20px; border-radius: 8px;
+            border: 1px solid var(--cor-borda); flex: 1; min-width: 450px;
+        }
+        .match-pair {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px; margin-bottom: 8px; border-radius: 5px; background-color: #252525;
+        }
+        .team-side { display: flex; flex-direction: column; align-items: center; text-align: center; width: 45%; }
+        .team-name { font-weight: bold; font-size: 1.1rem; }
+        .team-role { font-size: 0.8rem; color: #aaa; }
+        .vs-icon { font-family: 'Creepster', cursive; color: var(--cor-vermelho); font-size: 1.5rem; }
+        .team-pool { margin-top: 20px; text-align: center; }
+        #team-cards-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 10px; }
+        .player-card {
+            background-color: #1a1a1a; border: 1px solid var(--cor-borda); padding: 8px 12px;
+            border-left: 4px solid var(--cor-ouro); border-radius: 5px; width: 180px;
+            cursor: grab; font-weight: bold; text-align: center;
+        }
+        .player-card.dragging { opacity: 0.5; }
+        .dropzone {
+            width: 180px; height: 40px; border: 2px dashed var(--cor-borda);
+            border-radius: 5px; transition: background-color 0.2s ease;
+            display: flex; align-items: center; justify-content: center; color: #666; font-style: italic;
+        }
+        #champion { border: 2px solid var(--cor-ouro); background-color: rgba(255, 215, 0, 0.1); }
+        .dropzone.drag-over { background-color: rgba(255, 77, 77, 0.1); }
+        #animation-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.95); z-index: 9999; display: none; justify-content: center; align-items: center; }
+        #animation-text { font-family: 'Creepster', cursive; font-size: 5rem; color: var(--cor-vermelho); animation: pulse-text 1s infinite alternate; }
+        @keyframes pulse-text { from { text-shadow: 0 0 10px #ff0000; } to { text-shadow: 0 0 30px #ff4d4d; } }
+        #winner-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10000; display: none; justify-content: center; align-items: center; background-color: rgba(0,0,0,0.8); pointer-events: none; overflow: hidden; }
+        #winner-message { font-family: 'Creepster', cursive; font-size: clamp(3rem, 10vw, 8rem); color: var(--cor-ouro); text-align: center; animation: winner-text-anim 1s forwards; }
+        @keyframes winner-text-anim { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; text-shadow: 0 0 20px var(--cor-ouro); } }
+        .confetti { position: absolute; width: 10px; height: 25px; background-color: var(--cor-ouro); bottom: -30px; opacity: 0; animation: rise 4s linear forwards; }
+        @keyframes rise { to { transform: translateY(-105vh) rotateZ(720deg); opacity: 1; } }
+    </style>
+</head>
+<body>
+    <div id="animation-overlay"><div id="animation-text">Gerando Caos...</div></div>
+    <div id="winner-overlay"><div id="winner-message"></div></div>
+
+    <div class="container">
+        <header><h1>A Arena da Entidade</h1></header>
+
+        <section class="section">
+            <h2>Gerador de Chaveamento</h2>
+            <div class="controls-container">
+                <textarea id="team-list" placeholder="Insira os nomes dos times (múltiplos de 3, ex: 6, 9, 12...), um por linha..."></textarea>
+                <br>
+                <button id="generate-button" class="action-button">Gerar Torneio</button>
+            </div>
+        </section>
+
+        <section class="section" id="tournament-section" style="display: none;">
+              <div id="team-pool">
+                  <h3>Times Participantes</h3>
+                  <p>Arraste os times classificados para as fases seguintes.</p>
+                  <div id="team-cards-container"></div>
+              </div>
+              <div id="tournament-container">
+                  </div>
+        </section>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // =====================================================================
+        // ESTRUTURA CORRIGIDA: Funções Auxiliares Definidas PRIMEIRO
+        // =====================================================================
+
+        // --- 1. FUNÇÕES DE CRIAÇÃO DE HTML E PARTIDAS ---
+        const createGroupMatchHtml = (killerTeam, survivorTeam, killerRole) => `
+            <div class="match-pair">
+                <div class="team-side">
+                    <span class="team-name">${killerTeam}</span>
+                    <span class="team-role">(${killerRole})</span>
+                </div>
+                <span class="vs-icon">vs</span>
+                <div class="team-side">
+                    <span class="team-name">${survivorTeam}</span>
+                    <span class="team-role">(Joga de Sobrevivente)</span>
+                </div>
+            </div>`;
+
+        const createSimpleMatchHtml = (killerTeam, survivorTeam) => `
+            <div class="match-pair">
+                <div class="team-side">
+                    <span class="team-name">${killerTeam}</span>
+                    <span class="team-role">(Killer)</span>
+                </div>
+                <span class="vs-icon">vs</span>
+                <div class="team-side">
+                    <span class="team-name">${survivorTeam}</span>
+                    <span class="team-role">(Sobreviventes)</span>
+                </div>
+            </div>`;
+
+        const createGroupHtml = (groupName, teams) => {
+            const matchups = [ [teams[0], teams[1]], [teams[1], teams[2]], [teams[2], teams[0]] ];
+            let html = `<div class="group"><h3>${groupName}</h3>`;
+            matchups.forEach(match => {
+                html += createGroupMatchHtml(match[0], match[1], 'Escolhe o Killer');
+                html += createGroupMatchHtml(match[1], match[0], 'Espelha o Killer');
+            });
+            html += '</div>';
+            return html;
+        };
+
+        const createFinalHtml = () => `
+            <div id="final-section">
+                <h2>🏆 Grande Final 🏆</h2>
+                <p style="text-align:center; color: #ccc;">Arraste os 2 finalistas e sorteie a ordem da partida final.</p>
+                <div class="phase-container">
+                     <div class="phase">
+                        <h3>Finalistas</h3>
+                         <div class="match-pair"><div class="dropzone" id="finalist-1">Finalista 1</div></div>
+                         <div class="match-pair"><div class="dropzone" id="finalist-2">Finalista 2</div></div>
+                         <div style="text-align:center;">
+                             <button id="draw-final-button" class="action-button">Sortear Ordem da Final</button>
+                         </div>
+                    </div>
+                    <div class="phase" id="final-matches-container">
+                        <h3>Partidas Finais</h3>
+                    </div>
+                </div>
+                <div class="round" style="margin-top: 30px; text-align: center;">
+                    <h3>🏆 CAMPEÃO 🏆</h3>
+                    <div style="display: flex; justify-content: center;">
+                        <div class="dropzone" id="champion">Arraste o Campeão</div>
+                    </div>
+                </div>
+            </div>`;
+
+        // --- 2. FUNÇÕES DE SORTEIO E ANIMAÇÃO ---
+        const shuffleArray = (array) => {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        };
+
+        const showAnimation = (text, callback) => {
+            document.getElementById('animation-text').textContent = text;
+            animationOverlay.style.display = 'flex';
+            setTimeout(() => {
+                animationOverlay.style.display = 'none';
+                if (callback) callback();
+            }, 2500);
+        };
+        
+        const drawSemifinals = () => {
+            const qualifiers = [
+                document.querySelector('#semi-qualifier-1 .player-card')?.textContent,
+                document.querySelector('#semi-qualifier-2 .player-card')?.textContent,
+                document.querySelector('#semi-qualifier-3 .player-card')?.textContent,
+                document.querySelector('#semi-qualifier-4 .player-card')?.textContent,
+            ].filter(Boolean);
+
+            if (qualifiers.length !== 4) {
+                alert('Por favor, arraste os 4 times classificados para os espaços corretos antes de sortear.');
+                return;
+            }
+            
+            showAnimation('Sorteando Mata-Mata...', () => {
+                shuffleArray(qualifiers);
+                const matchups = [[qualifiers[0], qualifiers[1]], [qualifiers[2], qualifiers[3]]];
+                const container = document.getElementById('semifinals-matches-container');
+                let htmlContent = '<h3>Partidas da Semi</h3>'; 
+                matchups.forEach((match, index) => {
+                    htmlContent += `<h4>Confronto ${index + 1}</h4>`;
+                    let [team1, team2] = match;
+                    if (Math.random() > 0.5) [team1, team2] = [team2, team1];
+                    htmlContent += createSimpleMatchHtml(team1, team2);
+                });
+                container.innerHTML = htmlContent;
+            });
+        };
+
+        const drawFinal = () => {
+            const finalists = [
+                document.querySelector('#finalist-1 .player-card')?.textContent,
+                document.querySelector('#finalist-2 .player-card')?.textContent,
+            ].filter(Boolean);
+
+            if (finalists.length !== 2) {
+                alert('Por favor, arraste os 2 finalistas para os espaços corretos.');
+                return;
+            }
+
+            showAnimation('Sorteando a Final...', () => {
+                shuffleArray(finalists);
+                const container = document.getElementById('final-matches-container');
+                container.innerHTML = '<h3>Partidas Finais</h3>';
+                container.innerHTML += createSimpleMatchHtml(finalists[0], finalists[1]);
+                container.innerHTML += createSimpleMatchHtml(finalists[1], finalists[0]);
+            });
+        };
+        
+        const triggerWinnerAnimation = (name) => {
+            const winnerOverlay = document.getElementById('winner-overlay');
+            const winnerMessage = document.getElementById('winner-message');
+            winnerMessage.innerHTML = `CAMPEÃO<br>${name}!`;
+            let confettiContainer = winnerOverlay.querySelector('#confetti-container');
+            if (confettiContainer) confettiContainer.remove();
+            confettiContainer = document.createElement('div');
+            confettiContainer.id = 'confetti-container';
+            winnerOverlay.prepend(confettiContainer);
+            for (let i = 0; i < 150; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.animationDuration = (Math.random() * 2 + 3) + 's';
+                confetti.style.animationDelay = Math.random() * 1 + 's';
+                confetti.style.backgroundColor = Math.random() > 0.5 ? 'var(--cor-ouro)' : 'var(--cor-vermelho)';
+                confettiContainer.appendChild(confetti);
+            }
+            winnerOverlay.style.display = 'flex';
+            setTimeout(() => { winnerOverlay.style.display = 'none'; }, 5000);
+        };
+
+        // --- 3. FUNÇÕES DE DRAG & DROP ---
+        const handleDragScroll = (e) => {
+            if (e.clientY === 0) { return; }
+            const scrollSpeed = 15;
+            const triggerZone = window.innerHeight * 0.15;
+            if (e.clientY > window.innerHeight - triggerZone) window.scrollBy(0, scrollSpeed);
+            else if (e.clientY < triggerZone) window.scrollBy(0, -scrollSpeed);
+        };
+
+        const createPlayerCard = (name) => {
+            const card = document.createElement('div');
+            card.className = 'player-card';
+            card.setAttribute('draggable', true);
+            card.textContent = name;
+            card.id = 'card-' + name.replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+            card.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', e.target.id);
+                setTimeout(() => card.classList.add('dragging'), 0);
+            });
+            card.addEventListener('drag', handleDragScroll);
+            card.addEventListener('dragend', () => card.classList.remove('dragging'));
+            return card;
+        };
+
+        const setupDropzone = (zone) => {
+            zone.addEventListener('dragover', e => {
+                e.preventDefault();
+                if (zone.children.length === 0) zone.classList.add('drag-over');
+            });
+            zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+            zone.addEventListener('drop', e => {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                const id = e.dataTransfer.getData('text/plain');
+                const draggable = document.getElementById(id);
+                if (zone.children.length === 0) {
+                    zone.textContent = '';
+                    zone.appendChild(draggable);
+                    if (zone.id === 'champion') {
+                        triggerWinnerAnimation(draggable.textContent);
+                    }
+                }
+            });
+        };
+
+        // =====================================================================
+        // CÓDIGO DE EXECUÇÃO (depois que tudo foi definido)
+        // =====================================================================
+
+        // --- Referências a Elementos do DOM ---
+        const teamListText = document.getElementById('team-list');
+        const generateButton = document.getElementById('generate-button');
+        const tournamentContainer = document.getElementById('tournament-container');
+        const tournamentSection = document.getElementById('tournament-section');
+        const animationOverlay = document.getElementById('animation-overlay');
+        const teamPool = document.getElementById('team-pool');
+        const teamCardsContainer = document.getElementById('team-cards-container');
+
+        // --- Event Listener Principal ---
+        generateButton.addEventListener('click', () => {
+            const teams = teamListText.value.split('\n').map(t => t.trim()).filter(t => t !== '');
+            
+            // Validação para múltiplos de 3
+            if (teams.length < 6 || teams.length % 3 !== 0) {
+                alert('Para garantir a justiça das partidas, por favor, insira um número de times múltiplo de 3 (6, 9, 12, etc.).');
+                return;
+            }
+
+            showAnimation('Gerando Grupos...', () => {
+                shuffleArray(teams);
+
+                // Cria grupos de 3 times
+                const numGroups = teams.length / 3;
+                const groups = [];
+                for (let i = 0; i < numGroups; i++) {
+                    groups.push(teams.slice(i * 3, i * 3 + 3));
+                }
+
+                // Limpa e prepara os containers
+                tournamentContainer.innerHTML = '';
+                teamCardsContainer.innerHTML = '';
+                teams.forEach(team => teamCardsContainer.appendChild(createPlayerCard(team)));
+
+                // Gera o HTML da fase de grupos
+                let groupPhaseHtml = `<h2>⚔️ Fase de Grupos ⚔️</h2><div class="phase-container">`;
+                groups.forEach((group, index) => {
+                    const groupName = `Grupo ${String.fromCharCode(65 + index)}`; // Nomes A, B, C...
+                    groupPhaseHtml += createGroupHtml(groupName, group);
+                });
+                groupPhaseHtml += `</div>`;
+                
+                // Define a instrução para a próxima fase
+                const qualifierInstruction = `Arraste os 4 classificados (vencedor de cada grupo + melhores segundos colocados) e sorteie os confrontos.`;
+                
+                const semiFinalsHtml = `
+                    <div id="semifinals-section">
+                        <h2>💥 Semifinais (Mata-Mata) 💥</h2>
+                        <p style="text-align:center; color: #ccc;">${qualifierInstruction}</p>
+                        <div class="phase-container">
+                            <div class="phase">
+                                <h3>Classificados</h3>
+                                <div class="match-pair"><div class="dropzone" id="semi-qualifier-1">Classificado 1</div></div>
+                                <div class="match-pair"><div class="dropzone" id="semi-qualifier-2">Classificado 2</div></div>
+                                <div class="match-pair"><div class="dropzone" id="semi-qualifier-3">Classificado 3</div></div>
+                                <div class="match-pair"><div class="dropzone" id="semi-qualifier-4">Classificado 4</div></div>
+                                <div style="text-align:center;">
+                                    <button id="draw-semifinals-button" class="action-button">Sortear Semifinais</button>
+                                </div>
+                            </div>
+                            <div class="phase" id="semifinals-matches-container">
+                                <h3>Partidas da Semi</h3>
+                            </div>
+                        </div>
+                    </div>`;
+
+                // Junta tudo e insere no HTML
+                tournamentContainer.innerHTML = groupPhaseHtml + semiFinalsHtml + createFinalHtml();
+                
+                // Ativa a funcionalidade de arrastar e soltar
+                document.querySelectorAll('.dropzone').forEach(setupDropzone);
+                
+                // Adiciona os listeners aos novos botões de sorteio
+                document.getElementById('draw-semifinals-button').addEventListener('click', drawSemifinals);
+                document.getElementById('draw-final-button').addEventListener('click', drawFinal);
+
+                tournamentSection.style.display = 'block';
+                teamPool.style.display = 'block';
+            });
+        });
+    });
+    </script>
+</body>
+</html>
