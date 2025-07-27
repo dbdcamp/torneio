@@ -630,10 +630,85 @@ footer {
 /* --- INÍCIO: ESTILOS PARA DISPOSITIVOS MÓVEIS --- */
 /* =================================================== */
 @media (max-width: 800px) {
+    /* Diminui o tamanho da fonte dos números */
+.time-value {
+    font-size: 1.4rem; /* Valor original era 2.5rem. Ajuste como preferir. */
+}
+
+/* Diminui o texto abaixo dos números para manter a proporção */
+.time-label {
+    font-size: 0.5rem; /* Valor original era 0.7rem. */
+}
+
+/* Diminui o espaço entre os blocos de tempo */
+#timer {
+    gap: 7px; /* Valor original era 15px. */
+}
 
     /* --- GERAL E CONTEÚDO PRINCIPAL --- */
     main {
         padding: 20px 15px; /* Menos espaço nas laterais */
+    }
+
+@media (max-width: 800px) {
+    /* Exibe novamente os elementos que estavam com "display: none" */
+    #countdown-container,
+    #visitor-counter {
+        display: flex; /* ou 'block', dependendo do elemento */
+    }
+    @media (max-width: 800px) {
+    /* --- CABEÇALHO --- */
+    header {
+        flex-direction: column; /* Itens um embaixo do outro */
+        gap: 15px;              /* Espaço entre eles */
+    }
+
+    /* --- RODAPÉ --- */
+    .footer-content {
+        grid-template-columns: 1fr; /* Muda o grid para apenas uma coluna */
+        justify-items: center;      /* Centraliza tudo */
+        gap: 15px;
+    }
+@media (max-width: 800px) {
+    header,
+    footer {
+        position: static; /* Remove a posição fixa/colada */
+    }
+
+    /* Adicione uma margem no topo do rodapé para não colar no conteúdo */
+    footer {
+        margin-top: 30px; 
+    }
+    @media (max-width: 800px) {
+    /* Reduz o espaçamento geral */
+    main {
+        padding: 20px 15px; 
+    }
+    .section-container {
+        padding: 20px;
+    }
+
+    /* Diminui o tamanho das fontes principais */
+    .logo h1 {
+        font-size: 2rem;
+    }
+    .section-title {
+        font-size: 2.2rem;
+    }
+        /* Dentro da sua media query de 800px ou uma nova para telas menores */
+@media (max-width: 768px) {
+    .grimorio-flutuante {
+        bottom: 155px; /* Posição mais sensata para mobile */
+        left: 15px;
+        /* Pode também diminuir o tamanho da imagem e da fonte aqui */
+    }
+}
+
+/* Crie uma nova media query para telas muito pequenas, se necessário */
+@media (max-width: 480px) {
+    #chat-form .form-group {
+        flex-direction: column; /* Empilha o input e o botão do chat */
+        gap: 10px;
     }
 
     .section-container {
@@ -696,8 +771,8 @@ footer {
     }
 
     .scoreboard-fab {
-        right: 15px;
-        bottom: 15px;
+        right: 0px;
+        bottom: -50px;
         padding: 8px 15px;
         font-size: 0.9rem;
     }
