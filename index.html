@@ -1503,7 +1503,7 @@ fullscreenBtn.addEventListener('click', () => {
     if (!isFullscreen) {
         // ...então, entra em tela cheia.
         if (videoContainer.requestFullscreen) {
-            videoContainer.requestFullscreen();
+            videoContainer.requestFullscreen().then(() => { screen.orientation.lock('landscape'); });
         } else if (videoContainer.webkitRequestFullscreen) { /* Safari */
             videoContainer.webkitRequestFullscreen();
         } else if (videoContainer.msRequestFullscreen) { /* IE11 */
@@ -1514,7 +1514,7 @@ fullscreenBtn.addEventListener('click', () => {
     else {
         // ...então, sai da tela cheia.
         if (document.exitFullscreen) {
-            document.exitFullscreen();
+            document.exitFullscreen().then(() => { screen.orientation.unlock(); });
         } else if (document.webkitExitFullscreen) { /* Safari */
             document.webkitExitFullscreen();
         } else if (document.msExitFullscreen) { /* IE11 */
