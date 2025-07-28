@@ -17,7 +17,7 @@
         html { scroll-behavior: smooth; }
         body {
             font-family: 'Roboto', sans-serif; background-color: var(--cor-fundo);
-            background-image: url('https://i.postimg.cc/PqB0s4Z1/FUNDO-INICIAL-DBD.gif');
+            background-image: url('https://i.imgur.com/722rfMM.jpeg');
             background-size: cover; background-position: center;
             background-attachment: fixed; color: var(--cor-texto);
             margin: 0; padding: 20px;
@@ -116,11 +116,7 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // =====================================================================
-        // ESTRUTURA CORRIGIDA: Funções Auxiliares Definidas PRIMEIRO
-        // =====================================================================
-
-        // --- 1. FUNÇÕES DE CRIAÇÃO DE HTML E PARTIDAS ---
+        // --- FUNÇÕES AUXILIARES ---
         const createGroupMatchHtml = (killerTeam, survivorTeam, killerRole) => `
             <div class="match-pair">
                 <div class="team-side">
@@ -131,19 +127,6 @@
                 <div class="team-side">
                     <span class="team-name">${survivorTeam}</span>
                     <span class="team-role">(Joga de Sobrevivente)</span>
-                </div>
-            </div>`;
-
-        const createSimpleMatchHtml = (killerTeam, survivorTeam) => `
-            <div class="match-pair">
-                <div class="team-side">
-                    <span class="team-name">${killerTeam}</span>
-                    <span class="team-role">(Killer)</span>
-                </div>
-                <span class="vs-icon">vs</span>
-                <div class="team-side">
-                    <span class="team-name">${survivorTeam}</span>
-                    <span class="team-role">(Sobreviventes)</span>
                 </div>
             </div>`;
 
@@ -164,7 +147,7 @@
                 <p style="text-align:center; color: #ccc;">Arraste os 2 finalistas e sorteie a ordem da partida final.</p>
                 <div class="phase-container">
                      <div class="phase">
-                        <h3>Finalistas</h3>
+                         <h3>Finalistas</h3>
                          <div class="match-pair"><div class="dropzone" id="finalist-1">Finalista 1</div></div>
                          <div class="match-pair"><div class="dropzone" id="finalist-2">Finalista 2</div></div>
                          <div style="text-align:center;">
@@ -183,12 +166,14 @@
                 </div>
             </div>`;
 
-        // --- 2. FUNÇÕES DE SORTEIO E ANIMAÇÃO ---
         const shuffleArray = (array) => {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
             }
+            return array;
         };
 
         const showAnimation = (text, callback) => {
@@ -206,24 +191,46 @@
                 document.querySelector('#semi-qualifier-2 .player-card')?.textContent,
                 document.querySelector('#semi-qualifier-3 .player-card')?.textContent,
                 document.querySelector('#semi-qualifier-4 .player-card')?.textContent,
+                document.querySelector('#semi-qualifier-5 .player-card')?.textContent,
             ].filter(Boolean);
 
-            if (qualifiers.length !== 4) {
-                alert('Por favor, arraste os 4 times classificados para os espaços corretos antes de sortear.');
+            if (qualifiers.length !== 5) {
+                alert('Por favor, arraste os 5 times classificados para os espaços corretos antes de sortear.');
                 return;
             }
             
-            showAnimation('Sorteando Mata-Mata...', () => {
-                shuffleArray(qualifiers);
-                const matchups = [[qualifiers[0], qualifiers[1]], [qualifiers[2], qualifiers[3]]];
+            showAnimation('Sorteando Confrontos...', () => {
+                const choosers = shuffleArray([...qualifiers]);
+                const mirrorers = shuffleArray([...qualifiers]);
+
+                const opponentsForChoosers = [...choosers];
+                opponentsForChoosers.push(opponentsForChoosers.shift());
+
+                const opponentsForMirrorers = [...mirrorers];
+                opponentsForMirrorers.push(opponentsForMirrorers.shift());
+
+                const allMatches = [];
+                for (let i = 0; i < 5; i++) {
+                    allMatches.push({
+                        killer: choosers[i],
+                        survivor: opponentsForChoosers[i],
+                        role: 'Escolhe o Killer'
+                    });
+                    allMatches.push({
+                        killer: mirrorers[i],
+                        survivor: opponentsForMirrorers[i],
+                        role: 'Espelha o Killer'
+                    });
+                }
+                
+                shuffleArray(allMatches);
+
                 const container = document.getElementById('semifinals-matches-container');
-                let htmlContent = '<h3>Partidas da Semi</h3>'; 
-                matchups.forEach((match, index) => {
-                    htmlContent += `<h4>Confronto ${index + 1}</h4>`;
-                    let [team1, team2] = match;
-                    if (Math.random() > 0.5) [team1, team2] = [team2, team1];
-                    htmlContent += createSimpleMatchHtml(team1, team2);
+                let htmlContent = '<h3>Partidas da Semi</h3>';
+                allMatches.forEach(match => {
+                    htmlContent += createGroupMatchHtml(match.killer, match.survivor, match.role);
                 });
+
                 container.innerHTML = htmlContent;
             });
         };
@@ -239,12 +246,19 @@
                 return;
             }
 
-            showAnimation('Sorteando a Final...', () => {
+            showAnimation('Sorteando a Grande Final...', () => {
                 shuffleArray(finalists);
                 const container = document.getElementById('final-matches-container');
                 container.innerHTML = '<h3>Partidas Finais</h3>';
-                container.innerHTML += createSimpleMatchHtml(finalists[0], finalists[1]);
-                container.innerHTML += createSimpleMatchHtml(finalists[1], finalists[0]);
+                const [teamA, teamB] = finalists;
+
+                container.innerHTML += `<h4>1º Turno</h4>`;
+                container.innerHTML += createGroupMatchHtml(teamA, teamB, 'Escolhe o Killer');
+                container.innerHTML += createGroupMatchHtml(teamB, teamA, 'Espelha o Killer');
+
+                container.innerHTML += `<h4>2º Turno</h4>`;
+                container.innerHTML += createGroupMatchHtml(teamB, teamA, 'Escolhe o Killer');
+                container.innerHTML += createGroupMatchHtml(teamA, teamB, 'Espelha o Killer');
             });
         };
         
@@ -270,15 +284,17 @@
             setTimeout(() => { winnerOverlay.style.display = 'none'; }, 5000);
         };
 
-        // --- 3. FUNÇÕES DE DRAG & DROP ---
         const handleDragScroll = (e) => {
             if (e.clientY === 0) { return; }
             const scrollSpeed = 15;
             const triggerZone = window.innerHeight * 0.15;
-            if (e.clientY > window.innerHeight - triggerZone) window.scrollBy(0, scrollSpeed);
-            else if (e.clientY < triggerZone) window.scrollBy(0, -scrollSpeed);
+            if (e.clientY > window.innerHeight - triggerZone) {
+                window.scrollBy(0, scrollSpeed);
+            } else if (e.clientY < triggerZone) {
+                window.scrollBy(0, -scrollSpeed);
+            }
         };
-
+        
         const createPlayerCard = (name) => {
             const card = document.createElement('div');
             card.className = 'player-card';
@@ -295,10 +311,7 @@
         };
 
         const setupDropzone = (zone) => {
-            zone.addEventListener('dragover', e => {
-                e.preventDefault();
-                if (zone.children.length === 0) zone.classList.add('drag-over');
-            });
+            zone.addEventListener('dragover', e => { e.preventDefault(); if (zone.children.length === 0) zone.classList.add('drag-over'); });
             zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
             zone.addEventListener('drop', e => {
                 e.preventDefault();
@@ -308,31 +321,21 @@
                 if (zone.children.length === 0) {
                     zone.textContent = '';
                     zone.appendChild(draggable);
-                    if (zone.id === 'champion') {
-                        triggerWinnerAnimation(draggable.textContent);
-                    }
+                    if (zone.id === 'champion') triggerWinnerAnimation(draggable.textContent);
                 }
             });
         };
 
-        // =====================================================================
-        // CÓDIGO DE EXECUÇÃO (depois que tudo foi definido)
-        // =====================================================================
-
-        // --- Referências a Elementos do DOM ---
+        // --- CÓDIGO DE EXECUÇÃO ---
         const teamListText = document.getElementById('team-list');
         const generateButton = document.getElementById('generate-button');
         const tournamentContainer = document.getElementById('tournament-container');
         const tournamentSection = document.getElementById('tournament-section');
+        // ** VARIÁVEL CORRIGIDA / REINSERIDA **
         const animationOverlay = document.getElementById('animation-overlay');
-        const teamPool = document.getElementById('team-pool');
-        const teamCardsContainer = document.getElementById('team-cards-container');
 
-        // --- Event Listener Principal ---
         generateButton.addEventListener('click', () => {
             const teams = teamListText.value.split('\n').map(t => t.trim()).filter(t => t !== '');
-            
-            // Validação para múltiplos de 3
             if (teams.length < 6 || teams.length % 3 !== 0) {
                 alert('Para garantir a justiça das partidas, por favor, insira um número de times múltiplo de 3 (6, 9, 12, etc.).');
                 return;
@@ -340,34 +343,21 @@
 
             showAnimation('Gerando Grupos...', () => {
                 shuffleArray(teams);
-
-                // Cria grupos de 3 times
                 const numGroups = teams.length / 3;
                 const groups = [];
-                for (let i = 0; i < numGroups; i++) {
-                    groups.push(teams.slice(i * 3, i * 3 + 3));
-                }
+                for (let i = 0; i < numGroups; i++) groups.push(teams.slice(i * 3, i * 3 + 3));
 
-                // Limpa e prepara os containers
-                tournamentContainer.innerHTML = '';
-                teamCardsContainer.innerHTML = '';
-                teams.forEach(team => teamCardsContainer.appendChild(createPlayerCard(team)));
+                document.getElementById('team-cards-container').innerHTML = '';
+                teams.forEach(team => document.getElementById('team-cards-container').appendChild(createPlayerCard(team)));
 
-                // Gera o HTML da fase de grupos
                 let groupPhaseHtml = `<h2>⚔️ Fase de Grupos ⚔️</h2><div class="phase-container">`;
-                groups.forEach((group, index) => {
-                    const groupName = `Grupo ${String.fromCharCode(65 + index)}`; // Nomes A, B, C...
-                    groupPhaseHtml += createGroupHtml(groupName, group);
-                });
+                groups.forEach((group, index) => groupPhaseHtml += createGroupHtml(`Grupo ${String.fromCharCode(65 + index)}`, group));
                 groupPhaseHtml += `</div>`;
-                
-                // Define a instrução para a próxima fase
-                const qualifierInstruction = `Arraste os 4 classificados (vencedor de cada grupo + melhores segundos colocados) e sorteie os confrontos.`;
                 
                 const semiFinalsHtml = `
                     <div id="semifinals-section">
-                        <h2>💥 Semifinais (Mata-Mata) 💥</h2>
-                        <p style="text-align:center; color: #ccc;">${qualifierInstruction}</p>
+                        <h2>💥 Semifinais 💥</h2>
+                        <p style="text-align:center; color: #ccc;">Arraste os 5 melhores times e sorteie os confrontos.</p>
                         <div class="phase-container">
                             <div class="phase">
                                 <h3>Classificados</h3>
@@ -375,28 +365,24 @@
                                 <div class="match-pair"><div class="dropzone" id="semi-qualifier-2">Classificado 2</div></div>
                                 <div class="match-pair"><div class="dropzone" id="semi-qualifier-3">Classificado 3</div></div>
                                 <div class="match-pair"><div class="dropzone" id="semi-qualifier-4">Classificado 4</div></div>
+                                <div class="match-pair"><div class="dropzone" id="semi-qualifier-5">Classificado 5</div></div>
                                 <div style="text-align:center;">
                                     <button id="draw-semifinals-button" class="action-button">Sortear Semifinais</button>
                                 </div>
                             </div>
                             <div class="phase" id="semifinals-matches-container">
                                 <h3>Partidas da Semi</h3>
+                                <p style="color: #888; text-align: center;">Aguardando sorteio...</p>
                             </div>
                         </div>
                     </div>`;
 
-                // Junta tudo e insere no HTML
                 tournamentContainer.innerHTML = groupPhaseHtml + semiFinalsHtml + createFinalHtml();
-                
-                // Ativa a funcionalidade de arrastar e soltar
                 document.querySelectorAll('.dropzone').forEach(setupDropzone);
-                
-                // Adiciona os listeners aos novos botões de sorteio
                 document.getElementById('draw-semifinals-button').addEventListener('click', drawSemifinals);
                 document.getElementById('draw-final-button').addEventListener('click', drawFinal);
-
                 tournamentSection.style.display = 'block';
-                teamPool.style.display = 'block';
+                document.getElementById('team-pool').style.display = 'block';
             });
         });
     });
