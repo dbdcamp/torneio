@@ -45,6 +45,48 @@
         .entry-list input { width: 80px; margin: 0 10px; }
         .entry-list .actions { display: flex; gap: 10px; }
         @media (max-width: 900px) { .admin-panel { grid-template-columns: 1fr; } }
+        /* --- ESTILOS PARA O INTERRUPTOR (TOGGLE SWITCH) --- */
+.switch-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.switch-checkbox {
+    height: 0;
+    width: 0;
+    visibility: hidden;
+}
+.switch-label {
+    cursor: pointer;
+    text-indent: -9999px;
+    width: 50px;
+    height: 28px;
+    background: #555; /* Cor quando desligado */
+    display: block;
+    border-radius: 100px;
+    position: relative;
+}
+.switch-label:after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 22px;
+    height: 22px;
+    background: #fff;
+    border-radius: 90px;
+    transition: 0.3s;
+}
+.switch-checkbox:checked + .switch-label {
+    background: #4CAF50; /* Cor quando ligado */
+}
+.switch-checkbox:checked + .switch-label:after {
+    left: calc(100% - 3px);
+    transform: translateX(-100%);
+}
+.switch-label:active:after {
+    width: 30px;
+}
     </style>
 </head>
 <body>
@@ -58,6 +100,19 @@
         <p id="status"></p>
 
         <div class="admin-panel">
+            </div> <div class="panel-section">
+            <h2>Configurações Gerais</h2>
+            <div class="form-group switch-container">
+                <label for="registration-toggle">Status das Inscrições (Fechadas / Abertas)</label>
+                <div>
+                    <input type="checkbox" id="registration-toggle" class="switch-checkbox" disabled>
+                    <label for="registration-toggle" class="switch-label">
+                        <span class="switch-button"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+                </div>
             <div class="panel-section">
                 <h2>Gerenciar Equipes</h2>
                 <div class="form-group">
@@ -104,19 +159,48 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 🔧 Referência à chave 'teams' no Firebase (a única que precisamos agora)
     const teamsRef = database.ref('teams');
+    const registrationsRef = database.ref('config/registrationsOpen');
 
     // 🔧 Variáveis para o formulário de equipes
     const addEquipeBtn = document.getElementById('add-equipe-btn');
     const equipeNameInput = document.getElementById('equipe-name');
     const equipeScoreInput = document.getElementById('equipe-score');
     const equipesList = document.getElementById('equipes-list');
+    const registrationToggle = document.getElementById('registration-toggle');
 
     // --- Lógica de Autenticação ---
     passwordInput.addEventListener('input', () => {
         const isPasswordCorrect = passwordInput.value === ADMIN_PASSWORD;
         document.querySelectorAll('button').forEach(btn => {
             btn.disabled = !isPasswordCorrect;
+            // --- Lógica para o interruptor de Inscrições ---
+
+// 1. Lê o estado atual do Firebase e atualiza o interruptor na tela
+registrationsRef.on('value', (snapshot) => {
+    const areOpen = snapshot.val();
+    if (areOpen) {
+        registrationToggle.checked = true;
+    } else {
+        registrationToggle.checked = false;
+    }
+});
+
+// 2. Quando o admin clica no interruptor, atualiza o valor no Firebase
+registrationToggle.addEventListener('change', () => {
+    const isChecked = registrationToggle.checked;
+    registrationsRef.set(isChecked)
+        .then(() => {
+            statusElement.textContent = `Inscrições agora estão ${isChecked ? 'ABERTAS' : 'FECHADAS'}.`;
+            statusElement.style.color = "#4CAF50";
+        })
+        .catch(error => {
+            statusElement.textContent = "Erro ao atualizar status.";
+            statusElement.style.color = "#ff4d4d";
+            console.error(error);
         });
+});
+        });
+        registrationToggle.disabled = !isPasswordCorrect;
         
         if (isPasswordCorrect) {
             statusElement.textContent = "Acesso liberado.";
