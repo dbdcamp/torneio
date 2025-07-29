@@ -114,6 +114,93 @@
             100% { transform: rotate(360deg) scale(1); box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px var(--cor-cristal-sombra); }
         }
         #tiebreaker-spinner-text { font-family: 'Roboto', sans-serif; font-size: 1.8rem; font-weight: bold; color: #0b0f2e; text-shadow: 0 0 5px #ffffff; }
+        /* ======================================= */
+/* --- INÍCIO: OTIMIZAÇÃO PARA MOBILE --- */
+/* ======================================= */
+
+/* Regra geral para evitar que elementos "vazem" da tela */
+* {
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    /* --- AJUSTES GERAIS --- */
+    body {
+        padding: 10px; /* Menos espaço nas laterais da página */
+    }
+
+    .section {
+        padding: 15px; /* Menos espaço interno nas seções */
+    }
+
+    /* --- TÍTULOS --- */
+    h1 { font-size: 2.5rem; }
+    h2 { font-size: 1.8rem; }
+    h3 { font-size: 1.5rem; }
+    h4 { font-size: 1.3rem; }
+
+    /* --- CONTROLES PRINCIPAIS --- */
+    #team-list, #tiebreaker-teams {
+        width: 100%; /* Caixas de texto ocupam toda a largura */
+        height: 120px; /* Um pouco mais de altura para digitar no celular */
+    }
+
+    .action-button {
+        width: 90%; /* Botões maiores e mais fáceis de tocar */
+        max-width: 350px;
+        padding: 15px;
+        font-size: 1.3rem;
+    }
+
+    /* --- LAYOUT DO TORNEIO --- */
+    /* CORREÇÃO PRINCIPAL: Impede que os grupos estourem a tela */
+    .group, .phase {
+        min-width: 100%; /* Remove a largura mínima fixa */
+        padding: 15px;
+    }
+
+    .match-pair {
+        flex-direction: column; /* Empilha os times para economizar espaço */
+        gap: 5px;
+        padding: 15px;
+    }
+
+    .vs-icon {
+        transform: rotate(90deg); /* O "vs" fica de lado entre os times empilhados */
+    }
+
+    /* --- CARDS DE TIMES E DROPZONES --- */
+    #team-cards-container {
+        gap: 8px; /* Menos espaço entre os cards de time */
+    }
+
+    .player-card, .dropzone {
+        width: 140px; /* Cards um pouco menores */
+        padding: 10px 8px;
+        height: auto;
+        min-height: 40px;
+    }
+
+    /* --- ANIMAÇÕES --- */
+    #animation-text {
+        font-size: 2.5rem;
+        text-align: center;
+    }
+    
+    .crystal-spinner {
+        width: 150px;
+        height: 150px;
+    }
+
+    #tiebreaker-spinner-text {
+        font-size: 1.4rem;
+    }
+    
+    #winner-message {
+        /* Ajusta o clamp para ser menos agressivo no mobile */
+        font-size: clamp(2.5rem, 12vw, 5rem);
+    }
+}
     </style>
 </head>
 <body>
