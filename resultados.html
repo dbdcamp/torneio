@@ -13,6 +13,7 @@
             --cor-borda: #4a0e0e; --cor-vermelho: #ff4d4d;
             --cor-vermelho-escuro: #8B0000; --cor-texto: #f0f0f0;
             --sombra-vermelha: rgba(255, 0, 0, 0.3); --cor-ouro: #ffd700;
+            --cor-cristal-borda: #6a7fcc; --cor-cristal-sombra: rgba(106, 127, 204, 0.5);
         }
         html { scroll-behavior: smooth; }
         body {
@@ -37,8 +38,8 @@
         h3 { font-size: 1.8rem; margin-bottom: 15px; color: #ccc; }
         h4 { font-family: 'Creepster', cursive; text-align: center; color: var(--cor-ouro); font-size: 1.5rem; margin-top: 20px;}
         .controls-container { text-align: center; }
-        #team-list {
-            width: 80%; max-width: 500px; height: 120px; background-color: rgba(0, 0, 0, 0.4);
+        #team-list, #tiebreaker-teams {
+            width: 80%; max-width: 500px; height: 100px; background-color: rgba(0, 0, 0, 0.4);
             border: 1px solid #555; border-radius: 5px; color: #fff; font-size: 1rem;
             padding: 10px; box-sizing: border-box; resize: vertical; margin-bottom: 15px;
         }
@@ -58,23 +59,16 @@
             display: flex; justify-content: space-between; align-items: center;
             padding: 10px; margin-bottom: 8px; border-radius: 5px; background-color: #252525;
         }
+        #tiebreaker-result .match-pair { width: 80%; max-width: 500px; margin-left: auto; margin-right: auto; }
         .team-side { display: flex; flex-direction: column; align-items: center; text-align: center; width: 45%; }
         .team-name { font-weight: bold; font-size: 1.1rem; }
         .team-role { font-size: 0.8rem; color: #aaa; }
         .vs-icon { font-family: 'Creepster', cursive; color: var(--cor-vermelho); font-size: 1.5rem; }
         .team-pool { margin-top: 20px; text-align: center; }
         #team-cards-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 10px; }
-        .player-card {
-            background-color: #1a1a1a; border: 1px solid var(--cor-borda); padding: 8px 12px;
-            border-left: 4px solid var(--cor-ouro); border-radius: 5px; width: 180px;
-            cursor: grab; font-weight: bold; text-align: center;
-        }
+        .player-card { background-color: #1a1a1a; border: 1px solid var(--cor-borda); padding: 8px 12px; border-left: 4px solid var(--cor-ouro); border-radius: 5px; width: 180px; cursor: grab; font-weight: bold; text-align: center; }
         .player-card.dragging { opacity: 0.5; }
-        .dropzone {
-            width: 180px; height: 40px; border: 2px dashed var(--cor-borda);
-            border-radius: 5px; transition: background-color 0.2s ease;
-            display: flex; align-items: center; justify-content: center; color: #666; font-style: italic;
-        }
+        .dropzone { width: 180px; height: 40px; border: 2px dashed var(--cor-borda); border-radius: 5px; transition: background-color 0.2s ease; display: flex; align-items: center; justify-content: center; color: #666; font-style: italic; }
         #champion { border: 2px solid var(--cor-ouro); background-color: rgba(255, 215, 0, 0.1); }
         .dropzone.drag-over { background-color: rgba(255, 77, 77, 0.1); }
         #animation-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.95); z-index: 9999; display: none; justify-content: center; align-items: center; }
@@ -85,6 +79,41 @@
         @keyframes winner-text-anim { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; text-shadow: 0 0 20px var(--cor-ouro); } }
         .confetti { position: absolute; width: 10px; height: 25px; background-color: var(--cor-ouro); bottom: -30px; opacity: 0; animation: rise 4s linear forwards; }
         @keyframes rise { to { transform: translateY(-105vh) rotateZ(720deg); opacity: 1; } }
+
+        /* === ESTILOS DO DESEMPATE === */
+        #tiebreaker-section-container {
+            position: relative;
+            padding: 20px;
+            margin-bottom: 30px;
+            background: radial-gradient(circle, rgba(30,35,80,0.9) 0%, rgba(10,12,30,0.95) 100%);
+            border: 2px solid var(--cor-cristal-borda);
+            border-radius: 10px; /* Alterado de clip-path para borda arredondada */
+            box-shadow: 0 0 20px var(--cor-cristal-sombra);
+        }
+        #tiebreaker-section-container h2 { color: #d4e1ff; }
+        #tiebreaker-teams { border-color: var(--cor-cristal-borda); background-color: rgba(0,0,0,0.6); }
+        #draw-tiebreaker-button { background-color: #3b4d9b; border-color: var(--cor-cristal-borda); }
+        #draw-tiebreaker-button:hover { background-color: #5d6dc4; transform: scale(1.05); }
+        #tiebreaker-animation-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+            display: none; justify-content: center; align-items: center;
+            z-index: 10; border-radius: 10px;
+        }
+        .crystal-spinner {
+            width: 200px; height: 200px;
+            background: radial-gradient(circle, #8e9fff 0%, #4b5ac7 100%);
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            animation: spin-glow 3s infinite linear;
+            text-align: center; padding: 10px;
+        }
+        @keyframes spin-glow {
+            0%   { transform: rotate(0deg) scale(1); box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px var(--cor-cristal-sombra); }
+            50%  { transform: rotate(180deg) scale(1.05); box-shadow: 0 0 20px #fff, 0 0 30px #fff, 0 0 45px var(--cor-cristal-sombra); }
+            100% { transform: rotate(360deg) scale(1); box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px var(--cor-cristal-sombra); }
+        }
+        #tiebreaker-spinner-text { font-family: 'Roboto', sans-serif; font-size: 1.8rem; font-weight: bold; color: #0b0f2e; text-shadow: 0 0 5px #ffffff; }
     </style>
 </head>
 <body>
@@ -97,11 +126,27 @@
         <section class="section">
             <h2>Gerador de Chaveamento</h2>
             <div class="controls-container">
-                <textarea id="team-list" placeholder="Insira os nomes dos times (múltiplos de 3, ex: 6, 9, 12...), um por linha..."></textarea>
+                <textarea id="team-list" placeholder="Insira os nomes dos times para o torneio (múltiplos de 3, ex: 6, 9, 12...), um por linha..."></textarea>
                 <br>
                 <button id="generate-button" class="action-button">Gerar Torneio</button>
             </div>
         </section>
+
+        <div id="tiebreaker-section-container">
+             <div id="tiebreaker-animation-overlay">
+                <div class="crystal-spinner">
+                    <div id="tiebreaker-spinner-text"></div>
+                </div>
+            </div>
+            <div class="controls-container" style="padding: 20px;">
+                <h2 style="border: none; color: #d4e1ff;">💎 Sorteio de Desempate 💎</h2>
+                <p style="color: #ccc;">Insira os nomes dos times empatados e clique para sortear um confronto único.</p>
+                <textarea id="tiebreaker-teams" placeholder="Insira os nomes dos times empatados..."></textarea>
+                <br>
+                <button id="draw-tiebreaker-button" class="action-button">Sortear Desempate</button>
+                <div id="tiebreaker-result" style="margin-top: 20px;"></div>
+            </div>
+        </div>
 
         <section class="section" id="tournament-section" style="display: none;">
               <div id="team-pool">
@@ -109,221 +154,54 @@
                   <p>Arraste os times classificados para as fases seguintes.</p>
                   <div id="team-cards-container"></div>
               </div>
-              <div id="tournament-container">
-                  </div>
+              <div id="tournament-container"></div>
         </section>
     </div>
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // --- FUNÇÕES AUXILIARES ---
-        const createGroupMatchHtml = (killerTeam, survivorTeam, killerRole) => `
-            <div class="match-pair">
-                <div class="team-side">
-                    <span class="team-name">${killerTeam}</span>
-                    <span class="team-role">(${killerRole})</span>
-                </div>
-                <span class="vs-icon">vs</span>
-                <div class="team-side">
-                    <span class="team-name">${survivorTeam}</span>
-                    <span class="team-role">(Joga de Sobrevivente)</span>
-                </div>
-            </div>`;
-
-        const createGroupHtml = (groupName, teams) => {
-            const matchups = [ [teams[0], teams[1]], [teams[1], teams[2]], [teams[2], teams[0]] ];
-            let html = `<div class="group"><h3>${groupName}</h3>`;
-            matchups.forEach(match => {
-                html += createGroupMatchHtml(match[0], match[1], 'Escolhe o Killer');
-                html += createGroupMatchHtml(match[1], match[0], 'Espelha o Killer');
-            });
-            html += '</div>';
-            return html;
-        };
-
-        const createFinalHtml = () => `
-            <div id="final-section">
-                <h2>🏆 Grande Final 🏆</h2>
-                <p style="text-align:center; color: #ccc;">Arraste os 2 finalistas e sorteie a ordem da partida final.</p>
-                <div class="phase-container">
-                     <div class="phase">
-                         <h3>Finalistas</h3>
-                         <div class="match-pair"><div class="dropzone" id="finalist-1">Finalista 1</div></div>
-                         <div class="match-pair"><div class="dropzone" id="finalist-2">Finalista 2</div></div>
-                         <div style="text-align:center;">
-                             <button id="draw-final-button" class="action-button">Sortear Ordem da Final</button>
-                         </div>
-                    </div>
-                    <div class="phase" id="final-matches-container">
-                        <h3>Partidas Finais</h3>
-                    </div>
-                </div>
-                <div class="round" style="margin-top: 30px; text-align: center;">
-                    <h3>🏆 CAMPEÃO 🏆</h3>
-                    <div style="display: flex; justify-content: center;">
-                        <div class="dropzone" id="champion">Arraste o Campeão</div>
-                    </div>
-                </div>
-            </div>`;
-
-        const shuffleArray = (array) => {
-            let currentIndex = array.length, randomIndex;
-            while (currentIndex != 0) {
-                randomIndex = Math.floor(Math.random() * currentIndex);
-                currentIndex--;
-                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+        // --- FUNÇÕES AUXILIARES (DEFINIDAS UMA ÚNICA VEZ) ---
+        const createGroupMatchHtml = (killerTeam, survivorTeam, killerRole) => `<div class="match-pair"><div class="team-side"><span class="team-name">${killerTeam}</span><span class="team-role">(${killerRole})</span></div><span class="vs-icon">vs</span><div class="team-side"><span class="team-name">${survivorTeam}</span><span class="team-role">(Joga de Sobrevivente)</span></div></div>`;
+        const createSimpleMatchHtml = (killerTeam, survivorTeam) => `<div class="match-pair"><div class="team-side"><span class="team-name">${killerTeam}</span><span class="team-role">(Killer)</span></div><span class="vs-icon">vs</span><div class="team-side"><span class="team-name">${survivorTeam}</span><span class="team-role">(Sobreviventes)</span></div></div>`;
+        const createGroupHtml = (groupName, teams) => { let matchups = [ [teams[0], teams[1]], [teams[1], teams[2]], [teams[2], teams[0]] ], html = `<div class="group"><h3>${groupName}</h3>`; matchups.forEach(match => { html += createGroupMatchHtml(match[0], match[1], 'Escolhe o Killer'); html += createGroupMatchHtml(match[1], match[0], 'Espelha o Killer'); }); html += '</div>'; return html; };
+        const createFinalHtml = () => `<div id="final-section"><h2>🏆 Grande Final 🏆</h2><p style="text-align:center; color: #ccc;">Arraste os 2 finalistas e sorteie a ordem da partida final.</p><div class="phase-container"><div class="phase"><h3>Finalistas</h3><div class="match-pair"><div class="dropzone" id="finalist-1">Finalista 1</div></div><div class="match-pair"><div class="dropzone" id="finalist-2">Finalista 2</div></div><div style="text-align:center;"><button id="draw-final-button" class="action-button">Sortear Ordem da Final</button></div></div><div class="phase" id="final-matches-container"><h3>Partidas Finais</h3></div></div><div class="round" style="margin-top: 30px; text-align: center;"><h3>🏆 CAMPEÃO 🏆</h3><div style="display: flex; justify-content: center;"><div class="dropzone" id="champion">Arraste o Campeão</div></div></div></div>`;
+        const shuffleArray = (array) => { let currentIndex = array.length, randomIndex; while (currentIndex != 0) { randomIndex = Math.floor(Math.random() * currentIndex); currentIndex--; [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]]; } return array; };
+        const showAnimation = (text, callback) => { animationOverlay.style.display = 'flex'; document.getElementById('animation-text').textContent = text; setTimeout(() => { animationOverlay.style.display = 'none'; if (callback) callback(); }, 2500); };
+        const drawSemifinals = () => { const qualifiers = [document.querySelector('#semi-qualifier-1 .player-card')?.textContent, document.querySelector('#semi-qualifier-2 .player-card')?.textContent, document.querySelector('#semi-qualifier-3 .player-card')?.textContent, document.querySelector('#semi-qualifier-4 .player-card')?.textContent, document.querySelector('#semi-qualifier-5 .player-card')?.textContent,].filter(Boolean); if (qualifiers.length !== 5) { alert('Por favor, arraste os 5 times classificados para os espaços corretos antes de sortear.'); return; } showAnimation('Sorteando Confrontos...', () => { const choosers = shuffleArray([...qualifiers]); const mirrorers = shuffleArray([...qualifiers]); const opponentsForChoosers = [...choosers]; opponentsForChoosers.push(opponentsForChoosers.shift()); const opponentsForMirrorers = [...mirrorers]; opponentsForMirrorers.push(opponentsForMirrorers.shift()); const allMatches = []; for (let i = 0; i < 5; i++) { allMatches.push({ killer: choosers[i], survivor: opponentsForChoosers[i], role: 'Escolhe o Killer' }); allMatches.push({ killer: mirrorers[i], survivor: opponentsForMirrorers[i], role: 'Espelha o Killer' }); } shuffleArray(allMatches); const container = document.getElementById('semifinals-matches-container'); let htmlContent = '<h3>Partidas da Semi</h3>'; allMatches.forEach(match => { htmlContent += createGroupMatchHtml(match.killer, match.survivor, match.role); }); container.innerHTML = htmlContent; }); };
+        const drawFinal = () => { const finalists = [document.querySelector('#finalist-1 .player-card')?.textContent, document.querySelector('#finalist-2 .player-card')?.textContent,].filter(Boolean); if (finalists.length !== 2) { alert('Por favor, arraste os 2 finalistas para os espaços corretos.'); return; } showAnimation('Sorteando a Grande Final...', () => { shuffleArray(finalists); const container = document.getElementById('final-matches-container'); container.innerHTML = '<h3>Partidas Finais</h3>'; const [teamA, teamB] = finalists; container.innerHTML += `<h4>1º Turno</h4>`; container.innerHTML += createGroupMatchHtml(teamA, teamB, 'Escolhe o Killer'); container.innerHTML += createGroupMatchHtml(teamB, teamA, 'Espelha o Killer'); container.innerHTML += `<h4>2º Turno</h4>`; container.innerHTML += createGroupMatchHtml(teamB, teamA, 'Escolhe o Killer'); container.innerHTML += createGroupMatchHtml(teamA, teamB, 'Espelha o Killer'); }); };
+        const triggerWinnerAnimation = (name) => { const winnerOverlay = document.getElementById('winner-overlay'); const winnerMessage = document.getElementById('winner-message'); winnerMessage.innerHTML = `CAMPEÃO<br>${name}!`; let confettiContainer = winnerOverlay.querySelector('#confetti-container'); if (confettiContainer) confettiContainer.remove(); confettiContainer = document.createElement('div'); confettiContainer.id = 'confetti-container'; winnerOverlay.prepend(confettiContainer); for (let i = 0; i < 150; i++) { const confetti = document.createElement('div'); confetti.className = 'confetti'; confetti.style.left = Math.random() * 100 + 'vw'; confetti.style.animationDuration = (Math.random() * 2 + 3) + 's'; confetti.style.animationDelay = Math.random() * 1 + 's'; confetti.style.backgroundColor = Math.random() > 0.5 ? 'var(--cor-ouro)' : 'var(--cor-vermelho)'; winnerOverlay.appendChild(confetti); } winnerOverlay.style.display = 'flex'; setTimeout(() => { winnerOverlay.style.display = 'none'; }, 5000); };
+        const handleDragScroll = (e) => { if (e.clientY === 0) { return; } const scrollSpeed = 15; const triggerZone = window.innerHeight * 0.15; if (e.clientY > window.innerHeight - triggerZone) { window.scrollBy(0, scrollSpeed); } else if (e.clientY < triggerZone) { window.scrollBy(0, -scrollSpeed); } };
+        const createPlayerCard = (name) => { const card = document.createElement('div'); card.className = 'player-card'; card.setAttribute('draggable', true); card.textContent = name; card.id = 'card-' + name.replace(/\s+/g, '-').replace(/[^\w-]/g, ''); card.addEventListener('dragstart', (e) => { e.dataTransfer.setData('text/plain', e.target.id); setTimeout(() => card.classList.add('dragging'), 0); }); card.addEventListener('drag', handleDragScroll); card.addEventListener('dragend', () => card.classList.remove('dragging')); return card; };
+        const setupDropzone = (zone) => { zone.addEventListener('dragover', e => { e.preventDefault(); if (zone.children.length === 0) zone.classList.add('drag-over'); }); zone.addEventListener('dragleave', () => zone.classList.remove('drag-over')); zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag-over'); const id = e.dataTransfer.getData('text/plain'); const draggable = document.getElementById(id); if (zone.children.length === 0) { zone.textContent = ''; zone.appendChild(draggable); if (zone.id === 'champion') triggerWinnerAnimation(draggable.textContent); } }); };
+        
+        const drawTiebreaker = () => {
+            const teams = document.getElementById('tiebreaker-teams').value.split('\n').map(t => t.trim()).filter(t => t !== '');
+            if (teams.length < 2) {
+                alert('Por favor, insira pelo menos 2 times para o desempate.');
+                return;
             }
-            return array;
-        };
-
-        const showAnimation = (text, callback) => {
-            document.getElementById('animation-text').textContent = text;
-            animationOverlay.style.display = 'flex';
+            const tiebreakerAnimationOverlay = document.getElementById('tiebreaker-animation-overlay');
+            const spinnerText = document.getElementById('tiebreaker-spinner-text');
+            const resultContainer = document.getElementById('tiebreaker-result');
+            resultContainer.innerHTML = '';
+            tiebreakerAnimationOverlay.style.display = 'flex';
+            let spinCount = 0;
+            const spinner = setInterval(() => {
+                spinnerText.textContent = teams[spinCount % teams.length];
+                spinCount++;
+            }, 80);
             setTimeout(() => {
-                animationOverlay.style.display = 'none';
-                if (callback) callback();
-            }, 2500);
-        };
-        
-        const drawSemifinals = () => {
-            const qualifiers = [
-                document.querySelector('#semi-qualifier-1 .player-card')?.textContent,
-                document.querySelector('#semi-qualifier-2 .player-card')?.textContent,
-                document.querySelector('#semi-qualifier-3 .player-card')?.textContent,
-                document.querySelector('#semi-qualifier-4 .player-card')?.textContent,
-                document.querySelector('#semi-qualifier-5 .player-card')?.textContent,
-            ].filter(Boolean);
-
-            if (qualifiers.length !== 5) {
-                alert('Por favor, arraste os 5 times classificados para os espaços corretos antes de sortear.');
-                return;
-            }
-            
-            showAnimation('Sorteando Confrontos...', () => {
-                const choosers = shuffleArray([...qualifiers]);
-                const mirrorers = shuffleArray([...qualifiers]);
-
-                const opponentsForChoosers = [...choosers];
-                opponentsForChoosers.push(opponentsForChoosers.shift());
-
-                const opponentsForMirrorers = [...mirrorers];
-                opponentsForMirrorers.push(opponentsForMirrorers.shift());
-
-                const allMatches = [];
-                for (let i = 0; i < 5; i++) {
-                    allMatches.push({
-                        killer: choosers[i],
-                        survivor: opponentsForChoosers[i],
-                        role: 'Escolhe o Killer'
-                    });
-                    allMatches.push({
-                        killer: mirrorers[i],
-                        survivor: opponentsForMirrorers[i],
-                        role: 'Espelha o Killer'
-                    });
-                }
-                
-                shuffleArray(allMatches);
-
-                const container = document.getElementById('semifinals-matches-container');
-                let htmlContent = '<h3>Partidas da Semi</h3>';
-                allMatches.forEach(match => {
-                    htmlContent += createGroupMatchHtml(match.killer, match.survivor, match.role);
-                });
-
-                container.innerHTML = htmlContent;
-            });
-        };
-
-        const drawFinal = () => {
-            const finalists = [
-                document.querySelector('#finalist-1 .player-card')?.textContent,
-                document.querySelector('#finalist-2 .player-card')?.textContent,
-            ].filter(Boolean);
-
-            if (finalists.length !== 2) {
-                alert('Por favor, arraste os 2 finalistas para os espaços corretos.');
-                return;
-            }
-
-            showAnimation('Sorteando a Grande Final...', () => {
-                shuffleArray(finalists);
-                const container = document.getElementById('final-matches-container');
-                container.innerHTML = '<h3>Partidas Finais</h3>';
-                const [teamA, teamB] = finalists;
-
-                container.innerHTML += `<h4>1º Turno</h4>`;
-                container.innerHTML += createGroupMatchHtml(teamA, teamB, 'Escolhe o Killer');
-                container.innerHTML += createGroupMatchHtml(teamB, teamA, 'Espelha o Killer');
-
-                container.innerHTML += `<h4>2º Turno</h4>`;
-                container.innerHTML += createGroupMatchHtml(teamB, teamA, 'Escolhe o Killer');
-                container.innerHTML += createGroupMatchHtml(teamA, teamB, 'Espelha o Killer');
-            });
-        };
-        
-        const triggerWinnerAnimation = (name) => {
-            const winnerOverlay = document.getElementById('winner-overlay');
-            const winnerMessage = document.getElementById('winner-message');
-            winnerMessage.innerHTML = `CAMPEÃO<br>${name}!`;
-            let confettiContainer = winnerOverlay.querySelector('#confetti-container');
-            if (confettiContainer) confettiContainer.remove();
-            confettiContainer = document.createElement('div');
-            confettiContainer.id = 'confetti-container';
-            winnerOverlay.prepend(confettiContainer);
-            for (let i = 0; i < 150; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.animationDuration = (Math.random() * 2 + 3) + 's';
-                confetti.style.animationDelay = Math.random() * 1 + 's';
-                confetti.style.backgroundColor = Math.random() > 0.5 ? 'var(--cor-ouro)' : 'var(--cor-vermelho)';
-                confettiContainer.appendChild(confetti);
-            }
-            winnerOverlay.style.display = 'flex';
-            setTimeout(() => { winnerOverlay.style.display = 'none'; }, 5000);
-        };
-
-        const handleDragScroll = (e) => {
-            if (e.clientY === 0) { return; }
-            const scrollSpeed = 15;
-            const triggerZone = window.innerHeight * 0.15;
-            if (e.clientY > window.innerHeight - triggerZone) {
-                window.scrollBy(0, scrollSpeed);
-            } else if (e.clientY < triggerZone) {
-                window.scrollBy(0, -scrollSpeed);
-            }
-        };
-        
-        const createPlayerCard = (name) => {
-            const card = document.createElement('div');
-            card.className = 'player-card';
-            card.setAttribute('draggable', true);
-            card.textContent = name;
-            card.id = 'card-' + name.replace(/\s+/g, '-').replace(/[^\w-]/g, '');
-            card.addEventListener('dragstart', (e) => {
-                e.dataTransfer.setData('text/plain', e.target.id);
-                setTimeout(() => card.classList.add('dragging'), 0);
-            });
-            card.addEventListener('drag', handleDragScroll);
-            card.addEventListener('dragend', () => card.classList.remove('dragging'));
-            return card;
-        };
-
-        const setupDropzone = (zone) => {
-            zone.addEventListener('dragover', e => { e.preventDefault(); if (zone.children.length === 0) zone.classList.add('drag-over'); });
-            zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-            zone.addEventListener('drop', e => {
-                e.preventDefault();
-                zone.classList.remove('drag-over');
-                const id = e.dataTransfer.getData('text/plain');
-                const draggable = document.getElementById(id);
-                if (zone.children.length === 0) {
-                    zone.textContent = '';
-                    zone.appendChild(draggable);
-                    if (zone.id === 'champion') triggerWinnerAnimation(draggable.textContent);
-                }
-            });
+                clearInterval(spinner);
+                tiebreakerAnimationOverlay.style.display = 'none';
+                shuffleArray(teams);
+                const pair = [teams[0], teams[1]];
+                shuffleArray(pair);
+                const killer = pair[0];
+                const survivor = pair[1];
+                let htmlResult = `<h4>Confronto Decisivo</h4>`;
+                htmlResult += createSimpleMatchHtml(killer, survivor);
+                resultContainer.innerHTML = htmlResult;
+            }, 3000);
         };
 
         // --- CÓDIGO DE EXECUÇÃO ---
@@ -331,52 +209,26 @@
         const generateButton = document.getElementById('generate-button');
         const tournamentContainer = document.getElementById('tournament-container');
         const tournamentSection = document.getElementById('tournament-section');
-        // ** VARIÁVEL CORRIGIDA / REINSERIDA **
         const animationOverlay = document.getElementById('animation-overlay');
+        const drawTiebreakerButton = document.getElementById('draw-tiebreaker-button');
 
         generateButton.addEventListener('click', () => {
             const teams = teamListText.value.split('\n').map(t => t.trim()).filter(t => t !== '');
             if (teams.length < 6 || teams.length % 3 !== 0) {
-                alert('Para garantir a justiça das partidas, por favor, insira um número de times múltiplo de 3 (6, 9, 12, etc.).');
+                alert('Para garantir a justiça das partidas, por favor, insira um número de times para o torneio múltiplo de 3 (6, 9, 12, etc.).');
                 return;
             }
-
             showAnimation('Gerando Grupos...', () => {
                 shuffleArray(teams);
                 const numGroups = teams.length / 3;
                 const groups = [];
                 for (let i = 0; i < numGroups; i++) groups.push(teams.slice(i * 3, i * 3 + 3));
-
                 document.getElementById('team-cards-container').innerHTML = '';
                 teams.forEach(team => document.getElementById('team-cards-container').appendChild(createPlayerCard(team)));
-
                 let groupPhaseHtml = `<h2>⚔️ Fase de Grupos ⚔️</h2><div class="phase-container">`;
                 groups.forEach((group, index) => groupPhaseHtml += createGroupHtml(`Grupo ${String.fromCharCode(65 + index)}`, group));
                 groupPhaseHtml += `</div>`;
-                
-                const semiFinalsHtml = `
-                    <div id="semifinals-section">
-                        <h2>💥 Semifinais 💥</h2>
-                        <p style="text-align:center; color: #ccc;">Arraste os 5 melhores times e sorteie os confrontos.</p>
-                        <div class="phase-container">
-                            <div class="phase">
-                                <h3>Classificados</h3>
-                                <div class="match-pair"><div class="dropzone" id="semi-qualifier-1">Classificado 1</div></div>
-                                <div class="match-pair"><div class="dropzone" id="semi-qualifier-2">Classificado 2</div></div>
-                                <div class="match-pair"><div class="dropzone" id="semi-qualifier-3">Classificado 3</div></div>
-                                <div class="match-pair"><div class="dropzone" id="semi-qualifier-4">Classificado 4</div></div>
-                                <div class="match-pair"><div class="dropzone" id="semi-qualifier-5">Classificado 5</div></div>
-                                <div style="text-align:center;">
-                                    <button id="draw-semifinals-button" class="action-button">Sortear Semifinais</button>
-                                </div>
-                            </div>
-                            <div class="phase" id="semifinals-matches-container">
-                                <h3>Partidas da Semi</h3>
-                                <p style="color: #888; text-align: center;">Aguardando sorteio...</p>
-                            </div>
-                        </div>
-                    </div>`;
-
+                const semiFinalsHtml = `<div id="semifinals-section"><h2>💥 Semifinais 💥</h2><p style="text-align:center; color: #ccc;">Arraste os 5 melhores times e sorteie os confrontos.</p><div class="phase-container"><div class="phase"><h3>Classificados</h3><div class="match-pair"><div class="dropzone" id="semi-qualifier-1">Classificado 1</div></div><div class="match-pair"><div class="dropzone" id="semi-qualifier-2">Classificado 2</div></div><div class="match-pair"><div class="dropzone" id="semi-qualifier-3">Classificado 3</div></div><div class="match-pair"><div class="dropzone" id="semi-qualifier-4">Classificado 4</div></div><div class="match-pair"><div class="dropzone" id="semi-qualifier-5">Classificado 5</div></div><div style="text-align:center;"><button id="draw-semifinals-button" class="action-button">Sortear Semifinais</button></div></div><div class="phase" id="semifinals-matches-container"><h3>Partidas da Semi</h3><p style="color: #888; text-align: center;">Aguardando sorteio...</p></div></div></div>`;
                 tournamentContainer.innerHTML = groupPhaseHtml + semiFinalsHtml + createFinalHtml();
                 document.querySelectorAll('.dropzone').forEach(setupDropzone);
                 document.getElementById('draw-semifinals-button').addEventListener('click', drawSemifinals);
@@ -385,6 +237,8 @@
                 document.getElementById('team-pool').style.display = 'block';
             });
         });
+
+        drawTiebreakerButton.addEventListener('click', drawTiebreaker);
     });
     </script>
 </body>
