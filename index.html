@@ -472,43 +472,65 @@
 }
 /* --- FIM: Estilos do Placar Atualizado --- */
         /* ============================================= */
-/* --- INÍCIO: ESTILOS DO GRIMÓRIO FLUTUANTE --- */
-/* ============================================= */
-.grimorio-flutuante {
-    position: fixed; /* Fixa o elemento na tela */
-    bottom: 1110px;    /* Distância da parte de baixo */
-    left: 280px;      /* Distância da esquerda */
-    z-index: 1050;   /* Garante que ele fique acima da maioria dos outros elementos */
-    
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-decoration: none;
-    color: var(--cor-texto);
+/* ✨ INÍCIO: NOVOS ESTILOS DO GRIMÓRIO FLUTUANTE (COM POSICIONAMENTO CORRIGIDO) ✨ */
+/* ================================================================================= */
+
+/* O contêiner que flutua */
+#grimorio-container {
+    position: fixed;
+    /* ✨ VALORES EXATOS RESTAURADOS DO SEU CÓDIGO ORIGINAL PARA PC ✨ */
+    bottom: 1200px; 
+    left: 280px;
+    z-index: 1050;
     
     animation: flutuar 3s ease-in-out infinite;
-    transition: transform 0.3s ease, filter 0.3s ease;
+    transition: transform 0.5s ease, filter 0.5s ease;
 }
 
-.grimorio-flutuante:hover {
+#grimorio-container:hover {
     transform: scale(1.1);
     filter: drop-shadow(0 0 15px var(--cor-principal));
     animation-play-state: paused;
 }
 
-.grimorio-flutuante img {
+/* Estilos para CADA item (livro) dentro do contêiner */
+.grimorio-item {
+    position: absolute; 
+    top: 0;
+    left: 0;
+    transition: opacity 0.8s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: var(--cor-texto);
+}
+
+.grimorio-item img {
     width: 80px;
     height: auto;
     margin-bottom: 5px;
 }
 
-.grimorio-flutuante span {
+.grimorio-item span {
     font-family: 'Creepster', cursive;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     background-color: rgba(10, 10, 10, 0.7);
     padding: 5px 10px;
     border-radius: 5px;
     text-shadow: 0 0 5px black;
+    text-align: center;
+    width: 150px;
+}
+
+/* Classes de controle de visibilidade */
+.grimorio-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+.grimorio-hidden {
+    opacity: 0;
+    pointer-events: none;
 }
 
 @keyframes flutuar {
@@ -518,18 +540,20 @@
 }
 
 @media (max-width: 768px) {
-    .grimorio-flutuante {
-        bottom: 15px;
+    #grimorio-container {
+        /* ✨ VALORES EXATOS RESTAURADOS DO SEU CÓDIGO ORIGINAL PARA MOBILE ✨ */
+        bottom: 240px;
         left: 15px;
     }
-    .grimorio-flutuante img {
+    .grimorio-item img {
         width: 60px;
     }
-    .grimorio-flutuante span {
+    .grimorio-item span {
         font-size: 1rem;
+        width: 120px;
     }
 }
-/* --- FIM: ESTILOS DO GRIMÓRIO FLUTUANTE --- */
+/* --- FIM DOS NOVOS ESTILOS --- */
         footer {
     position: fixed;
     bottom: 0;
@@ -1663,10 +1687,16 @@ fullscreenBtn.addEventListener('click', () => {
     }
 });
 </script>
-        <a href="niveis.html" class="grimorio-flutuante">
-    <img src="https://i.imgur.com/KhwS5jZ.gif" alt="Grimório da Entidade">
-    <span>Grimório dos Killers</span>
-</a>
+        <div id="grimorio-container">
+    <a href="niveis.html" id="grimorio-killers" class="grimorio-item grimorio-visible">
+        <img src="https://i.imgur.com/KhwS5jZ.gif" alt="Grimório dos Killers">
+        <span>Grimório dos Killers</span>
+    </a>
+    <a href="recompensas.html" id="grimorio-recompensas" class="grimorio-item grimorio-hidden">
+        <img src="https://i.imgur.com/p53OZAS.gif" alt="Livro das Recompensas">
+        <span>Livro das Recompensas</span>
+    </a>
+</div>
     <footer>
     <div class="footer-content">
         <div class="footer-logo">
@@ -1682,5 +1712,24 @@ fullscreenBtn.addEventListener('click', () => {
         </nav>
     </div>
 </footer>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const grimorioKillers = document.getElementById('grimorio-killers');
+    const grimorioRecompensas = document.getElementById('grimorio-recompensas');
+
+    // Se os elementos existirem na página
+    if (grimorioKillers && grimorioRecompensas) {
+        // A cada 10 segundos (10000 milissegundos)
+        setInterval(() => {
+            // Alterna as classes de visibilidade dos dois livros
+            grimorioKillers.classList.toggle('grimorio-visible');
+            grimorioKillers.classList.toggle('grimorio-hidden');
+
+            grimorioRecompensas.classList.toggle('grimorio-visible');
+            grimorioRecompensas.classList.toggle('grimorio-hidden');
+        }, 10000); // 10000ms = 10 segundos
+    }
+});
+</script>
 </body>
 </html>
