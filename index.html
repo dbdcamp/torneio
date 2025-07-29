@@ -106,6 +106,39 @@
             transform: scale(0.9); transition: transform 0.4s ease;
         }
         .popup-overlay.active .feedback-popup { transform: scale(1); }
+        /* Adicione esta nova classe para alinhar pop-ups no topo */
+.popup-overlay.align-top {
+    align-items: flex-start; /* Em vez de 'center', alinha no topo */
+}
+        /* Encontre a regra do popup de feedback e adicione a margem */
+.feedback-popup {
+    background-color: #110e0e; 
+    border: 1px solid var(--cor-borda);
+    box-shadow: 0 0 40px rgba(0,0,0,0.8); 
+    border-radius: 10px; 
+    padding: 30px 40px;
+    width: 90%; 
+    max-width: 500px; 
+    position: relative;
+    transform: scale(0.9); 
+    transition: transform 0.4s ease;
+    margin-top: 30vh; /* ✨ ADICIONE ESTA LINHA ✨ */
+}
+
+/* Encontre a regra do popup do placar e adicione a mesma margem */
+.scoreboard-popup {
+    background-color: #110e0e; 
+    border: 1px solid var(--cor-borda);
+    box-shadow: 0 0 40px rgba(0,0,0,0.8); 
+    border-radius: 10px; 
+    padding: 30px 40px;
+    width: 90%; 
+    max-width: 800px; 
+    position: relative;
+    transform: scale(0.9); 
+    transition: transform 0.4s ease;
+    margin-top: 15vh; /* ✨ ADICIONE ESTA LINHA ✨ */
+}
         .feedback-popup .close-btn {
             position: absolute; top: 15px; right: 20px;
             background: none; border: none; font-size: 2rem;
@@ -822,11 +855,12 @@ footer {
     }
 
     /* --- PLACAR E FEEDBACK (POP-UPS) --- */
-    .scoreboard-popup,
-    .feedback-popup {
-        padding: 25px 20px; /* Menos espaçamento nos pop-ups */
-        width: 95%; /* Garante que não fique colado nas bordas */
-    }
+.scoreboard-popup,
+.feedback-popup {
+    padding: 25px 15px;          /* Diminui um pouco mais o espaço nas laterais */
+    width: 95%;                  /* Garante que não fique colado nas bordas */
+    box-sizing: border-box;      /* IMPORTANTE: Faz com que o padding seja incluído na largura total, e não somado a ela. */
+}
     
     .scoreboard-popup h2,
     .feedback-popup h2 {
@@ -1135,7 +1169,7 @@ footer {
         </section>
     </main>
 
-   <div id="scoreboard-overlay" class="popup-overlay">
+   <div id="scoreboard-overlay" class="popup-overlay align-top">
     <div class="scoreboard-popup">
         <button id="close-scoreboard-btn" class="close-btn">×</button>
         <h2>Placar do Torneio</h2>
@@ -1151,7 +1185,7 @@ footer {
     </div>
 </div>
     
-    <div id="feedback-popup-overlay" class="popup-overlay">
+    <div id="feedback-popup-overlay" class="popup-overlay align-top">
         <div class="feedback-popup">
             <button id="close-feedback-btn" class="close-btn">×</button>
             <div id="feedback-form-content">
@@ -1718,7 +1752,7 @@ fullscreenBtn.addEventListener('click', () => {
         <span>Livro das Recompensas</span>
     </a>
 </div>
-    <div id="registration-closed-popup" class="popup-overlay">
+    <div id="registration-closed-popup" class="popup-overlay align-top">
     <div class="feedback-popup"> <button class="close-btn">&times;</button>
         <div class="feedback-success" style="display: block;"> <div class="icon" style="animation: popIn 0.5s ease, pulse 2s infinite;">⛓️</div>
             <h3 style="font-family: 'Creepster', cursive; font-size: 2.5rem;">Inscrições Fechadas</h3>
