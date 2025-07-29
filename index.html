@@ -1008,6 +1008,20 @@ footer {
     to {
         transform: rotate(360deg);
     }
+    /* --- ESTILO PARA O BOTÃO DE INSCRIÇÃO DESATIVADO --- */
+.btn.disabled {
+    background-color: var(--cor-cinza-botao);
+    color: #888;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Remove o efeito hover do botão quando desativado */
+.btn.disabled:hover {
+    background-color: var(--cor-cinza-botao);
+    transform: none;
+    box-shadow: none;
+}
 }
     </style>
 </head>
@@ -1042,7 +1056,7 @@ footer {
     <div id="live-message" class="hidden">A CAÇADA COMEÇOU!</div>
 </div>
         <nav class="nav-buttons">
-            <a href="inscricao.html" class="btn">Inscrever-se</a>
+            <a href="inscricao.html" class="btn" id="signup-btn">Inscrever-se</a>
             <button id="open-feedback-btn" class="btn">Feedback</button>
         </nav>
     </header>
@@ -1704,6 +1718,14 @@ fullscreenBtn.addEventListener('click', () => {
         <span>Livro das Recompensas</span>
     </a>
 </div>
+    <div id="registration-closed-popup" class="popup-overlay">
+    <div class="feedback-popup"> <button class="close-btn">&times;</button>
+        <div class="feedback-success" style="display: block;"> <div class="icon" style="animation: popIn 0.5s ease, pulse 2s infinite;">⛓️</div>
+            <h3 style="font-family: 'Creepster', cursive; font-size: 2.5rem;">Inscrições Fechadas</h3>
+            <p>A Entidade ainda não está aceitando novos desafiantes. Volte mais tarde!</p>
+        </div>
+    </div>
+</div>
     <footer>
     <div class="footer-content">
         <div class="footer-logo">
@@ -1737,6 +1759,58 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 10000); // 10000ms = 10 segundos
     }
 });
+        // --- INÍCIO: LÓGICA PARA ATIVAR/DESATIVAR INSCRIÇÕES ---
+
+// Seleciona os elementos que vamos usar
+const signupBtn = document.getElementById('signup-btn');
+const registrationPopup = document.getElementById('registration-closed-popup');
+const closeRegistrationPopupBtn = registrationPopup.querySelector('.close-btn');
+
+// Referência no seu Firebase para o controle de inscrições
+// Você precisará criar isso no seu painel!
+const registrationsRef = database.ref('config/registrationsOpen');
+
+// Fica "ouvindo" qualquer mudança no valor de 'registrationsOpen' no Firebase
+registrationsRef.on('value', (snapshot) => {
+    const areOpen = snapshot.val(); // Pega o valor (true ou false)
+
+    if (areOpen === true) {
+        // Se as inscrições estiverem ABERTAS
+        signupBtn.classList.remove('disabled');
+        signupBtn.href = 'inscricao.html'; // Garante que o link funcione
+        signupBtn.setAttribute('title', 'Clique para se inscrever!');
+    } else {
+        // Se as inscrições estiverem FECHADAS (ou não existir a chave)
+        signupBtn.classList.add('disabled');
+        signupBtn.href = '#'; // Remove o link para evitar navegação
+        signupBtn.setAttribute('title', 'As inscrições estão fechadas no momento.');
+    }
+});
+
+// Adiciona o evento de clique ao botão de inscrição
+signupBtn.addEventListener('click', (event) => {
+    // Verifica se o botão tem a classe 'disabled'
+    if (signupBtn.classList.contains('disabled')) {
+        event.preventDefault(); // Previne qualquer ação padrão do link
+        registrationPopup.classList.add('active'); // Mostra o pop-up de aviso
+    }
+});
+
+// Função para fechar o pop-up
+function closePopup() {
+    registrationPopup.classList.remove('active');
+}
+
+// Adiciona eventos para fechar o pop-up
+closeRegistrationPopupBtn.addEventListener('click', closePopup);
+registrationPopup.addEventListener('click', (event) => {
+    // Fecha se o clique for no fundo escuro (overlay) e não no conteúdo
+    if (event.target === registrationPopup) {
+        closePopup();
+    }
+});
+
+// --- FIM: LÓGICA PARA ATIVAR/DESATIVAR INSCRIÇÕES ---
 </script>
 </body>
 </html>
