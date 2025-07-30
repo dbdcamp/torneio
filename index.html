@@ -1559,7 +1559,7 @@ function handleCommand(message) {
     const command = parts[0];
     const args = parts.slice(1);
 
-    if (command === '/limpar') {
+    if (command === '/limparagora') {
         if (confirm('Tem certeza que deseja apagar TODAS as mensagens do chat público?')) {
             publicMessagesRef.remove();
         }
