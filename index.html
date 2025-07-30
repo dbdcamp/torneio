@@ -1427,7 +1427,7 @@ const videoContainer = document.querySelector('.video-container');
         }
     });
         
-        // --- INÍCIO: LÓGICA DO CHAT AO VIVO (COM MENSAGENS PRIVADAS) ---
+        // --- INÍCIO: LÓGICA DO CHAT AO VIVO (COMANDOS, DMs E MENÇÕES CORRIGIDAS) ---
 const chatNameInput = document.getElementById('chat-name');
 const enterChatBtn = document.getElementById('enter-chat-btn');
 const nameGroup = document.getElementById('name-group');
@@ -1436,11 +1436,13 @@ const chatMessageInput = document.getElementById('chat-message');
 const messageGroup = document.getElementById('message-group');
 const chatMessages = document.getElementById('chat-messages');
 const chatSubmitButton = messageGroup.querySelector('button');
+const chatPlaceholder = document.getElementById('chat-placeholder');
 
-// Novas referências para DM
+// Referências para novas funcionalidades
 const pmIndicator = document.getElementById('private-message-indicator');
 const pmInfo = document.getElementById('pm-info');
 const exitPmBtn = document.getElementById('exit-pm-btn');
+const suggestionsBox = document.getElementById('mention-suggestions');
 
 // Referências do Firebase
 const publicMessagesRef = database.ref('chatMessages');
@@ -1450,7 +1452,7 @@ const participantsRef = database.ref('participants');
 // Variáveis de estado
 let chatParticipants = new Set();
 let currentUser = '';
-let privateRecipient = null; // Guarda para quem a DM está sendo enviada
+let privateRecipient = null;
 const userColors = {};
 
 function getRandomColor() {
@@ -1477,7 +1479,6 @@ function activateChat(name) {
     chatNameInput.value = name;
     nameGroup.classList.add('hidden');
 
-    // Esconde o novo placeholder
     const chatPlaceholder = document.getElementById('chat-placeholder');
     if (chatPlaceholder) {
         chatPlaceholder.classList.add('hidden');
@@ -1494,10 +1495,16 @@ function activateChat(name) {
 
     listenForPrivateMessages(currentUser);
 }
+
 // Lógica de Entrada no Chat
 const savedName = localStorage.getItem('dbdChatName');
 if (savedName) {
+    // Se já tem nome, entra direto e JÁ DEIXA o placeholder escondido
+    if (chatPlaceholder) chatPlaceholder.classList.add('hidden');
     activateChat(savedName);
+} else {
+    // Se é novo, o placeholder começa visível (removendo a classe 'hidden')
+    if (chatPlaceholder) chatPlaceholder.classList.remove('hidden');
 }
 
 enterChatBtn.addEventListener('click', () => {
@@ -1515,44 +1522,75 @@ enterChatBtn.addEventListener('click', () => {
 participantsRef.on('child_added', snapshot => chatParticipants.add(snapshot.key));
 participantsRef.on('child_removed', snapshot => chatParticipants.delete(snapshot.key));
 
-// Lógica de Envio de Mensagem (Pública ou Privada)
+// Lógica de Envio de Mensagem (com tratamento de comandos)
 chatForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const message = chatMessageInput.value.trim();
     if (!currentUser || !message) return;
 
+    // --- TRATAMENTO DE COMANDOS ---
+    if (message.startsWith('/')) {
+        handleCommand(message);
+        chatMessageInput.value = '';
+        return;
+    }
+
     if (privateRecipient) {
         // --- ENVIANDO MENSAGEM PRIVADA ---
         const conversationId = [currentUser, privateRecipient].sort().join('_');
-        const conversationRef = privateMessagesRef.child(conversationId);
-        conversationRef.push({
-            from: currentUser,
-            to: privateRecipient,
-            message: message,
+        privateMessagesRef.child(conversationId).push({
+            from: currentUser, to: privateRecipient, message,
             timestamp: firebase.database.ServerValue.TIMESTAMP
         });
-
     } else {
         // --- ENVIANDO MENSAGEM PÚBLICA ---
         publicMessagesRef.push({
-            name: currentUser,
-            message: message,
+            name: currentUser, message,
             timestamp: firebase.database.ServerValue.TIMESTAMP,
             watchingStream: isLiveNow ? currentStreamKey : 'offline'
         });
     }
-
     chatMessageInput.value = '';
 });
+
+// --- FUNÇÃO PARA PROCESSAR COMANDOS ---
+function handleCommand(message) {
+    const parts = message.split(' ');
+    const command = parts[0];
+    const args = parts.slice(1);
+
+    if (command === '/limpar') {
+        if (confirm('Tem certeza que deseja apagar TODAS as mensagens do chat público?')) {
+            publicMessagesRef.remove();
+        }
+    } else if (command === '/nome') {
+        const newName = args.join(' ').trim();
+        const oldName = currentUser;
+
+        if (!newName) {
+            displaySystemMessage('Uso: /nome <seu_novo_nome>');
+        } else if (chatParticipants.has(newName)) {
+            displaySystemMessage(`O nome "${newName}" já está em uso.`);
+        } else {
+            participantsRef.child(oldName).remove();
+            const newParticipantRef = participantsRef.child(newName);
+            newParticipantRef.set(true);
+            newParticipantRef.onDisconnect().remove();
+
+            currentUser = newName;
+            localStorage.setItem('dbdChatName', newName);
+
+            displaySystemMessage(`Seu nome foi alterado de "${oldName}" para "${newName}"`);
+        }
+    } else {
+        displaySystemMessage(`Comando "${command}" não reconhecido.`);
+    }
+}
 
 // Lógica para RENDERIZAR mensagens públicas
 publicMessagesRef.limitToLast(100).on('child_added', (snapshot) => {
     const msg = snapshot.val();
-    if (!msg || !msg.name || !msg.message) return;
-
-    // Evita mostrar DMs no chat público se a estrutura do DB mudar
-    if (msg.to) return; 
-
+    if (!msg || !msg.name || !msg.message || msg.to) return;
     displayPublicMessage(msg);
 });
 
@@ -1563,11 +1601,7 @@ function displayPublicMessage(msg) {
     if (msg.watchingStream) {
         const streamIndicator = document.createElement('span');
         streamIndicator.className = 'watching-indicator';
-        if (msg.watchingStream === 'offline') {
-            streamIndicator.textContent = 'Sem live ativa';
-        } else {
-            streamIndicator.textContent = `Na tela ${msg.watchingStream.slice(-1)}`;
-        }
+        streamIndicator.textContent = msg.watchingStream === 'offline' ? 'Sem live ativa' : `Na tela ${msg.watchingStream.slice(-1)}`;
         messageElement.appendChild(streamIndicator);
     }
 
@@ -1576,7 +1610,7 @@ function displayPublicMessage(msg) {
     nameSpan.className = 'name';
     nameSpan.textContent = msg.name + ':';
     nameSpan.style.color = userColors[msg.name];
-    nameSpan.dataset.username = msg.name; // Adiciona o nome para referência do clique
+    nameSpan.dataset.username = msg.name;
     messageElement.appendChild(nameSpan);
 
     const messageSpan = document.createElement('span');
@@ -1592,52 +1626,43 @@ function displayPublicMessage(msg) {
 function displayPrivateMessage(msg) {
     const isSender = msg.from === currentUser;
     const otherPerson = isSender ? msg.to : msg.from;
-
     const messageElement = document.createElement('div');
     messageElement.classList.add('chat-message', 'private-message');
-
     const header = document.createElement('div');
     header.className = 'pm-header';
     header.textContent = isSender ? `Sussurro para ${otherPerson}:` : `Sussurro de ${otherPerson}:`;
     messageElement.appendChild(header);
-
     const messageSpan = document.createElement('span');
     messageSpan.className = 'text';
     messageSpan.textContent = msg.message;
     messageElement.appendChild(messageSpan);
-
     chatMessages.appendChild(messageElement);
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
 // Lógica para "ESCUTAR" por mensagens privadas
 function listenForPrivateMessages(username) {
-    const conversationIds = new Set(); // Para não criar listeners duplicados
-
+    const conversationIds = new Set();
     const setupListener = (otherUser) => {
         if (otherUser === username) return;
-
         const conversationId = [username, otherUser].sort().join('_');
         if (conversationIds.has(conversationId)) return;
         conversationIds.add(conversationId);
-
-        const conversationRef = privateMessagesRef.child(conversationId);
-
-        conversationRef.on('child_added', (msgSnapshot) => {
+        privateMessagesRef.child(conversationId).on('child_added', (msgSnapshot) => {
             const msg = msgSnapshot.val();
-            if (msg.to === username || msg.from === username) {
+            if (msg && (msg.to === username || msg.from === username)) {
                 displayPrivateMessage(msg);
             }
         });
     };
-
     participantsRef.on('child_added', (snapshot) => setupListener(snapshot.key));
 }
 
-// Lógica do MENU DE CONTEXTO (clicar no nome)
+// Lógica do MENU DE CONTEXTO e SUGESTÕES DE MENÇÃO
 document.body.addEventListener('click', (e) => {
     const existingMenu = document.querySelector('.context-menu');
     if (existingMenu) existingMenu.remove();
+    hideSuggestions();
 
     if (e.target.classList.contains('name')) {
         const username = e.target.dataset.username;
@@ -1653,16 +1678,11 @@ function createContextMenu(username, x, y) {
     menu.className = 'context-menu';
     menu.style.left = `${x}px`;
     menu.style.top = `${y}px`;
-
     const pmItem = document.createElement('div');
     pmItem.className = 'context-menu-item';
     pmItem.textContent = `Mensagem Privada`;
-    pmItem.onclick = () => {
-        enterPrivateMode(username);
-        menu.remove();
-    };
+    pmItem.onclick = () => { enterPrivateMode(username); menu.remove(); };
     menu.appendChild(pmItem);
-
     document.body.appendChild(menu);
 }
 
@@ -1681,17 +1701,81 @@ function exitPrivateMode() {
     chatMessageInput.placeholder = 'Digite sua mensagem...';
     chatMessageInput.focus();
 }
-
 exitPmBtn.addEventListener('click', exitPrivateMode);
 
-publicMessagesRef.on('child_removed', (snapshot) => {
-    // Esta funcionalidade pode ser complexa de implementar de forma robusta
-    // Por ora, a limpeza geral remove tudo
+// --- LÓGICA DAS SUGESTÕES DE MENÇÃO (CORRIGIDA) ---
+chatMessageInput.addEventListener('input', () => {
+    const text = chatMessageInput.value;
+    const cursorPos = chatMessageInput.selectionStart;
+
+    // Verifica se o cursor está logo após um @
+    if (text.substring(cursorPos - 1, cursorPos) === '@' && (text.length === 1 || text.substring(cursorPos - 2, cursorPos - 1) === ' ')) {
+        const suggestions = [...chatParticipants].filter(name => name !== currentUser);
+        if (suggestions.length > 0) showSuggestions(suggestions, cursorPos - 1);
+        else hideSuggestions();
+        return;
+    }
+
+    // Lógica para filtrar nomes
+    const textBeforeCursor = text.substring(0, cursorPos);
+    const lastAtIndex = textBeforeCursor.lastIndexOf('@');
+    const lastSpaceIndex = textBeforeCursor.lastIndexOf(' ');
+
+    if (lastAtIndex > lastSpaceIndex) {
+        const searchTerm = textBeforeCursor.substring(lastAtIndex + 1).toLowerCase();
+        const suggestions = [...chatParticipants].filter(name =>
+            name.toLowerCase().startsWith(searchTerm) && name !== currentUser
+        );
+        if (suggestions.length > 0) showSuggestions(suggestions, lastAtIndex);
+        else hideSuggestions();
+    } else {
+        hideSuggestions();
+    }
 });
 
+function showSuggestions(suggestions, atIndex) {
+    suggestionsBox.innerHTML = '';
+    suggestions.forEach(name => {
+        const item = document.createElement('div');
+        item.className = 'suggestion-item';
+        item.textContent = name;
+        item.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            const text = chatMessageInput.value;
+            const before = text.substring(0, atIndex);
+            const after = text.substring(chatMessageInput.selectionStart);
+            chatMessageInput.value = `${before}@${name} ${after}`;
+            hideSuggestions();
+            chatMessageInput.focus();
+        });
+        suggestionsBox.appendChild(item);
+    });
+    suggestionsBox.classList.remove('hidden');
+}
+
+function hideSuggestions() {
+    if (!suggestionsBox.classList.contains('hidden')) {
+        suggestionsBox.classList.add('hidden');
+    }
+}
+
+// Limpeza geral do chat público
 publicMessagesRef.on('value', (snapshot) => {
-    if (!snapshot.exists()) {
-        chatMessages.innerHTML = '';
+    if (!snapshot.exists() && chatMessages) {
+        chatMessages.innerHTML = ''; // Limpa completamente o chat
+        const name = localStorage.getItem('dbdChatName');
+
+        // SÓ recria o placeholder se o usuário NÃO tiver um nome salvo
+        if (!name) { 
+            const placeholder = document.createElement('div');
+            placeholder.id = 'chat-placeholder';
+            placeholder.innerHTML = `<div class="placeholder-icon">💬</div>
+                <h4>Bem-vindo ao Chat da Entidade</h4>
+                <p>Use <code>/nome &lt;novo&gt;</code> para mudar seu nome.</p>
+                <p>Clique em um usuário para enviar uma DM.</p>
+                <p>Digite <code>@</code> para mencionar alguém.</p>`;
+            chatMessages.appendChild(placeholder);
+        }
     }
 });
 // --- FIM: LÓGICA DO CHAT AO VIVO ---
