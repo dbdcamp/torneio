@@ -362,6 +362,61 @@
     background-repeat: no-repeat; /* A imagem não se repete */
     background-size: contain; /* Garante que a imagem caiba inteira na caixa */
 }
+        /* --- INÍCIO: ESTILOS DO PLACEHOLDER DO CHAT --- */
+
+/* Torna a caixa de mensagens um container para o placeholder */
+#chat-messages {
+    position: relative;
+}
+
+#chat-placeholder {
+    /* Posicionamento */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    /* Aparência */
+    color: rgba(255, 255, 255, 0.25); /* Cor bem sutil */
+    text-align: center;
+    width: 80%;
+    pointer-events: none; /* Impede que o texto seja clicável */
+    transition: opacity 0.3s ease;
+}
+
+/* Esconde o placeholder quando o chat está ativo */
+#chat-placeholder.hidden {
+    opacity: 0;
+}
+
+#chat-placeholder .placeholder-icon {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    opacity: 0.5;
+}
+
+#chat-placeholder h4 {
+    margin: 0 0 15px 0;
+    font-family: 'Creepster', cursive;
+    font-size: 1.8rem;
+    font-weight: normal;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+#chat-placeholder p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+}
+
+#chat-placeholder code {
+    background-color: rgba(0,0,0,0.4);
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-family: monospace;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* --- FIM: ESTILOS DO PLACEHOLDER DO CHAT --- */
 #chat-messages::-webkit-scrollbar { width: 8px; }
 #chat-messages::-webkit-scrollbar-track { background: #1a1a1a; }
 #chat-messages::-webkit-scrollbar-thumb { background: var(--cor-borda-forte); border-radius: 4px; }
@@ -449,6 +504,88 @@
     margin: 8px 0;
     font-size: 0.9em;
 }
+        /* --- INÍCIO: ESTILOS DE MENSAGENS PRIVADAS --- */
+
+/* Indicador que aparece acima do campo de texto */
+#private-message-indicator {
+    background-color: rgba(139, 0, 0, 0.3);
+    border: 1px solid var(--cor-borda-forte);
+    padding: 8px 12px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    animation: fadeIn 0.3s ease;
+}
+
+#private-message-indicator span {
+    font-style: italic;
+}
+
+#private-message-indicator button {
+    background: var(--cor-principal);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#private-message-indicator button:hover {
+    background-color: #ff2d2d;
+}
+
+/* Menu que aparece ao clicar no nome de um usuário */
+.context-menu {
+    position: absolute;
+    background-color: #2a2a2a;
+    border: 1px solid var(--cor-borda);
+    border-radius: 5px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    z-index: 1000;
+    padding: 5px;
+}
+
+.context-menu-item {
+    padding: 8px 15px;
+    color: var(--cor-texto);
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.context-menu-item:hover {
+    background-color: var(--cor-borda-forte);
+}
+
+/* Estilo para o nome clicável */
+.chat-message .name {
+    cursor: pointer;
+    transition: text-shadow 0.2s;
+}
+.chat-message .name:hover {
+    text-shadow: 0 0 5px var(--cor-texto);
+}
+
+/* Estilo para a mensagem privada */
+.private-message {
+    background-color: rgba(112, 12, 12, 0.2);
+    border-left: 3px solid #FFC107; /* Amarelo para destacar */
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.private-message .pm-header {
+    font-size: 0.8em;
+    font-style: italic;
+    color: #FFC107;
+    margin-bottom: 5px;
+}
+
+/* --- FIM: ESTILOS DE MENSAGENS PRIVADAS --- */
       /* --- INÍCIO: Estilos para troca de transmissão --- */
 #stream-switcher {
     display: flex;
@@ -1140,7 +1277,18 @@ footer {
             <section class="section-container">
     <h2 class="section-title">Chat da Entidade</h2>
     <div id="chat-messages">
-        </div>
+         <div id="chat-placeholder">
+        <div class="placeholder-icon">💬</div>
+        <h4>Bem-vindo ao Chat da Entidade</h4>
+        <p>Use <code>/nome SEUNOME</code> para mudar o nome de usuário. Ex: /nome Chris.</p>
+        <p>Clique no nome do usuário para enviar uma DM.</p>
+        <p>Digite <code>@</code> para mencionar alguém.</p>
+    </div>
+    </div>
+                <div id="private-message-indicator" class="hidden">
+    <span id="pm-info"></span>
+    <button id="exit-pm-btn">Voltar ao Chat Público</button>
+</div>
     <form id="chat-form">
         <div class="form-group" id="name-group">
             <input type="text" id="chat-name" placeholder="Digite seu nome para entrar..." required>
@@ -1279,265 +1427,274 @@ const videoContainer = document.querySelector('.video-container');
         }
     });
         
-        // --- INÍCIO: LÓGICA DO CHAT AO VIVO (COM NOVAS FUNÇÕES) ---
-        const chatNameInput = document.getElementById('chat-name');
-        const enterChatBtn = document.getElementById('enter-chat-btn');
-        const nameGroup = document.getElementById('name-group');
-        const chatForm = document.getElementById('chat-form');
-        const chatMessageInput = document.getElementById('chat-message');
-        const messageGroup = document.getElementById('message-group');
-        const chatMessages = document.getElementById('chat-messages');
-        const chatSubmitButton = messageGroup.querySelector('button');
-        const messagesRef = database.ref('chatMessages');
+        // --- INÍCIO: LÓGICA DO CHAT AO VIVO (COM MENSAGENS PRIVADAS) ---
+const chatNameInput = document.getElementById('chat-name');
+const enterChatBtn = document.getElementById('enter-chat-btn');
+const nameGroup = document.getElementById('name-group');
+const chatForm = document.getElementById('chat-form');
+const chatMessageInput = document.getElementById('chat-message');
+const messageGroup = document.getElementById('message-group');
+const chatMessages = document.getElementById('chat-messages');
+const chatSubmitButton = messageGroup.querySelector('button');
 
-        const suggestionsBox = document.getElementById('mention-suggestions');
-        const participantsRef = database.ref('participants');
-        let chatParticipants = new Set();
-        let currentUser = '';
+// Novas referências para DM
+const pmIndicator = document.getElementById('private-message-indicator');
+const pmInfo = document.getElementById('pm-info');
+const exitPmBtn = document.getElementById('exit-pm-btn');
 
-        const userColors = {};
+// Referências do Firebase
+const publicMessagesRef = database.ref('chatMessages');
+const privateMessagesRef = database.ref('privateMessages');
+const participantsRef = database.ref('participants');
 
-        function getRandomColor() {
-            const hue = Math.floor(Math.random() * 360);
-            return `hsl(${hue}, 90%, 70%)`;
+// Variáveis de estado
+let chatParticipants = new Set();
+let currentUser = '';
+let privateRecipient = null; // Guarda para quem a DM está sendo enviada
+const userColors = {};
+
+function getRandomColor() {
+    const hue = Math.floor(Math.random() * 360);
+    return `hsl(${hue}, 90%, 70%)`;
+}
+
+function escapeHTML(str) {
+    const p = document.createElement('p');
+    p.textContent = str;
+    return p.innerHTML;
+}
+
+function displaySystemMessage(text) {
+    const messageElement = document.createElement('div');
+    messageElement.className = 'chat-system-message';
+    messageElement.textContent = text;
+    chatMessages.appendChild(messageElement);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function activateChat(name) {
+    currentUser = name;
+    chatNameInput.value = name;
+    nameGroup.classList.add('hidden');
+
+    // Esconde o novo placeholder
+    const chatPlaceholder = document.getElementById('chat-placeholder');
+    if (chatPlaceholder) {
+        chatPlaceholder.classList.add('hidden');
+    }
+
+    messageGroup.classList.remove('hidden');
+    chatMessageInput.disabled = false;
+    chatSubmitButton.disabled = false;
+    chatMessageInput.focus();
+
+    const participantRef = participantsRef.child(name);
+    participantRef.set(true);
+    participantRef.onDisconnect().remove();
+
+    listenForPrivateMessages(currentUser);
+}
+// Lógica de Entrada no Chat
+const savedName = localStorage.getItem('dbdChatName');
+if (savedName) {
+    activateChat(savedName);
+}
+
+enterChatBtn.addEventListener('click', () => {
+    const name = chatNameInput.value.trim();
+    if (name) {
+        if (chatParticipants.has(name)) {
+            alert(`O nome "${name}" já está em uso.`);
+            return;
         }
-        
-        function escapeHTML(str) {
-            const p = document.createElement('p');
-            p.textContent = str;
-            return p.innerHTML;
-        }
-
-        // ✨ NOVO: Função para exibir mensagens do sistema no chat
-        function displaySystemMessage(text) {
-            const messageElement = document.createElement('div');
-            messageElement.className = 'chat-system-message';
-            messageElement.textContent = text;
-            chatMessages.appendChild(messageElement);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        function activateChat(name) {
-            currentUser = name;
-            chatNameInput.value = name;
-            chatNameInput.disabled = true;
-            nameGroup.classList.add('hidden');
-            messageGroup.classList.remove('hidden');
-            chatMessageInput.disabled = false;
-            chatSubmitButton.disabled = false;
-            chatMessageInput.focus();
-
-            const participantRef = participantsRef.child(name);
-            participantRef.set(true);
-            participantRef.onDisconnect().remove();
-        }
-
-        participantsRef.on('child_added', (snapshot) => {
-            chatParticipants.add(snapshot.key);
-        });
-        participantsRef.on('child_removed', (snapshot) => {
-            chatParticipants.delete(snapshot.key);
-        });
-
-
-        const savedName = localStorage.getItem('dbdChatName');
-        if (savedName) {
-            activateChat(savedName);
-        }
-
-        enterChatBtn.addEventListener('click', () => {
-            const name = chatNameInput.value.trim();
-            if (name) {
-                if (chatParticipants.has(name)) {
-                    alert(`O nome "${name}" já está em uso. Por favor, escolha outro.`);
-                    return;
-                }
-                localStorage.setItem('dbdChatName', name);
-                activateChat(name);
-            }
-        });
-        
-        chatMessageInput.addEventListener('input', () => {
-            const cursorPos = chatMessageInput.selectionStart;
-            const textBeforeCursor = chatMessageInput.value.substring(0, cursorPos);
-            const lastAtIndex = textBeforeCursor.lastIndexOf('@');
-            const lastSpaceIndex = textBeforeCursor.lastIndexOf(' ');
-
-            if (lastAtIndex > lastSpaceIndex) {
-                const searchTerm = textBeforeCursor.substring(lastAtIndex + 1).toLowerCase();
-                const suggestions = [...chatParticipants].filter(name => 
-                    name.toLowerCase().startsWith(searchTerm) && name !== currentUser
-                );
-
-                if (suggestions.length > 0) {
-                    showSuggestions(suggestions, lastAtIndex);
-                } else {
-                    hideSuggestions();
-                }
-            } else {
-                hideSuggestions();
-            }
-        });
-
-        function showSuggestions(suggestions, atIndex) {
-            suggestionsBox.innerHTML = '';
-            suggestions.forEach(name => {
-                const item = document.createElement('div');
-                item.className = 'suggestion-item';
-                item.textContent = name;
-                item.addEventListener('mousedown', (e) => {
-                    e.preventDefault();
-                    const text = chatMessageInput.value;
-                    const before = text.substring(0, atIndex);
-                    const after = text.substring(chatMessageInput.selectionStart);
-                    chatMessageInput.value = `${before}@${name} ${after}`;
-                    hideSuggestions();
-                    chatMessageInput.focus();
-                });
-                suggestionsBox.appendChild(item);
-            });
-            suggestionsBox.classList.remove('hidden');
-        }
-
-        function hideSuggestions() {
-            suggestionsBox.classList.add('hidden');
-        }
-        
-        document.addEventListener('click', (e) => {
-            if (e.target !== chatMessageInput) {
-                hideSuggestions();
-            }
-        });
-
-        chatForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const message = chatMessageInput.value.trim();
-
-            if (message === '/limpar') {
-                if (confirm('Tem certeza que deseja apagar TODAS as mensagens do chat para todos?')) {
-                    messagesRef.remove();
-                }
-                chatMessageInput.value = '';
-                return;
-            }
-
-            // ✨ NOVO: Comando para redefinir o nome de usuário
-            if (message.startsWith('/nome ')) {
-                const newName = message.substring(6).trim();
-                const oldName = currentUser;
-
-                if (!newName) {
-                    displaySystemMessage('Uso inválido. Digite: /nome <seu_novo_nome>');
-                } else if (newName === oldName) {
-                    displaySystemMessage('Este já é o seu nome atual.');
-                } else if (chatParticipants.has(newName)) {
-                    displaySystemMessage(`O nome "${newName}" já está em uso. Tente outro.`);
-                } else {
-                    // Atualiza o nome no Firebase
-                    participantsRef.child(oldName).remove();
-                    const newParticipantRef = participantsRef.child(newName);
-                    newParticipantRef.set(true);
-                    newParticipantRef.onDisconnect().remove();
-
-                    // Atualiza o estado local
-                    currentUser = newName;
-                    chatNameInput.value = newName;
-                    localStorage.setItem('dbdChatName', newName);
-
-                    // Transfere a cor do nome antigo para o novo
-                    if (userColors[oldName]) {
-                        userColors[newName] = userColors[oldName];
-                        delete userColors[oldName];
-                    }
-
-                    displaySystemMessage(`Seu nome foi alterado de "${oldName}" para "${newName}"`);
-                }
-                
-                chatMessageInput.value = '';
-                return;
-            }
-
-
-            if (currentUser && message) {
-                const streamStatus = isLiveNow ? currentStreamKey : 'offline';
-
-messagesRef.push({
-    name: currentUser,
-    message: message,
-    timestamp: firebase.database.ServerValue.TIMESTAMP,
-    watchingStream: streamStatus // Envia o status correto
+        localStorage.setItem('dbdChatName', name);
+        activateChat(name);
+    }
 });
-                chatMessageInput.value = '';
-            }
+
+participantsRef.on('child_added', snapshot => chatParticipants.add(snapshot.key));
+participantsRef.on('child_removed', snapshot => chatParticipants.delete(snapshot.key));
+
+// Lógica de Envio de Mensagem (Pública ou Privada)
+chatForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const message = chatMessageInput.value.trim();
+    if (!currentUser || !message) return;
+
+    if (privateRecipient) {
+        // --- ENVIANDO MENSAGEM PRIVADA ---
+        const conversationId = [currentUser, privateRecipient].sort().join('_');
+        const conversationRef = privateMessagesRef.child(conversationId);
+        conversationRef.push({
+            from: currentUser,
+            to: privateRecipient,
+            message: message,
+            timestamp: firebase.database.ServerValue.TIMESTAMP
         });
-        
-        // SUBSTITUA A FUNÇÃO INTEIRA PELA VERSÃO ABAIXO
-messagesRef.limitToLast(100).on('child_added', (snapshot) => {
+
+    } else {
+        // --- ENVIANDO MENSAGEM PÚBLICA ---
+        publicMessagesRef.push({
+            name: currentUser,
+            message: message,
+            timestamp: firebase.database.ServerValue.TIMESTAMP,
+            watchingStream: isLiveNow ? currentStreamKey : 'offline'
+        });
+    }
+
+    chatMessageInput.value = '';
+});
+
+// Lógica para RENDERIZAR mensagens públicas
+publicMessagesRef.limitToLast(100).on('child_added', (snapshot) => {
     const msg = snapshot.val();
     if (!msg || !msg.name || !msg.message) return;
 
+    // Evita mostrar DMs no chat público se a estrutura do DB mudar
+    if (msg.to) return; 
+
+    displayPublicMessage(msg);
+});
+
+function displayPublicMessage(msg) {
     const messageElement = document.createElement('div');
     messageElement.classList.add('chat-message');
-    messageElement.id = `msg-${snapshot.key}`;
 
-    // ===== NOVA LÓGICA DE MONTAGEM =====
-
-    // 1. PRIMEIRO, verifica e adiciona o status da transmissão.
-    // Como o CSS do indicador tem "display: block", ele ocupará a primeira linha.
     if (msg.watchingStream) {
         const streamIndicator = document.createElement('span');
         streamIndicator.className = 'watching-indicator';
-        
-        // Substitua pelo bloco abaixo:
-if (msg.watchingStream === 'offline') {
-    streamIndicator.textContent = 'Sem live ativa';
-} else {
-    // Pega o número do final da string (ex: "stream1" -> "1")
-    const streamNumber = msg.watchingStream.slice(-1);
-    streamIndicator.textContent = `Na tela ${streamNumber}`;
-}
+        if (msg.watchingStream === 'offline') {
+            streamIndicator.textContent = 'Sem live ativa';
+        } else {
+            streamIndicator.textContent = `Na tela ${msg.watchingStream.slice(-1)}`;
+        }
         messageElement.appendChild(streamIndicator);
     }
 
-    // 2. SEGUNDO, adiciona o nome do usuário.
-    if (!userColors[msg.name]) {
-        userColors[msg.name] = getRandomColor();
-    }
+    if (!userColors[msg.name]) userColors[msg.name] = getRandomColor();
     const nameSpan = document.createElement('span');
     nameSpan.className = 'name';
     nameSpan.textContent = msg.name + ':';
     nameSpan.style.color = userColors[msg.name];
+    nameSpan.dataset.username = msg.name; // Adiciona o nome para referência do clique
     messageElement.appendChild(nameSpan);
 
-    // 3. TERCEIRO, adiciona o texto da mensagem.
-    // Como o CSS do nome e do texto não têm "display: block", eles ficarão lado a lado.
     const messageSpan = document.createElement('span');
     messageSpan.className = 'text';
-    const sanitizedMessage = escapeHTML(msg.message);
-    const finalHTML = sanitizedMessage.replace(/@([\wÀ-ú]+)/g, '<span class="mention">@$1</span>');
-    messageSpan.innerHTML = finalHTML;
+    messageSpan.innerHTML = escapeHTML(msg.message).replace(/@([\wÀ-ú]+)/g, '<span class="mention">@$1</span>');
     messageElement.appendChild(messageSpan);
-    
-    // ===================================
-    
+
     chatMessages.appendChild(messageElement);
     chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Lógica para RENDERIZAR mensagens privadas
+function displayPrivateMessage(msg) {
+    const isSender = msg.from === currentUser;
+    const otherPerson = isSender ? msg.to : msg.from;
+
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('chat-message', 'private-message');
+
+    const header = document.createElement('div');
+    header.className = 'pm-header';
+    header.textContent = isSender ? `Sussurro para ${otherPerson}:` : `Sussurro de ${otherPerson}:`;
+    messageElement.appendChild(header);
+
+    const messageSpan = document.createElement('span');
+    messageSpan.className = 'text';
+    messageSpan.textContent = msg.message;
+    messageElement.appendChild(messageSpan);
+
+    chatMessages.appendChild(messageElement);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Lógica para "ESCUTAR" por mensagens privadas
+function listenForPrivateMessages(username) {
+    const conversationIds = new Set(); // Para não criar listeners duplicados
+
+    const setupListener = (otherUser) => {
+        if (otherUser === username) return;
+
+        const conversationId = [username, otherUser].sort().join('_');
+        if (conversationIds.has(conversationId)) return;
+        conversationIds.add(conversationId);
+
+        const conversationRef = privateMessagesRef.child(conversationId);
+
+        conversationRef.on('child_added', (msgSnapshot) => {
+            const msg = msgSnapshot.val();
+            if (msg.to === username || msg.from === username) {
+                displayPrivateMessage(msg);
+            }
+        });
+    };
+
+    participantsRef.on('child_added', (snapshot) => setupListener(snapshot.key));
+}
+
+// Lógica do MENU DE CONTEXTO (clicar no nome)
+document.body.addEventListener('click', (e) => {
+    const existingMenu = document.querySelector('.context-menu');
+    if (existingMenu) existingMenu.remove();
+
+    if (e.target.classList.contains('name')) {
+        const username = e.target.dataset.username;
+        if (username && username !== currentUser) {
+            e.preventDefault();
+            createContextMenu(username, e.pageX, e.pageY);
+        }
+    }
 });
 
-        messagesRef.on('child_removed', (snapshot) => {
-            const messageId = `msg-${snapshot.key}`;
-            const elementToRemove = document.getElementById(messageId);
-            if (elementToRemove) {
-                elementToRemove.remove();
-            }
-        });
+function createContextMenu(username, x, y) {
+    const menu = document.createElement('div');
+    menu.className = 'context-menu';
+    menu.style.left = `${x}px`;
+    menu.style.top = `${y}px`;
 
-        messagesRef.on('value', (snapshot) => {
-            if (!snapshot.exists()) {
-                chatMessages.innerHTML = '';
-            }
-        });
-        // --- FIM: LÓGICA DO CHAT AO VIVO ---
+    const pmItem = document.createElement('div');
+    pmItem.className = 'context-menu-item';
+    pmItem.textContent = `Mensagem Privada`;
+    pmItem.onclick = () => {
+        enterPrivateMode(username);
+        menu.remove();
+    };
+    menu.appendChild(pmItem);
+
+    document.body.appendChild(menu);
+}
+
+// Funções para GERENCIAR o modo de conversa
+function enterPrivateMode(username) {
+    privateRecipient = username;
+    pmInfo.textContent = `Sussurrando para ${username}...`;
+    pmIndicator.classList.remove('hidden');
+    chatMessageInput.placeholder = `Mensagem privada para ${username}...`;
+    chatMessageInput.focus();
+}
+
+function exitPrivateMode() {
+    privateRecipient = null;
+    pmIndicator.classList.add('hidden');
+    chatMessageInput.placeholder = 'Digite sua mensagem...';
+    chatMessageInput.focus();
+}
+
+exitPmBtn.addEventListener('click', exitPrivateMode);
+
+publicMessagesRef.on('child_removed', (snapshot) => {
+    // Esta funcionalidade pode ser complexa de implementar de forma robusta
+    // Por ora, a limpeza geral remove tudo
+});
+
+publicMessagesRef.on('value', (snapshot) => {
+    if (!snapshot.exists()) {
+        chatMessages.innerHTML = '';
+    }
+});
+// --- FIM: LÓGICA DO CHAT AO VIVO ---
 
 
         // (O resto do seu código JS continua aqui, sem alterações)
