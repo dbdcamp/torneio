@@ -1800,8 +1800,8 @@ publicMessagesRef.on('value', (snapshot) => {
             placeholder.id = 'chat-placeholder';
             placeholder.innerHTML = `<div class="placeholder-icon">💬</div>
                 <h4>Bem-vindo ao Chat da Entidade</h4>
-                <p>Use <code>/nome &lt;novo&gt;</code> para mudar seu nome.</p>
-                <p>Clique em um usuário para enviar uma DM.</p>
+                <p>Use <code>/nome SEUNOME</code> para mudar o nome de usuário. Ex: /nome Chris.</p>
+                <p>Clique sobre o nome de um usuário para enviar uma DM.</p>
                 <p>Digite <code>@</code> para mencionar alguém.</p>`;
             chatMessages.appendChild(placeholder);
         }
