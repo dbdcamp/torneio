@@ -1291,7 +1291,7 @@ footer {
 </div>
     <form id="chat-form">
         <div class="form-group" id="name-group">
-            <input type="text" id="chat-name" placeholder="Digite seu nome para entrar..." required>
+            <input type="text" id="chat-name" placeholder="Digite seu nome para entrar..." required maxlength="15">
             <button type="button" id="enter-chat-btn">Entrar no Chat</button>
         </div>
         <div class="form-group hidden" id="message-group">
@@ -1429,6 +1429,8 @@ const videoContainer = document.querySelector('.video-container');
         
         // --- INÍCIO: LÓGICA DO CHAT AO VIVO (COMANDOS, DMs E MENÇÕES CORRIGIDAS) ---
 const MAX_MESSAGE_LENGTH = 400;
+const MAX_USERNAME_LENGTH = 15;
+const palavrasImproprias = ['idiota', 'idiotas', 'viadinho', 'laskar', 'lascar', 'pôpo', 'popô', 'pôpô', 'popo', 'bumbum', 'bunda', 'dedada', 'lamber', 'linguada', 'boquetinho', 'boquetão', 'boquetao', 'bouquete', 'boquete', 'genital', 'genitalha', 'camaco', 'dotada', 'dotado', 'roludas', 'roludos', 'roluda', 'roludo', 'rola', 'pirocão', 'pirocao', 'pirocudo', 'pirocas', 'piroca', 'neguinhos', 'negrinhos', 'negrinhas', 'neguinha', 'neguinha', 'neguinho', 'nego', 'chifruda', 'chifrudo', 'corninha', 'corninho', 'benga', 'pauzuda', 'pauzudo', 'rodinhas', 'cuzinhos', 'gayzinhos', 'viadinhos', 'putinhas', 'ovinhos', 'ovinho', 'ovão', 'ovao', 'ovos', 'ovo', 'rodinha', 'boguinha', 'boga', 'ânus', 'anus', 'lambido', 'lambi', 'lamber', 'lambe', 'vara', 'negrinha', 'negrinho', 'negra', 'negro', 'peitao', 'peitão', 'peitinho', 'peito', 'peitos', 'chupar', 'chupa', 'viad', 'viadao', 'viadão', 'viadinho', 'mamaco', 'macaquinho', 'linguiça', 'toba', 'pau no cú', 'pau no cu', 'arrombada', 'arrombado', 'piranha', 'gayzinho', 'vadiazinha', 'putinha', 'puta', 'gay', 'travesti', 'traveco', 'bicha', 'bixa', 'macaca', 'macaco', 'vagabunda', 'bilau', 'pal', 'pau', 'chibiu', 'xibiu', 'perereca', 'chota', 'xota', 'vagina', 'buceta', 'pênis', 'penis', 'incesto', 'porno', 'pornô', 'viadinha', 'cuzinho', 'vadio', 'vadia', 'bobo', 'bobos', 'trouxa', 'trouxas', 'babaca', 'babacas', 'otário', 'otaria', 'otários', 'otarias', 'bocó', 'bocós', 'burro', 'burra', 'burros', 'burras', 'imbecil', 'imbecis', 'corno', 'corna', 'cornos', 'cornas', 'vagabundo', 'vagabunda', 'vagabundos', 'vagabundas', 'merda', 'merdas', 'porra', 'porras', 'caralho', 'caralhos', 'filho da puta', 'filha da puta', 'filhos da puta', 'filhas da puta', 'puta', 'putas', 'putaria', 'puto', 'puta que pariu', 'vai tomar no cu', 'vai se foder', 'vai se ferrar', 'vai se lascar', 'se fode', 'se foda', 'se ferra', 'se lasca', 'se ferrou', 'foda-se', 'fodase', 'fodam-se', 'fodido', 'fodida', 'fodidos', 'fodidas', 'fdp', 'pnc', 'vsf', 'vtnc', 'escroto', 'escrota', 'escrotos', 'escrotas', 'cuzão', 'cuzona', 'cuzões', 'cuzao', 'cuzona', 'cu', 'cuzao', 'pau no cu', 'pau no seu cu', 'pau no cú', 'no cu', 'no cú', 'viado', 'veado', 'veados', 'viados', 'boiola', 'boiolas', 'bicha', 'bichas', 'gayzinho', 'lesbica', 'lésbica', 'mongol', 'mongoloide', 'retardado', 'retardada', 'retardados', 'retardadas', 'deficiente', 'aleijado', 'aleijada', 'aleijados', 'aleijadas', 'doente', 'doentes', 'nojento', 'nojenta', 'nojentos', 'nojentas', 'maldito', 'maldita', 'desgraçado', 'desgraçada', 'desgraçados', 'desgraçadas', 'maluco', 'maluca', 'malucos', 'malucas', 'traste', 'lixo', 'lixos', 'fracassado', 'fracassada', 'fracassados', 'fracassadas', 'zé ruela', 'zé buceta', 'zé', 'cracudo', 'cracuda', 'cracudos', 'cracudas', 'maconheiro', 'maconheira', 'maconheiros', 'maconheiras', 'demente', 'tapado', 'tapada', 'jumento', 'jumenta', 'anta', 'jegue', 'burro pra caralho', 'burra pra caralho'];
 const chatNameInput = document.getElementById('chat-name');
 const enterChatBtn = document.getElementById('enter-chat-btn');
 const nameGroup = document.getElementById('name-group');
@@ -1474,6 +1476,17 @@ function displaySystemMessage(text) {
     chatMessages.appendChild(messageElement);
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
+        // DEPOIS (SUBSTITUA PELA VERSÃO ABAIXO)
+function contemPalavraImpropria(texto) {
+    if (palavrasImproprias.length === 0) return false;
+
+    // Converte o texto do usuário para minúsculas e divide em "palavras"
+    // Isso lida com espaços e pontuações de forma mais eficaz
+    const palavrasDoTexto = texto.toLowerCase().split(/[\s,\.;:\-_!?()]+/);
+
+    // Verifica se ALGUMA das palavras do texto está na lista de palavras impróprias
+    return palavrasDoTexto.some(palavra => palavrasImproprias.includes(palavra));
+}
 
 function activateChat(name) {
     currentUser = name;
@@ -1510,6 +1523,14 @@ if (savedName) {
 
 enterChatBtn.addEventListener('click', () => {
     const name = chatNameInput.value.trim();
+    if (contemPalavraImpropria(name)) {
+        alert('Este nome de usuário não é permitido. Por favor, escolha outro.');
+        return;
+    }
+    if (name.length > MAX_USERNAME_LENGTH) {
+        alert(`O nome de usuário é muito longo! O limite é de ${MAX_USERNAME_LENGTH} caracteres.`);
+        return;
+    }
     if (name) {
         if (chatParticipants.has(name)) {
             alert(`O nome "${name}" já está em uso.`);
@@ -1528,13 +1549,17 @@ chatForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const message = chatMessageInput.value.trim();
     if (!currentUser || !message) return;
+
+    if (contemPalavraImpropria(message)) {
+        alert('Sua mensagem contém termos não permitidos e não será enviada.');
+        chatMessageInput.value = ''; // Limpa o campo
+        return;
+    }
     if (message.length > MAX_MESSAGE_LENGTH) {
         alert(`Sua mensagem é muito longa! O limite é de ${MAX_MESSAGE_LENGTH} caracteres.`);
         return; // Impede o envio da mensagem
     }
-    // FIM DO NOVO BLOCO
 
-    // --- TRATAMENTO DE COMANDOS ---
     if (message.startsWith('/')) {
         handleCommand(message);
         chatMessageInput.value = '';
@@ -1542,14 +1567,12 @@ chatForm.addEventListener('submit', (e) => {
     }
 
     if (privateRecipient) {
-        // --- ENVIANDO MENSAGEM PRIVADA ---
         const conversationId = [currentUser, privateRecipient].sort().join('_');
         privateMessagesRef.child(conversationId).push({
             from: currentUser, to: privateRecipient, message,
             timestamp: firebase.database.ServerValue.TIMESTAMP
         });
     } else {
-        // --- ENVIANDO MENSAGEM PÚBLICA ---
         publicMessagesRef.push({
             name: currentUser, message,
             timestamp: firebase.database.ServerValue.TIMESTAMP,
