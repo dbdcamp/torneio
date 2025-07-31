@@ -202,12 +202,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Referências do Firebase ---
     const teamsRef = database.ref('teams');
     const configRef = database.ref('config');
+    const bannerRef = database.ref('banner'); // ALTERADO: Nova referência direta para o banner
 
     // --- Função Central de Controle ---
     function toggleControls(enable) {
         const allButtons = document.querySelectorAll('button');
         const allInputs = document.querySelectorAll('input:not(#password)');
-
         allButtons.forEach(btn => btn.disabled = !enable);
         allInputs.forEach(input => input.disabled = !enable);
     }
@@ -216,7 +216,6 @@ document.addEventListener('DOMContentLoaded', function() {
     passwordInput.addEventListener('input', () => {
         const isPasswordCorrect = passwordInput.value === ADMIN_PASSWORD;
         toggleControls(isPasswordCorrect);
-
         if (isPasswordCorrect) {
             statusElement.textContent = "Acesso liberado. Controles habilitados.";
             statusElement.style.color = "#4CAF50";
@@ -233,27 +232,34 @@ document.addEventListener('DOMContentLoaded', function() {
     const timeInput = document.getElementById('banner-time-input');
     const registrationToggle = document.getElementById('registration-toggle');
 
+    // ALTERADO: Lê as informações do banner do local correto ('banner')
+    bannerRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            activeToggle.checked = data.ativo || false;
+            dateInput.value = data.data || '';
+            timeInput.value = data.horario || '';
+        }
+    });
+    
+    // ALTERADO: Lê as informações de inscrição (continua em 'config')
     configRef.on('value', (snapshot) => {
         const data = snapshot.val();
         if (data) {
-            if (data.championshipBanner) {
-                activeToggle.checked = data.championshipBanner.isActive || false;
-                dateInput.value = data.championshipBanner.dateText || '';
-                timeInput.value = data.championshipBanner.timeText || '';
-            }
             registrationToggle.checked = data.registrationsOpen || false;
         }
     });
 
+    // ALTERADO: Salva os dados do banner no local e com os nomes corretos
     bannerForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const bannerData = {
-            isActive: activeToggle.checked,
-            dateText: dateInput.value,
-            timeText: timeInput.value
+            ativo: activeToggle.checked,
+            data: dateInput.value,
+            horario: timeInput.value
         };
-        configRef.child('championshipBanner').update(bannerData)
-            .then(() => alert('Configurações do banner salvas!'))
+        bannerRef.update(bannerData)
+            .then(() => alert('Configurações do banner salvas com sucesso!'))
             .catch(err => alert('Erro ao salvar banner: ' + err.message));
     });
     
@@ -266,7 +272,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(err => alert('Erro ao salvar inscrições: ' + err.message));
     });
 
-    // --- Lógica de Gerenciamento de EQUIPES ---
+    // --- Lógica de Gerenciamento de EQUIPES (sem alterações) ---
     const addEquipeBtn = document.getElementById('add-equipe-btn');
     const equipeNameInput = document.getElementById('equipe-name');
     const equipeScoreInput = document.getElementById('equipe-score');
