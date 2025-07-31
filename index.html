@@ -323,8 +323,7 @@
 }
 #chat-placeholder {
     position: absolute;
-    /* Adicionado para garantir que o placeholder não seja cortado */
-    width: 100%; 
+    width: 100%;
     left: 0;
     top: 50%;
     transform: translateY(-50%);
@@ -344,19 +343,25 @@
     background-size: cover;
     background-position: center;
     
-    z-index: 8; 
+    z-index: 8;
     
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.4s ease-in-out;
 }
 
-/* --- O GATILHO QUE ATIVA A CAMADA --- */
+/* --- O GATILHO QUE ATIVA TUDO --- */
 
+/* Quando o placeholder estiver ativo (classe no pai)... */
 #chat-messages.placeholder-active #chat-overlay {
-    /* AQUI VOCÊ CONTROLA A OPACIDADE DA IMAGEM
-       Ajuste o valor de 0.0 a 1.0 */
+    /* ...o nosso div de overlay se torna visível! */
     opacity: 0.95;
+}
+
+/* ✨ A CORREÇÃO DEFINITIVA ESTÁ AQUI ✨ */
+/* Bloqueia a rolagem do chat de forma forçada quando o placeholder está ativo */
+#chat-messages.placeholder-active {
+    overflow-y: hidden !important;
 }
 
 /* ===================================================================== */
@@ -1695,10 +1700,15 @@ function displayPublicMessage(msg) {
     messageSpan.innerHTML = escapeHTML(msg.message).replace(/@([\wÀ-ú]+)/g, '<span class="mention">@$1</span>');
     messageElement.appendChild(messageSpan);
 
+    // Adiciona a mensagem ao chat
     chatMessages.appendChild(messageElement);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+    
+    // ✨ CORREÇÃO DEFINITIVA DA ROLAGEM:
+    // Só rola o chat para o final se as instruções NÃO estiverem na tela.
+    if (!chatMessages.classList.contains('placeholder-active')) {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
 }
-
 // Lógica para RENDERIZAR mensagens privadas
 function displayPrivateMessage(msg) {
     const isSender = msg.from === currentUser;
@@ -2181,15 +2191,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 2. Função que verifica se o fundo deve estar escuro ou claro
     function atualizarFundoChat() {
-        // A lógica é simples: o placeholder está escondido?
-        if (chatPlaceholder.classList.contains('hidden')) {
-            // Se SIM, o fundo fica claro.
-            chatMessages.classList.remove('placeholder-active');
-        } else {
-            // Se NÃO, o fundo fica escuro.
-            chatMessages.classList.add('placeholder-active');
-        }
+    // A lógica é simples: o placeholder está escondido?
+    if (chatPlaceholder.classList.contains('hidden')) {
+        // Se SIM, removemos a classe e a rolagem volta ao normal.
+        chatMessages.classList.remove('placeholder-active');
+    } else {
+        // Se NÃO, adicionamos a classe para ativar o overlay e travar a rolagem.
+        chatMessages.classList.add('placeholder-active');
     }
+}
 
     // 3. Verificação inicial assim que a página carrega
     // Isso garante que o fundo comece no estado correto.
