@@ -1412,6 +1412,12 @@ footer {
         transform: rotate(360deg);
     }
 }
+    /* ✨ NOVO: Esconde a contagem em telas pequenas ✨ */
+@media (max-width: 768px) {
+    #countdown-container {
+        display: none !important;
+    }
+}
     </style>
 </head>
 <body>
@@ -2166,34 +2172,7 @@ document.addEventListener('click', (event) => {
                 visitorCountElement.textContent = count;
             }
         });
-        const countdownDate = new Date("2025-10-31T20:00:00").getTime();
-        const countdownContainer = document.getElementById('countdown-container');
-        const timerElement = document.getElementById('timer');
-        const liveMessageElement = document.getElementById('live-message');
-        const countdownTitle = countdownContainer.querySelector('.countdown-title');
-        const daysEl = document.getElementById('days');
-        const hoursEl = document.getElementById('hours');
-        const minutesEl = document.getElementById('minutes');
-        const secondsEl = document.getElementById('seconds');
-        const countdownInterval = setInterval(function() {
-            const now = new Date().getTime();
-            const distance = countdownDate - now;
-            if (distance < 0) {
-                clearInterval(countdownInterval);
-                timerElement.classList.add('hidden');
-                countdownTitle.classList.add('hidden');
-                liveMessageElement.classList.remove('hidden');
-                return;
-            }
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            daysEl.textContent = days < 10 ? '0' + days : days;
-            hoursEl.textContent = hours < 10 ? '0' + hours : hours;
-            minutesEl.textContent = minutes < 10 ? '0' + minutes : minutes;
-            secondsEl.textContent = seconds < 10 ? '0' + seconds : seconds;
-        }, 1000);
+        
         const offlineOverlay = document.getElementById('offline-overlay');
         const liveIndicator = document.getElementById('live-indicator-wrapper');
         const unmutePopup = document.getElementById('dbd-unmute-popup');
@@ -2464,47 +2443,70 @@ registrationPopup.addEventListener('click', (event) => {
 // --- FIM: LÓGICA PARA ATIVAR/DESATIVAR INSCRIÇÕES ---
 </script>
     <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // 1. Pegamos as referências aos elementos importantes
-    const chatMessages = document.getElementById('chat-messages');
-    const chatPlaceholder = document.getElementById('chat-placeholder');
+    // --- INÍCIO: LÓGICA DA CONTAGEM REGRESSIVA DINÂMICA ---
+    document.addEventListener('DOMContentLoaded', function() {
+        // Esta verificação garante que a variável 'database' do Firebase já exista
+        if (typeof database !== 'undefined') {
+            // Referências aos elementos do HTML
+            const countdownContainer = document.getElementById('countdown-container');
+            const timerElement = document.getElementById('timer');
+            const liveMessageElement = document.getElementById('live-message');
+            const daysEl = document.getElementById('days');
+            const hoursEl = document.getElementById('hours');
+            const minutesEl = document.getElementById('minutes');
+            const secondsEl = document.getElementById('seconds');
 
-    // Garante que o código não quebre se os elementos não existirem
-    if (!chatMessages || !chatPlaceholder) {
-        console.error("Elementos do chat não encontrados. A lógica do fundo escuro não vai funcionar.");
-        return;
-    }
+            let countdownInterval; // Variável para controlar o timer
 
-    // 2. Função que verifica se o fundo deve estar escuro ou claro
-    function atualizarFundoChat() {
-    // A lógica é simples: o placeholder está escondido?
-    if (chatPlaceholder.classList.contains('hidden')) {
-        // Se SIM, removemos a classe e a rolagem volta ao normal.
-        chatMessages.classList.remove('placeholder-active');
-    } else {
-        // Se NÃO, adicionamos a classe para ativar o overlay e travar a rolagem.
-        chatMessages.classList.add('placeholder-active');
-    }
-}
+            // Referência para buscar a data no Firebase
+            const countdownTargetRef = database.ref('config/countdownTarget');
 
-    // 3. Verificação inicial assim que a página carrega
-    // Isso garante que o fundo comece no estado correto.
-    atualizarFundoChat();
+            countdownTargetRef.on('value', (snapshot) => {
+                clearInterval(countdownInterval); // Limpa qualquer timer anterior
+                const targetDateString = snapshot.val();
 
-    // 4. O Observador de Mutações: A Mágica Acontece Aqui!
-    // Este código fica "escutando" qualquer mudança no placeholder.
-    const observer = new MutationObserver(function(mutations) {
-        // Toda vez que algo mudar no placeholder...
-        // ...nós simplesmente rodamos nossa função de novo.
-        atualizarFundoChat();
+                if (!targetDateString || !countdownContainer) {
+                    // Se não houver data definida no admin ou o container não existir, esconde o timer
+                    if(countdownContainer) countdownContainer.style.display = 'none';
+                    return;
+                }
+
+                // Mostra o timer caso ele estivesse escondido
+                countdownContainer.style.display = 'flex';
+
+                const countdownDate = new Date(targetDateString).getTime();
+
+                function updateTimer() {
+                    const now = new Date().getTime();
+                    const distance = countdownDate - now;
+
+                    if (distance < 0) {
+                        clearInterval(countdownInterval);
+                        if(timerElement) timerElement.classList.add('hidden');
+                        if(liveMessageElement) liveMessageElement.classList.remove('hidden');
+                        return;
+                    }
+                    
+                    if(timerElement) timerElement.classList.remove('hidden');
+                    if(liveMessageElement) liveMessageElement.classList.add('hidden');
+
+                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    if(daysEl) daysEl.textContent = String(days).padStart(2, '0');
+                    if(hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
+                    if(minutesEl) minutesEl.textContent = String(minutes).padStart(2, '0');
+                    if(secondsEl) secondsEl.textContent = String(seconds).padStart(2, '0');
+                }
+
+                updateTimer(); // Roda uma vez imediatamente
+                countdownInterval = setInterval(updateTimer, 1000); // Atualiza a cada segundo
+            });
+        }
     });
-
-    // 5. Inicia o observador para ficar de olho no elemento
-    // Ele vai prestar atenção especificamente em mudanças nos "atributos" (como a classe)
-    observer.observe(chatPlaceholder, {
-        attributes: true
-    });
-});
-</script>
-</body>
+    // --- FIM: LÓGICA DA CONTAGEM REGRESSIVA DINÂMICA ---
+    </script>
+    </body>
 </html>
