@@ -98,20 +98,26 @@
 
         /* --- PAINÉIS DE VIDRO --- */
         .admin-panel {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 40px;
-        }
+    display: flex; /* Alteramos para flex para controlar a largura dos itens */
+    flex-direction: column; /* Empilhamos os itens verticalmente */
+    gap: 40px;
+    align-items: center; /* Centraliza os itens horizontalmente */
+}
 
-        .panel-section {
-            background: var(--cor-painel-vidro);
-            border: 1px solid var(--cor-borda-energia);
-            border-radius: 12px;
-            padding: 30px 35px;
-            backdrop-filter: blur(12px) saturate(150%);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            transition: border-color 0.4s ease, box-shadow 0.4s ease;
-        }
+.panel-section {
+    background: var(--cor-painel-vidro);
+    border: 1px solid var(--cor-borda-energia);
+    border-radius: 12px;
+    padding: 30px 35px;
+    backdrop-filter: blur(12px) saturate(150%);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    transition: border-color 0.4s ease, box-shadow 0.4s ease;
+
+    /* ===== LINHAS PARA ADICIONAR ===== */
+    max-width: 600px; /* Define uma largura máxima (ajuste se quiser) */
+    margin: 0 auto 40px; /* Centraliza na tela e adiciona espaço embaixo */
+    width: 100%; /* Garante que funcione bem em telas pequenas */
+}
 
         /* --- FORMULÁRIOS E INTERAÇÕES --- */
         .form-group {
@@ -309,10 +315,7 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Painel de Controle</h1>
-        
-        <div class="panel-section">
+    <div class="panel-section">
             <div class="form-group">
                 <label for="password">Chave de Acesso</label>
                 <input type="password" id="password" placeholder="Insira a chave para despertar os controles...">
@@ -320,61 +323,67 @@
             <p id="status"></p>
         </div>
 
-        <div class="admin-panel">
-            <div class="panel-section">
-                <h2>Configurações</h2>
-                
-                <form id="banner-control-form">
-                    <h3>Data do Próximo Torneio</h3>
-                    <div class="form-group switch-container">
-                        <label for="banner-active-toggle">Ativar Banner</label>
-                        <div>
-                            <input type="checkbox" id="banner-active-toggle" class="switch-checkbox" disabled>
-                            <label for="banner-active-toggle" class="switch-label"></label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="banner-date-input">Data</label>
-                        <input type="text" id="banner-date-input" placeholder="Ex: O Presságio se Cumpre em 31 de Outubro" disabled>
-                    </div>
-                    <div class="form-group">
-                        <label for="banner-time-input">Horário</label>
-                        <input type="text" id="banner-time-input" placeholder="Ex: Ao soar da nona badalada" disabled>
-                    </div>
-                    <button type="submit" id="save-banner-btn" disabled>Conectar aos Servidores</button>
-                </form>
-
-                <hr>
-
-                <h3>Portais de Inscrição</h3>
-                <div class="form-group switch-container">
-                    <label for="registration-toggle">Status dos Portais (Selados / Abertos)</label>
-                    <div>
-                        <input type="checkbox" id="registration-toggle" class="switch-checkbox" disabled>
-                        <label for="registration-toggle" class="switch-label"></label>
-                    </div>
-                </div>
-            </div>
+        <div class="panel-section">
+            <h2>Configurações</h2>
             
-            <div class="panel-section">
-                <h2>Gerenciar Equipes</h2>
-                <div class="form-group">
-                    <label for="equipe-name">Nome da nova equipe</label>
-                    <input type="text" id="equipe-name" disabled>
+            <form id="banner-control-form">
+                <h3>Data do Próximo Torneio</h3>
+                <div class="form-group switch-container">
+                    <label for="banner-active-toggle">Ativar Banner</label>
+                    <div>
+                        <input type="checkbox" id="banner-active-toggle" class="switch-checkbox" disabled>
+                        <label for="banner-active-toggle" class="switch-label"></label>
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label for="equipe-score">Recompensas Iniciais</label>
-                    <input type="number" id="equipe-score" value="0" disabled>
+                    <label for="banner-date-input">Data</label>
+                    <input type="text" id="banner-date-input" placeholder="Ex: O Presságio se Cumpre em 31 de Outubro" disabled>
                 </div>
-                <button id="add-equipe-btn" disabled>Conectar aos Servidores</button>
-                
-                <hr>
-                
-                <h3>Almas atuais</h3>
-                <ul id="equipes-list" class="entry-list"></ul>
+                <div class="form-group">
+                    <label for="banner-time-input">Horário</label>
+                    <input type="text" id="banner-time-input" placeholder="Ex: Ao soar da nona badalada" disabled>
+                </div>
+                <button type="submit" id="save-banner-btn" disabled>Conectar aos Servidores</button>
+            </form>
+
+            <hr>
+
+            <h3>Portais de Inscrição</h3>
+            <div class="form-group switch-container">
+                <label for="registration-toggle">Status das Inscrições (Abertas / Fechadas)</label>
+                <div>
+                    <input type="checkbox" id="registration-toggle" class="switch-checkbox" disabled>
+                    <label for="registration-toggle" class="switch-label"></label>
+                </div>
             </div>
+
+            <hr>
+
+            <h3>Contagem Regressiva</h3>
+            <div class="form-group">
+                <label for="countdown-input">Data e Hora do Início do Evento</label>
+                <input type="datetime-local" id="countdown-input" disabled>
+            </div>
+            <button type="button" id="save-countdown-btn" disabled>Salvar Data da Contagem</button>
         </div>
-    </div>
+
+        <div class="panel-section">
+            <h2>Gerenciar Equipes</h2>
+            <div class="form-group">
+                <label for="equipe-name">Nome da nova equipe</label>
+                <input type="text" id="equipe-name" disabled>
+            </div>
+            <div class="form-group">
+                <label for="equipe-score">Recompensas Iniciais</label>
+                <input type="number" id="equipe-score" value="0" disabled>
+            </div>
+            <button id="add-equipe-btn" disabled>Conectar aos Servidores</button>
+            
+            <hr>
+            
+            <h3>Almas atuais</h3>
+            <ul id="equipes-list" class="entry-list"></ul>
+        </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
@@ -383,6 +392,7 @@
     // COLE-O ABAIXO DESTA LINHA
     
     // --- COLE AQUI A MESMA CONFIGURAÇÃO DO FIREBASE ---
+    // --- CONFIGURAÇÃO DO FIREBASE ---
     const firebaseConfig = {
         apiKey: "AIzaSyA_eqbuIT9Pe3z1NlTG6EQIForIM3uNv_c",
         authDomain: "placar-dbd-torneio.firebaseapp.com",
@@ -408,7 +418,7 @@
         // --- Referências do Firebase ---
         const teamsRef = database.ref('teams');
         const configRef = database.ref('config');
-        const bannerRef = database.ref('banner'); // ALTERADO: Nova referência direta para o banner
+        const bannerRef = database.ref('banner');
 
         // --- Função Central de Controle ---
         function toggleControls(enable) {
@@ -431,14 +441,16 @@
             }
         });
 
-        // --- Lógica das Configurações Gerais (BANNER E INSCRIÇÕES) ---
+        // --- Lógica das Configurações Gerais ---
         const bannerForm = document.getElementById('banner-control-form');
         const activeToggle = document.getElementById('banner-active-toggle');
         const dateInput = document.getElementById('banner-date-input');
         const timeInput = document.getElementById('banner-time-input');
         const registrationToggle = document.getElementById('registration-toggle');
+        const countdownInput = document.getElementById('countdown-input');
+        const saveCountdownBtn = document.getElementById('save-countdown-btn');
 
-        // ALTERADO: Lê as informações do banner do local correto ('banner')
+        // Lê as informações do banner
         bannerRef.on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -448,15 +460,16 @@
             }
         });
         
-        // ALTERADO: Lê as informações de inscrição (continua em 'config')
+        // Lê as informações de config (inscrições e contagem)
         configRef.on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
                 registrationToggle.checked = data.registrationsOpen || false;
+                countdownInput.value = data.countdownTarget || '';
             }
         });
 
-        // ALTERADO: Salva os dados do banner no local e com os nomes corretos
+        // Salva os dados do banner
         bannerForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const bannerData = {
@@ -465,20 +478,33 @@
                 horario: timeInput.value
             };
             bannerRef.update(bannerData)
-                .then(() => alert('Edito gravado nas runas com sucesso!'))
+                .then(() => alert('Edito do banner gravado com sucesso!'))
                 .catch(err => alert('Falha na gravação do edito: ' + err.message));
         });
         
+        // Altera status das inscrições
         registrationToggle.addEventListener('change', () => {
             configRef.child('registrationsOpen').set(registrationToggle.checked)
                 .then(() => {
-                    statusElement.textContent = `Portais de Inscrição agora estão ${registrationToggle.checked ? 'ABERTOS' : 'SELADOS'}.`;
+                    statusElement.textContent = `Portais de Inscrição agora estão ${registrationToggle.checked ? 'ABERTAS' : 'SELADOS'}.`;
                     statusElement.style.color = "var(--cor-sucesso)";
                 })
                 .catch(err => alert('Falha ao alterar status dos portais: ' + err.message));
         });
 
-        // --- Lógica de Gerenciamento de EQUIPES (sem alterações) ---
+        // Salva a data da contagem regressiva
+        saveCountdownBtn.addEventListener('click', () => {
+            const targetDate = countdownInput.value;
+            if (!targetDate) {
+                alert('Por favor, selecione uma data e hora.');
+                return;
+            }
+            configRef.child('countdownTarget').set(targetDate)
+                .then(() => alert('Data da contagem regressiva salva com sucesso!'))
+                .catch(err => alert('Falha ao salvar a data da contagem: ' + err.message));
+        });
+
+        // --- Lógica de Gerenciamento de EQUIPES ---
         const addEquipeBtn = document.getElementById('add-equipe-btn');
         const equipeNameInput = document.getElementById('equipe-name');
         const equipeScoreInput = document.getElementById('equipe-score');
@@ -523,14 +549,12 @@
                 });
             }
             
-            // Aplica o estado de bloqueio/desbloqueio sempre que a lista for atualizada
             const isPasswordCorrect = passwordInput.value === ADMIN_PASSWORD;
             toggleControls(isPasswordCorrect);
         });
 
-        // Força o estado inicial para tudo começar bloqueado
         toggleControls(false); 
-    });
+    }); 
     </script>
 </body>
 </html>
