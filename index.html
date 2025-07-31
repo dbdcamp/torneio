@@ -562,6 +562,65 @@
     background-color: var(--cor-borda-forte);
 }
 /* --- FIM: ESTILOS DO CHAT AO VIVO --- */
+        /* ✨ INÍCIO: NOVOS ESTILOS PARA O SELETOR DE EMOJIS ✨ */
+
+/* Posiciona o painel de emojis de forma absoluta */
+#emoji-picker {
+    position: absolute;
+    bottom: 110%; /* Aparece acima do campo de input */
+    right: 0;
+    width: 300px;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: #1f1f1f;
+    border: 1px solid var(--cor-borda);
+    border-radius: 8px;
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.4);
+    padding: 10px;
+    z-index: 15;
+    display: grid; /* Organiza os emojis em uma grade */
+    grid-template-columns: repeat(auto-fill, minmax(30px, 1fr));
+    gap: 5px;
+}
+
+/* Estilo para cada emoji dentro do painel */
+.emoji-item {
+    padding: 5px;
+    font-size: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+}
+.emoji-item:hover {
+    background-color: var(--cor-borda-forte);
+}
+
+/* Estilo do botão que abre o painel de emojis */
+#emoji-toggle-btn {
+    padding: 0 12px;
+    background-color: #2a2a2a;
+    border: 1px solid #555;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+#emoji-toggle-btn:hover {
+    background-color: #444;
+}
+/* Quando o botão está desativado (antes de entrar no chat) */
+#emoji-toggle-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* Scrollbar do painel de emojis */
+#emoji-picker::-webkit-scrollbar { width: 6px; }
+#emoji-picker::-webkit-scrollbar-track { background: #2a2a2a; }
+#emoji-picker::-webkit-scrollbar-thumb { background: var(--cor-borda-forte); border-radius: 3px; }
+
+/* --- FIM DOS ESTILOS --- */
         /* NOVO: Estilo para mensagens do sistema no chat */
 .chat-system-message {
     color: #a0a0a0;
@@ -716,7 +775,7 @@
 #grimorio-container {
     position: fixed;
     /* ✨ VALORES EXATOS RESTAURADOS DO SEU CÓDIGO ORIGINAL PARA PC ✨ */
-    bottom: 1570px; 
+    bottom: 2130px; 
     left: 280px;
     z-index: 1050;
     
@@ -1347,24 +1406,36 @@ footer {
             <button type="button" id="enter-chat-btn">Entrar no Chat</button>
         </div>
         <div class="form-group hidden" id="message-group">
-            <input type="text" id="chat-message" placeholder="Digite sua mensagem..." required disabled>
-            <button type="submit" disabled>Enviar</button>
-       
+    <div id="emoji-picker" class="hidden"></div>
+
+    <input type="text" id="chat-message" placeholder="Digite sua mensagem..." required disabled maxlength="400">
+    
+    <button type="button" id="emoji-toggle-btn" title="Inserir Emoji" disabled>😊</button>
+    
+    <button type="submit" disabled>Enviar</button>
+    
     <div id="mention-suggestions" class="suggestions-box hidden"></div>
-    </div>
+</div>
     </form>
 </section>
             <h2 class="section-title">Regras do Torneio</h2>
             <ul>
-                <li>Cada esquadrão será formado por cinco almas: quatro destinadas à Sobrevivência e uma encarregada da Caçada.</li>
-                <li>A Entidade não espera. A tolerância para atrasos é de 5 minutos, e o descumprimento implicará em derrota automática (W.O.).</li>
-                <li>Assim como o julgamento da Entidade, as decisões da organização são absolutas e não estarão sujeitas a apelações, visando a integridade da competição.</li>
-                <li>Assassinos capazes de um abate instantâneo devem honrar a caçada, sendo proibida a prática de 'camperar'. A exceção se aplica unicamente ao Ghost Face.</li>
-                <li>O reino da Entidade exige respeito. Atos de desrespeito ou preconceito (verbal ou escrito) serão punidos com a expulsão sumária de toda a equipe do torneio.</li>
-                <li>A agonia no chão tem seus limites. Um Assassino com duas presas caídas deve completar o ritual do gancho com uma delas antes de voltar seu foco para os demais.</li>
-                <li>Para selar o destino da última esperança, cada partida deve ser iniciada com uma oferenda que conjure a Escotilha no Santuário do Assassino ou no prédio principal.</li>
-                <li>A engenhosidade é a chave. Os quatro Sobreviventes devem adentrar a partida com itens únicos, sendo proibida a repetição de arsenal entre os membros da equipe.</li>
-                <li>A desobediência à entidade tem um preço. A equipe ou Assassino infrator perderá o favor da Entidade, sofrendo com a subtração parcial ou total dos pontos e até mesmo com a desclassificação.</li>
+                <li>1. Cada esquadrão será formado por cinco almas: quatro destinadas à Sobrevivência e uma encarregada da Caçada.</li>
+                <li>2. A Entidade não espera. A tolerância para atrasos é de 5 minutos, e o descumprimento implicará em derrota automática (W.O.).</li>
+                <li>3. Assim como o julgamento da Entidade, as decisões da organização são absolutas e não estarão sujeitas a apelações, visando a integridade da competição.</li>
+                <li>4. Para garantir que a habilidade seja o único reflexo na névoa, a Entidade decreta que quando uma equipe for "espelhar" a escolha de Assassino da equipe adversária, ela também deverá espelhar o mapa onde a caçada anterior ocorreu.</li>
+                <li>5. Assassinos capazes de um abate instantâneo devem honrar a caçada, sendo proibida a prática de 'camperar'. A exceção se aplica unicamente ao Ghost Face.</li>
+                <li>6. Para manter o equilíbrio dos reinos, a Entidade decreta que, dentre as vantagens "Ressonância, Impasse, Intervenção e Sem Saída" o Assassino pode equipar no máximo DUAS (2) por partida.</li>
+                <li>7. A forma pura do mal (Michael Myers) está proibido de carregar os fragmentos de lápide ou o acessório Lápide de Judith. Sua fúria deve ser demonstrada no gancho, não em uma aniquilação instantânea que ignora o ritual da Entidade.</li>
+                <li>8. A Entidade despreza o poder que não é conquistado pelo mérito, então o uso da perk "Ninguém Escapa da Morte (NOED)" é estritamente proibido. A caçada deve ser vencida pela pressão constante, não por uma fúria desesperada e artificial no final do ritual.</li>
+                <li>9. O reino da Entidade exige respeito. Atos de desrespeito ou preconceito (verbal ou escrito) serão punidos com a expulsão sumária de toda a equipe do torneio.</li>
+                <li>10. A agonia no chão tem seus limites. Um Assassino com duas presas caídas deve completar o ritual do gancho com uma delas antes de voltar seu foco para os demais.</li>
+                <li>11. Para selar o destino da última esperança, cada partida deve ser iniciada com uma oferenda que conjure a Escotilha no Santuário do Assassino ou no prédio principal.</li>
+                <li>12. A engenhosidade é a chave. Os quatro Sobreviventes devem adentrar a partida com itens únicos, sendo proibida a repetição de arsenal entre os membros da equipe.</li>
+                <li>13. Entre as poderosas vantagens "Adrenalina, Inquebrável, Extraoficialmente, Duro na Queda e Ataque Decisivo", a equipe de Sobreviventes pode equipar apenas UMA (1) no total entre os quatro jogadores na mesma partida.</li>
+                <li>14. As leis da realidade, mesmo neste reino, não devem ser quebradas. É estritamente proibido o uso de qualquer bug, glitch ou exploit conhecido que conceda uma vantagem injusta. A descoberta de tal ato levará à desclassificação imediata.</li>
+                <li>15. Em caso de almas perdidas na névoa por desconexão de um jogador (Somente se não houver começado uma perseguição qualquer), a partida deverá ser reiniciada. Se já houver perseguição em andamento, a partida continua normalmente, e a equipe desfalcada deverá lutar com as almas que restaram.</li>
+                <li>16. A desobediência à entidade tem um preço. A equipe ou Assassino infrator perderá o favor da Entidade, sofrendo com a subtração parcial ou total dos pontos e até mesmo com a desclassificação.</li>
                 
             </ul>
         </section>
@@ -1490,7 +1561,7 @@ const chatForm = document.getElementById('chat-form');
 const chatMessageInput = document.getElementById('chat-message');
 const messageGroup = document.getElementById('message-group');
 const chatMessages = document.getElementById('chat-messages');
-const chatSubmitButton = messageGroup.querySelector('button');
+const chatSubmitButton = messageGroup.querySelector('button[type="submit"]');
 const chatPlaceholder = document.getElementById('chat-placeholder');
 
 // Referências para novas funcionalidades
@@ -1554,6 +1625,7 @@ function activateChat(name) {
     messageGroup.classList.remove('hidden');
     chatMessageInput.disabled = false;
     chatSubmitButton.disabled = false;
+    document.getElementById('emoji-toggle-btn').disabled = false;
     chatMessageInput.focus();
 
     const participantRef = participantsRef.child(name);
@@ -1865,6 +1937,64 @@ publicMessagesRef.on('value', (snapshot) => {
         }
     }
 });
+// --- FIM: LÓGICA DO CHAT AO VIVO ---
+        // ✨ INÍCIO: LÓGICA DO SELETOR DE EMOJIS ✨
+const emojiBtn = document.getElementById('emoji-toggle-btn');
+const emojiPicker = document.getElementById('emoji-picker');
+
+// Lista de emojis que aparecerão no painel
+const emojis = [
+    // Carinhas e Reações
+    '😀', '😃', '😄', '😁', '😆', '😅', '🤣', '😂', '🙂', '🙃', '🫠', '😉', '😊', '😇', '🥰', '😍', '🤩', '😘',
+    '😗', '☺️', '😚', '😙', '🥲', '😋', '😛', '😜', '🤪', '😝', '🤑', '🤗', '🤭', '🫢', '🫣', '🤫', '🤔',
+    '🫡', '🤐', '🤨', '😐', '😑', '😶', '🫥', '😶‍🌫️', '😏', '😒', '🙄', '😬', '😮‍💨', '🤥', '🫨', '🙂‍↔️',
+    '🙂‍↕️', '😌', '😔', '😪', '🤤', '😴', '😷', '🤒', '🤕', '🤢', '🤮', '🤧', '🥵', '🥶', '🥴', '😵', '😵‍💫',
+    '🤯', '🤠', '🥳', '🥸', '😎', '🤓', '🧐', '😕', '🫤', '😟', '🙁', '☹️', '😮', '😯', '😲', '😳', '🥺',
+    '🥹', '😦', '😧', '😨', '😰', '😥', '😢', '😭', '😱', '😖', '😣', '😞', '😓', '😩', '😫', '🥱', '😤',
+    '😡', '😠', '🤬', '😈', '👿', '💀', '☠️', '💩', '🤡', '👹', '👺', '👻', '👽', '👾', '🤖', '😺', '😸',
+    '😹', '😻', '😼', '😽', '🙀', '😿', '😾', '🙈', '🙉', '🙊', '👋', '🤚', '🖐️', '✋', '🖖', '🫱', '🫲',
+    '🫳', '🫴', '🫷', '🫸', '👌', '🤌', '🤏', '✌️', '🤞', '🫰', '🤟', '🤘', '🤙', '👈', '👉', '👆', '🖕',
+    '👇', '☝️', '🫵', '👍', '👎', '✊', '👊', '🤛', '🤜', '👏', '🙌', '🫶', '👐', '🤲', '🤝', '🙏', '✍️',
+    '💅', '🤳', '💪', '🦾', '🦿', '🦵', '🦶', '👂', '🦻', '👃', '🙋‍♂️', '🙋‍♀️', '❤️', '🩷', '🧡', '💛', '💚',
+    '💙', '🩵', '💜', '🤎', '🖤', '🩶', '🤍', '🎖️', '🏆', '🏅', '🥇', '🥈', '🥉'
+];
+
+// Função que cria os emojis e os adiciona ao painel
+function populateEmojiPicker() {
+    emojis.forEach(emoji => {
+        const emojiEl = document.createElement('span');
+        emojiEl.className = 'emoji-item';
+        emojiEl.textContent = emoji;
+        emojiEl.addEventListener('click', () => {
+            // Insere o emoji na posição atual do cursor no campo de texto
+            const start = chatMessageInput.selectionStart;
+            const end = chatMessageInput.selectionEnd;
+            const text = chatMessageInput.value;
+            chatMessageInput.value = text.substring(0, start) + emoji + text.substring(end);
+            chatMessageInput.focus();
+            // Move o cursor para depois do emoji inserido
+            chatMessageInput.selectionEnd = start + emoji.length;
+        });
+        emojiPicker.appendChild(emojiEl);
+    });
+}
+populateEmojiPicker(); // Chama a função para criar os emojis assim que a página carrega
+
+// Evento para mostrar/esconder o painel de emojis
+emojiBtn.addEventListener('click', (event) => {
+    event.stopPropagation(); // Impede que o clique feche o painel imediatamente
+    emojiPicker.classList.toggle('hidden');
+});
+
+// Evento para fechar o painel se clicar em qualquer outro lugar da página
+document.addEventListener('click', (event) => {
+    if (!emojiPicker.classList.contains('hidden') && !emojiPicker.contains(event.target) && event.target !== emojiBtn) {
+        emojiPicker.classList.add('hidden');
+    }
+});
+// ✨ FIM: LÓGICA DO SELETOR DE EMOJIS ✨
+
+
 // --- FIM: LÓGICA DO CHAT AO VIVO ---
 
 
