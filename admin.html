@@ -88,48 +88,89 @@
 .switch-label:active:after {
     width: 30px;
 }
+        /* Estilos para a seção de admin e o toggle switch */
+.admin-section { background-color: #333; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+.admin-section h2 { margin-top: 0; color: #ff4d4d; }
+.admin-section .form-group { margin-bottom: 15px; display: flex; flex-direction: column; }
+.admin-section label { margin-bottom: 5px; font-weight: bold; }
+.admin-section input[type="text"] { padding: 10px; border-radius: 5px; border: 1px solid #555; background: #222; color: #fff; }
+.admin-section .save-btn { background-color: #ff4d4d; color: white; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+/* Estilos do Toggle Switch */
+.switch { position: relative; display: inline-block; width: 60px; height: 34px; align-self: flex-start; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; }
+.slider.round { border-radius: 34px; }
+.slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .slider { background-color: #4CAF50; }
+input:checked + .slider:before { transform: translateX(26px); }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Painel de Controle - Placar de Equipes</h1>
+        <h1>Painel de Controle - Torneio da Entidade</h1>
         
-        <div class="form-group">
-            <label for="password">Senha de Administrador</label>
-            <input type="password" id="password" placeholder="Digite a senha para habilitar os controles">
+        <div class="panel-section">
+            <div class="form-group">
+                <label for="password">Senha de Administrador</label>
+                <input type="password" id="password" placeholder="Digite a senha para habilitar os controles">
+            </div>
+            <p id="status"></p>
         </div>
-        <p id="status"></p>
 
         <div class="admin-panel">
-            </div> <div class="panel-section">
-            <h2>Configurações Gerais</h2>
-            <div class="form-group switch-container">
-                <label for="registration-toggle">Status das Inscrições (Fechadas / Abertas)</label>
-                <div>
-                    <input type="checkbox" id="registration-toggle" class="switch-checkbox" disabled>
-                    <label for="registration-toggle" class="switch-label">
-                        <span class="switch-button"></span>
-                    </label>
+            <div class="panel-section">
+                <h2>Configurações Gerais</h2>
+                
+                <form id="banner-control-form">
+                    <h3>Banner do Próximo Campeonato</h3>
+                    <div class="form-group switch-container">
+                        <label for="banner-active-toggle">Ativar Banner na Página Principal</label>
+                        <div>
+                            <input type="checkbox" id="banner-active-toggle" class="switch-checkbox" disabled>
+                            <label for="banner-active-toggle" class="switch-label"></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="banner-date-input">Texto da Data (Ex: 31 DE OUTUBRO)</label>
+                        <input type="text" id="banner-date-input" placeholder="Digite o texto da data..." disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="banner-time-input">Texto do Horário (Ex: às 20:00)</label>
+                        <input type="text" id="banner-time-input" placeholder="Digite o texto do horário..." disabled>
+                    </div>
+                    <button type="submit" class="save-btn" id="save-banner-btn" disabled>Salvar Configurações do Banner</button>
+                </form>
+
+                <hr style="border-color: #4a0e0e; margin: 30px 0;">
+
+                <h3>Inscrições</h3>
+                <div class="form-group switch-container">
+                    <label for="registration-toggle">Status das Inscrições (Abertas / Fechadas)</label>
+                    <div>
+                        <input type="checkbox" id="registration-toggle" class="switch-checkbox" disabled>
+                        <label for="registration-toggle" class="switch-label"></label>
+                    </div>
                 </div>
             </div>
-        </div>
-                </div>
+            
             <div class="panel-section">
                 <h2>Gerenciar Equipes</h2>
                 <div class="form-group">
                     <label for="equipe-name">Nome da Nova Equipe</label>
-                    <input type="text" id="equipe-name">
+                    <input type="text" id="equipe-name" disabled>
                 </div>
                 <div class="form-group">
                     <label for="equipe-score">Pontuação Inicial</label>
-                    <input type="number" id="equipe-score" value="0">
+                    <input type="number" id="equipe-score" value="0" disabled>
                 </div>
                 <button id="add-equipe-btn" disabled>Adicionar Equipe</button>
+                
                 <hr style="border-color: #4a0e0e; margin: 20px 0;">
+                
                 <h3>Equipes Atuais</h3>
                 <ul id="equipes-list" class="entry-list"></ul>
             </div>
-            </div>
+        </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -152,112 +193,87 @@ firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
 document.addEventListener('DOMContentLoaded', function() {
-    const ADMIN_PASSWORD = "@Mateus2024"; // Sua senha
-    
+    const ADMIN_PASSWORD = "@Mateus2024";
+
     // --- Referências do DOM ---
     const passwordInput = document.getElementById('password');
     const statusElement = document.getElementById('status');
     
-    // 🔧 Referência à chave 'teams' no Firebase (a única que precisamos agora)
+    // --- Referências do Firebase ---
     const teamsRef = database.ref('teams');
-    const registrationsRef = database.ref('config/registrationsOpen');
+    const configRef = database.ref('config');
 
-    // 🔧 Variáveis para o formulário de equipes
-    const addEquipeBtn = document.getElementById('add-equipe-btn');
-    const equipeNameInput = document.getElementById('equipe-name');
-    const equipeScoreInput = document.getElementById('equipe-score');
-    const equipesList = document.getElementById('equipes-list');
-    const registrationToggle = document.getElementById('registration-toggle');
+    // --- Função Central de Controle ---
+    function toggleControls(enable) {
+        const allButtons = document.querySelectorAll('button');
+        const allInputs = document.querySelectorAll('input:not(#password)');
+
+        allButtons.forEach(btn => btn.disabled = !enable);
+        allInputs.forEach(input => input.disabled = !enable);
+    }
 
     // --- Lógica de Autenticação ---
     passwordInput.addEventListener('input', () => {
         const isPasswordCorrect = passwordInput.value === ADMIN_PASSWORD;
-        document.querySelectorAll('button').forEach(btn => {
-            btn.disabled = !isPasswordCorrect;
-            // --- Lógica para o interruptor de Inscrições ---
+        toggleControls(isPasswordCorrect);
 
-// 1. Lê o estado atual do Firebase e atualiza o interruptor na tela
-registrationsRef.on('value', (snapshot) => {
-    const areOpen = snapshot.val();
-    if (areOpen) {
-        registrationToggle.checked = true;
-    } else {
-        registrationToggle.checked = false;
-    }
-});
-
-// 2. Quando o admin clica no interruptor, atualiza o valor no Firebase
-registrationToggle.addEventListener('change', () => {
-    const isChecked = registrationToggle.checked;
-    registrationsRef.set(isChecked)
-        .then(() => {
-            statusElement.textContent = `Inscrições agora estão ${isChecked ? 'ABERTAS' : 'FECHADAS'}.`;
-            statusElement.style.color = "#4CAF50";
-        })
-        .catch(error => {
-            statusElement.textContent = "Erro ao atualizar status.";
-            statusElement.style.color = "#ff4d4d";
-            console.error(error);
-        });
-});
-        });
-        registrationToggle.disabled = !isPasswordCorrect;
-        
         if (isPasswordCorrect) {
-            statusElement.textContent = "Acesso liberado.";
+            statusElement.textContent = "Acesso liberado. Controles habilitados.";
             statusElement.style.color = "#4CAF50";
         } else {
-            statusElement.textContent = "";
+            statusElement.textContent = "Aguardando senha...";
+            statusElement.style.color = "#f0f0f0";
         }
     });
 
-    // --- Função para renderizar a lista de equipes ---
-    function createListUpdater(ref, listElement) {
-        ref.on('value', (snapshot) => {
-            const isPasswordCorrect = passwordInput.value === ADMIN_PASSWORD;
-            listElement.innerHTML = ''; // Limpa a lista antes de recriar
-            const data = snapshot.val();
-            if (data) {
-                Object.keys(data).forEach((key) => {
-                    const entry = data[key];
-                    const li = document.createElement('li');
-                    li.innerHTML = `
-                        <span class="info">${entry.name}</span>
-                        <div class="actions">
-                            <input type="number" value="${entry.score}" id="score-${key}">
-                            <button id="update-${key}">Atualizar</button>
-                            <button id="delete-${key}" class="btn-delete">Remover</button>
-                        </div>
-                    `;
-                    listElement.appendChild(li);
-                    
-                    const updateBtn = document.getElementById(`update-${key}`);
-                    const deleteBtn = document.getElementById(`delete-${key}`);
+    // --- Lógica das Configurações Gerais (BANNER E INSCRIÇÕES) ---
+    const bannerForm = document.getElementById('banner-control-form');
+    const activeToggle = document.getElementById('banner-active-toggle');
+    const dateInput = document.getElementById('banner-date-input');
+    const timeInput = document.getElementById('banner-time-input');
+    const registrationToggle = document.getElementById('registration-toggle');
 
-                    updateBtn.disabled = !isPasswordCorrect;
-                    deleteBtn.disabled = !isPasswordCorrect;
-
-                    updateBtn.addEventListener('click', () => {
-                        const newScore = document.getElementById(`score-${key}`).value;
-                        ref.child(key).update({ score: parseInt(newScore, 10) });
-                    });
-
-                    deleteBtn.addEventListener('click', () => {
-                        if (confirm(`Tem certeza que deseja remover "${entry.name}"?`)) {
-                            ref.child(key).remove();
-                        }
-                    });
-                });
+    configRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            if (data.championshipBanner) {
+                activeToggle.checked = data.championshipBanner.isActive || false;
+                dateInput.value = data.championshipBanner.dateText || '';
+                timeInput.value = data.championshipBanner.timeText || '';
             }
-        });
-    }
+            registrationToggle.checked = data.registrationsOpen || false;
+        }
+    });
+
+    bannerForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const bannerData = {
+            isActive: activeToggle.checked,
+            dateText: dateInput.value,
+            timeText: timeInput.value
+        };
+        configRef.child('championshipBanner').update(bannerData)
+            .then(() => alert('Configurações do banner salvas!'))
+            .catch(err => alert('Erro ao salvar banner: ' + err.message));
+    });
     
-    // 🔧 Chamamos a função apenas UMA VEZ, para a lista de equipes
-    createListUpdater(teamsRef, equipesList);
-    
-    // --- Lógica para adicionar uma nova equipe ---
+    registrationToggle.addEventListener('change', () => {
+        configRef.child('registrationsOpen').set(registrationToggle.checked)
+            .then(() => {
+                statusElement.textContent = `Inscrições agora estão ${registrationToggle.checked ? 'ABERTAS' : 'FECHADAS'}.`;
+                statusElement.style.color = "#4CAF50";
+            })
+            .catch(err => alert('Erro ao salvar inscrições: ' + err.message));
+    });
+
+    // --- Lógica de Gerenciamento de EQUIPES ---
+    const addEquipeBtn = document.getElementById('add-equipe-btn');
+    const equipeNameInput = document.getElementById('equipe-name');
+    const equipeScoreInput = document.getElementById('equipe-score');
+    const equipesList = document.getElementById('equipes-list');
+
     addEquipeBtn.addEventListener('click', () => {
-        const name = equipeNameInput.value;
+        const name = equipeNameInput.value.trim();
         const score = parseInt(equipeScoreInput.value, 10);
         if (name) {
             teamsRef.push({ name, score });
@@ -265,6 +281,43 @@ registrationToggle.addEventListener('change', () => {
             equipeScoreInput.value = '0';
         }
     });
+
+    teamsRef.on('value', (snapshot) => {
+        equipesList.innerHTML = '';
+        const data = snapshot.val();
+        if (data) {
+            Object.keys(data).forEach((key) => {
+                const entry = data[key];
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span class="info">${entry.name}</span>
+                    <div class="actions">
+                        <input type="number" value="${entry.score}" id="score-${key}">
+                        <button id="update-${key}">Atualizar</button>
+                        <button id="delete-${key}" class="btn-delete">Remover</button>
+                    </div>`;
+                equipesList.appendChild(li);
+                
+                document.getElementById(`update-${key}`).addEventListener('click', () => {
+                    const newScore = document.getElementById(`score-${key}`).value;
+                    teamsRef.child(key).update({ score: parseInt(newScore, 10) });
+                });
+
+                document.getElementById(`delete-${key}`).addEventListener('click', () => {
+                    if (confirm(`Tem certeza que deseja remover "${entry.name}"?`)) {
+                        teamsRef.child(key).remove();
+                    }
+                });
+            });
+        }
+        
+        // Aplica o estado de bloqueio/desbloqueio sempre que a lista for atualizada
+        const isPasswordCorrect = passwordInput.value === ADMIN_PASSWORD;
+        toggleControls(isPasswordCorrect);
+    });
+
+    // Força o estado inicial para tudo começar bloqueado
+    toggleControls(false); 
 });
     </script>
 </body>
