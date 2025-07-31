@@ -308,6 +308,60 @@
     #countdown-container { display: none; } /* Esconde em telas pequenas para não quebrar o layout */
 }
 /* --- FIM DOS ESTILOS --- */
+        /* ===================================================================== */
+/* ✨ INÍCIO: VERSÃO FINAL COM ELEMENTO DEDICADO ✨ */
+/* ===================================================================== */
+
+/* --- CONFIGURAÇÃO DA HIERARQUIA (EMPILHAMENTO) --- */
+
+#chat-messages {
+    position: relative;
+}
+.chat-message {
+    position: relative;
+    z-index: 5;
+}
+#chat-placeholder {
+    position: absolute;
+    /* Adicionado para garantir que o placeholder não seja cortado */
+    width: 100%; 
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+}
+
+/* --- ESTILO DA NOSSA NOVA CAMADA/OVERLAY --- */
+
+#chat-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    background-image: url('https://i.imgur.com/2UivLtF.png');
+    background-size: cover;
+    background-position: center;
+    
+    z-index: 8; 
+    
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease-in-out;
+}
+
+/* --- O GATILHO QUE ATIVA A CAMADA --- */
+
+#chat-messages.placeholder-active #chat-overlay {
+    /* AQUI VOCÊ CONTROLA A OPACIDADE DA IMAGEM
+       Ajuste o valor de 0.0 a 1.0 */
+    opacity: 0.95;
+}
+
+/* ===================================================================== */
+/* ✨ FIM DA VERSÃO FINAL ✨ */
+/* ===================================================================== */
         /* --- INÍCIO: ESTILOS DO CONTADOR DE VISITANTES --- */
 #visitor-counter {
     display: flex;
@@ -370,14 +424,13 @@
 }
 
 #chat-placeholder {
-    /* Posicionamento */
+    /* Posicionamento (sem alteração) */
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
 
     /* Aparência */
-    color: rgba(255, 255, 255, 0.25); /* Cor bem sutil */
     text-align: center;
     width: 80%;
     pointer-events: none; /* Impede que o texto seja clicável */
@@ -392,28 +445,36 @@
 #chat-placeholder .placeholder-icon {
     font-size: 3rem;
     margin-bottom: 10px;
-    opacity: 0.5;
+    opacity: 0.6; /* 🔧 ALTERADO: Ícone um pouco mais visível */
+    /* ✨ NOVO: Adiciona um brilho sutil no ícone */
+    text-shadow: 0 0 8px rgba(255, 77, 77, 0.5); 
 }
 
 #chat-placeholder h4 {
     margin: 0 0 15px 0;
     font-family: 'Creepster', cursive;
-    font-size: 1.8rem;
+    font-size: 2rem; /* 🔧 ALTERADO: Fonte um pouco maior */
     font-weight: normal;
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.9); /* 🔧 ALTERADO: Cor bem mais forte e visível */
+    /* ✨ NOVO: Efeito de brilho vermelho, combinando com o tema */
+    text-shadow: 0 0 12px var(--cor-principal);
 }
 
 #chat-placeholder p {
-    margin: 5px 0;
-    font-size: 0.9rem;
+    margin: 8px 0;
+    font-size: 0.95rem; /* 🔧 ALTERADO: Fonte um pouco maior para ler melhor */
+    color: rgba(255, 255, 255, 0.8); /* ✨ NOVO: Cor dedicada para os parágrafos, bem mais clara */
+     /* ✨ NOVO: Sombra escura sutil para destacar o texto do fundo */
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
 #chat-placeholder code {
-    background-color: rgba(0,0,0,0.4);
-    padding: 2px 5px;
-    border-radius: 3px;
+    background-color: rgba(0,0,0,0.6); /* 🔧 ALTERADO: Fundo um pouco mais escuro */
+    padding: 3px 6px;
+    border-radius: 4px;
     font-family: monospace;
-    color: rgba(255, 255, 255, 0.5);
+    color: #ffc107; /* ✨ NOVO: Cor amarelada para destacar os comandos */
+    font-weight: bold; /* ✨ NOVO: Deixa o comando em negrito */
 }
 
 /* --- FIM: ESTILOS DO PLACEHOLDER DO CHAT --- */
@@ -1180,20 +1241,6 @@ footer {
     to {
         transform: rotate(360deg);
     }
-    /* --- ESTILO PARA O BOTÃO DE INSCRIÇÃO DESATIVADO --- */
-.btn.disabled {
-    background-color: var(--cor-cinza-botao);
-    color: #888;
-    cursor: not-allowed;
-    box-shadow: none;
-}
-
-/* Remove o efeito hover do botão quando desativado */
-.btn.disabled:hover {
-    background-color: var(--cor-cinza-botao);
-    transform: none;
-    box-shadow: none;
-}
 }
     </style>
 </head>
@@ -1277,7 +1324,7 @@ footer {
             <section class="section-container">
     <h2 class="section-title">Chat da Entidade</h2>
     <div id="chat-messages">
-         <div id="chat-placeholder">
+         <div id="chat-overlay"></div> <div id="chat-placeholder">
         <div class="placeholder-icon">💬</div>
         <h4>Bem-vindo ao Chat da Entidade</h4>
         <p>Use <code>/nome SEUNOME</code> para mudar o nome de usuário. Ex: /nome Chris.</p>
@@ -1496,6 +1543,7 @@ function activateChat(name) {
     const chatPlaceholder = document.getElementById('chat-placeholder');
     if (chatPlaceholder) {
         chatPlaceholder.classList.add('hidden');
+        chatMessages.classList.remove('placeholder-active');
     }
 
     messageGroup.classList.remove('hidden');
@@ -1513,12 +1561,12 @@ function activateChat(name) {
 // Lógica de Entrada no Chat
 const savedName = localStorage.getItem('dbdChatName');
 if (savedName) {
-    // Se já tem nome, entra direto e JÁ DEIXA o placeholder escondido
-    if (chatPlaceholder) chatPlaceholder.classList.add('hidden');
+    // Se já tem nome, o placeholder será escondido pela função activateChat.
     activateChat(savedName);
 } else {
-    // Se é novo, o placeholder começa visível (removendo a classe 'hidden')
+    // Se é novo, o placeholder fica visível E o fundo fica escuro.
     if (chatPlaceholder) chatPlaceholder.classList.remove('hidden');
+    chatMessages.classList.add('placeholder-active'); // ✨ ADICIONE ESTA LINHA
 }
 
 enterChatBtn.addEventListener('click', () => {
@@ -2118,6 +2166,49 @@ registrationPopup.addEventListener('click', (event) => {
 });
 
 // --- FIM: LÓGICA PARA ATIVAR/DESATIVAR INSCRIÇÕES ---
+</script>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Pegamos as referências aos elementos importantes
+    const chatMessages = document.getElementById('chat-messages');
+    const chatPlaceholder = document.getElementById('chat-placeholder');
+
+    // Garante que o código não quebre se os elementos não existirem
+    if (!chatMessages || !chatPlaceholder) {
+        console.error("Elementos do chat não encontrados. A lógica do fundo escuro não vai funcionar.");
+        return;
+    }
+
+    // 2. Função que verifica se o fundo deve estar escuro ou claro
+    function atualizarFundoChat() {
+        // A lógica é simples: o placeholder está escondido?
+        if (chatPlaceholder.classList.contains('hidden')) {
+            // Se SIM, o fundo fica claro.
+            chatMessages.classList.remove('placeholder-active');
+        } else {
+            // Se NÃO, o fundo fica escuro.
+            chatMessages.classList.add('placeholder-active');
+        }
+    }
+
+    // 3. Verificação inicial assim que a página carrega
+    // Isso garante que o fundo comece no estado correto.
+    atualizarFundoChat();
+
+    // 4. O Observador de Mutações: A Mágica Acontece Aqui!
+    // Este código fica "escutando" qualquer mudança no placeholder.
+    const observer = new MutationObserver(function(mutations) {
+        // Toda vez que algo mudar no placeholder...
+        // ...nós simplesmente rodamos nossa função de novo.
+        atualizarFundoChat();
+    });
+
+    // 5. Inicia o observador para ficar de olho no elemento
+    // Ele vai prestar atenção especificamente em mudanças nos "atributos" (como a classe)
+    observer.observe(chatPlaceholder, {
+        attributes: true
+    });
+});
 </script>
 </body>
 </html>
