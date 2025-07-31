@@ -9,6 +9,112 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        /* ✨ INÍCIO: ESTILOS DO BANNER DE CAMPEONATO ✨ */
+#campeonato-banner {
+    position: sticky; /* Fica fixo no topo ao rolar a página */
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 2px solid var(--cor-principal);
+    padding: 15px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 9999; /* Garante que fique acima de todos os outros elementos */
+    box-sizing: border-box;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Animação de entrada */
+@keyframes slideInDown {
+    from {
+        transform: translateY(-100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+#campeonato-banner {
+    animation: slideInDown 0.6s ease-out;
+}
+
+
+/* Classe para esconder o banner suavemente */
+#campeonato-banner.hidden {
+    transform: translateY(-150%);
+    opacity: 0;
+    pointer-events: none; /* Impede cliques no banner escondido */
+}
+
+.banner-conteudo {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.banner-icone {
+    font-size: 2.5rem;
+    line-height: 1;
+}
+
+.banner-texto h3 {
+    font-family: 'Creepster', cursive;
+    color: var(--cor-principal);
+    font-size: 1.8rem;
+    margin: 0 0 5px 0;
+    letter-spacing: 1px;
+}
+
+.banner-texto p {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--cor-texto);
+}
+
+.banner-texto p strong {
+    color: #fff; /* Destaca a data/hora */
+}
+
+#close-banner-btn {
+    background: none;
+    border: none;
+    font-size: 2.5rem;
+    color: #888;
+    cursor: pointer;
+    transition: color 0.3s, transform 0.3s;
+    padding: 0 15px;
+}
+
+#close-banner-btn:hover {
+    color: var(--cor-principal);
+    transform: scale(1.1);
+}
+
+/* Ajuste para telas pequenas */
+@media (max-width: 768px) {
+    #campeonato-banner {
+        padding: 15px;
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+    .banner-conteudo {
+        flex-direction: column;
+        gap: 10px;
+    }
+    #close-banner-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        font-size: 2rem;
+    }
+}
+/* ✨ FIM: ESTILOS DO BANNER ✨ */
         :root {
             --cor-principal: #ff4d4d;
             --cor-fundo-container: rgba(15, 15, 15, 0.9);
@@ -1309,6 +1415,16 @@ footer {
     </style>
 </head>
 <body>
+    <div id="campeonato-banner" class="hidden">
+        <div class="banner-conteudo">
+            <div class="banner-icone">🏆</div>
+            <div class="banner-texto">
+                <h3>A Próxima Caçada Foi Anunciada!</h3>
+                <p>A névoa se agita! O próximo torneio será em <strong><span id="banner-data"></span> <span id="banner-horario"></span></strong>. Prepare sua alma!</p>
+            </div>
+        </div>
+        <button id="close-banner-btn" title="Fechar Aviso">×</button>
+    </div>
     <header>
         <div class="logo"><h1>Torneio da Entidade</h1></div>
         <div id="visitor-counter">
@@ -1525,6 +1641,46 @@ window.onYouTubeIframeAPIReady = function() {
     // Se isLiveNow for false, nada acontece, e a imagem offline continua visível por padrão.
 };
     document.addEventListener('DOMContentLoaded', function() {
+// --- INÍCIO: LÓGICA FINAL DO BANNER (BASEADA NA LÓGICA DO PLACAR) ---
+
+// Seleciona os elementos do banner na página
+const campeonatoBanner = document.getElementById('campeonato-banner');
+const bannerData = document.getElementById('banner-data');
+const bannerHorario = document.getElementById('banner-horario');
+const closeBannerBtn = document.getElementById('close-banner-btn');
+
+// Garante que o código só execute se os elementos existirem
+if (campeonatoBanner) {
+    
+    // O PLACAR LÊ DE 'teams'. O BANNER LERÁ DE 'banner'.
+    // Esta é a referência correta, no nível principal do seu banco de dados.
+    const bannerRef = database.ref('banner');
+
+    // Fica "escutando" por qualquer alteração no objeto 'banner'
+    bannerRef.on('value', (snapshot) => {
+        const bannerInfo = snapshot.val();
+
+        // CONDIÇÃO: O objeto 'banner' existe? O campo 'ativo' é true? O campo 'data' existe?
+        if (bannerInfo && bannerInfo.ativo === true && bannerInfo.data) {
+            
+            // Se sim, preenchemos os dados e removemos a classe 'hidden' para MOSTRAR o banner.
+            bannerData.textContent = bannerInfo.data;
+            bannerHorario.textContent = bannerInfo.horario || ''; // Horário é opcional
+            campeonatoBanner.classList.remove('hidden');
+
+        } else {
+            
+            // Caso contrário, adicionamos a classe 'hidden' para garantir que ele fique ESCONDIDO.
+            campeonatoBanner.classList.add('hidden');
+        }
+    });
+
+    // Adiciona a funcionalidade para o botão de fechar.
+    closeBannerBtn.addEventListener('click', () => {
+        campeonatoBanner.classList.add('hidden');
+    });
+}
+// --- FIM: LÓGICA FINAL DO BANNER ---
         const fullscreenBtn = document.getElementById('custom-fullscreen-btn');
 const videoContainer = document.querySelector('.video-container');
        // ✨ NOVO: Lógica para trocar a transmissão
@@ -1547,8 +1703,8 @@ const videoContainer = document.querySelector('.video-container');
                 });
                 e.target.classList.add('active');
             }
-        }
-    });
+            }
+        });
         
         // --- INÍCIO: LÓGICA DO CHAT AO VIVO (COMANDOS, DMs E MENÇÕES CORRIGIDAS) ---
 const MAX_MESSAGE_LENGTH = 400;
