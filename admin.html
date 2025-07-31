@@ -4,148 +4,351 @@
     <link rel="icon" type="image/png" href="https://i.imgur.com/EIcTCVt.png">
     <meta charset="UTF-8">
     <title>Admin - Painel de Controle do Torneio</title>
-    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-    font-family: 'Roboto', sans-serif;
-    color: #f0f0f0;
-    padding: 20px;
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     
-    /* INÍCIO DA ALTERAÇÃO */
-    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://i.imgur.com/DdHzTvV.jpeg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    /* FIM DA ALTERAÇÃO */
-}
-        .container { max-width: 1200px; margin: 0 auto; }
-        h1 { font-family: 'Creepster', cursive; color: #ff4d4d; text-align: center; font-size: 3rem; }
+    <style>
+        /* =================================================================== */
+        /* ✨ NOVO DESIGN: FRAGMENTO DA ENTIDADE ✨ */
+        /* =================================================================== */
+        :root {
+            --cor-vermelho-sangue: #ff0d0d;
+            --cor-vermelho-brilho: rgba(255, 13, 13, 0.7);
+            --cor-fundo-profundo: #0a0a0c;
+            --cor-painel-vidro: rgba(12, 12, 16, 0.7);
+            --cor-borda-energia: rgba(255, 13, 13, 0.25);
+            --cor-borda-hover: rgba(255, 13, 13, 0.8);
+            --cor-texto-fantasma: #c9c9d1;
+            --cor-texto-titulo: #ffffff;
+            --cor-sucesso: #00ffae;
+            --cor-sucesso-brilho: rgba(0, 255, 174, 0.5);
+        }
+
+        /* --- ESTRUTURA E FUNDO --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif; /* Fonte mais elegante para o corpo */
+            color: var(--cor-texto-fantasma);
+            background-color: var(--cor-fundo-profundo);
+            background-image: url('https://i.imgur.com/DdHzTvV.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            padding: 40px 20px;
+        }
+
+        /* Camada de vinheta para focar o conteúdo */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, rgba(10, 10, 12, 0) 50%, var(--cor-fundo-profundo) 100%);
+            pointer-events: none;
+        }
+
+        /* --- TÍTULOS E LAYOUT --- */
+        .container {
+            max-width: 750px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-family: 'Creepster', cursive;
+            color: var(--cor-texto-titulo);
+            text-align: center;
+            font-size: 4.5rem;
+            letter-spacing: 4px;
+            text-shadow: 0 0 10px var(--cor-vermelho-brilho), 0 0 20px var(--cor-vermelho-brilho), 0 0 40px black;
+            margin-bottom: 50px;
+            animation: brilhoTitulo 5s ease-in-out infinite;
+        }
+
+        @keyframes brilhoTitulo {
+            0%, 100% { text-shadow: 0 0 10px var(--cor-vermelho-brilho), 0 0 20px var(--cor-vermelho-brilho), 0 0 40px black; }
+            50% { text-shadow: 0 0 15px var(--cor-vermelho-brilho), 0 0 30px var(--cor-vermelho-brilho), 0 0 40px black; }
+        }
+
+        h2, h3 {
+            font-family: 'Creepster', cursive;
+            color: var(--cor-texto-titulo);
+            letter-spacing: 2px;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--cor-borda-energia);
+        }
+        
+        h3 {
+            font-size: 1.8rem;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+
+        /* --- PAINÉIS DE VIDRO --- */
         .admin-panel {
-    display: grid;
-    /* Força o layout de uma coluna única */
-    grid-template-columns: 1fr; 
-    /* Define uma largura máxima para a coluna não ficar excessivamente larga em telas grandes */
-    max-width: 700px; 
-    /* Centraliza a coluna no container */
-    margin: 0 auto; 
-    gap: 40px;
-}
-        .panel-section { background-color: #2c2c2c; padding: 20px; border-radius: 10px; }
-        h2 { font-family: 'Creepster', cursive; color: #ff4d4d; border-bottom: 1px solid #4a0e0e; padding-bottom: 10px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; }
-        input { width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #555; background-color: #1a1a1a; color: #f0f0f0; font-size: 1rem; box-sizing: border-box; }
-        button { padding: 10px 15px; border-radius: 5px; border: none; background-color: #8B0000; color: white; cursor: pointer; transition: background-color 0.3s; }
-        button:hover:not(:disabled) { background-color: #ff4d4d; }
-        button:disabled { background-color: #555; cursor: not-allowed; }
-        .btn-delete { background-color: #444; }
-        #status { text-align: center; margin-top: 20px; font-weight: bold; min-height: 20px; }
-        .entry-list { list-style: none; padding: 0; }
-        .entry-list li { background-color: #3a3a3a; padding: 10px; border-radius: 5px; margin-bottom: 10px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; }
-        .entry-list .info { flex-grow: 1; }
-        .entry-list input { width: 80px; margin: 0 10px; }
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+        }
+
+        .panel-section {
+            background: var(--cor-painel-vidro);
+            border: 1px solid var(--cor-borda-energia);
+            border-radius: 12px;
+            padding: 30px 35px;
+            backdrop-filter: blur(12px) saturate(150%);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            transition: border-color 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        /* --- FORMULÁRIOS E INTERAÇÕES --- */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        input[type="text"], input[type="number"], input[type="password"] {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: var(--cor-texto-fantasma);
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease-in-out;
+        }
+
+        input:disabled {
+            cursor: not-allowed;
+            opacity: 0.4;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--cor-vermelho-brilho);
+            background: rgba(0, 0, 0, 0.2);
+            box-shadow: 0 0 15px var(--cor-borda-energia);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px 20px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--cor-texto-titulo);
+            background: transparent;
+            border: 2px solid var(--cor-vermelho-brilho);
+            border-radius: 8px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: color 0.4s ease-in-out;
+            text-shadow: 0 0 5px black;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--cor-vermelho-brilho), transparent);
+            transition: left 0.4s ease-in-out;
+        }
+        
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:hover {
+            box-shadow: 0 0 20px var(--cor-borda-energia);
+            color: white;
+        }
+
+        button:disabled {
+            border-color: #444;
+            color: #777;
+            cursor: not-allowed;
+        }
+        button:disabled:hover {
+            box-shadow: none;
+        }
+        button:disabled::before {
+            background: none;
+        }
+
+        .btn-delete {
+            border-color: #666;
+        }
+        .btn-delete:hover {
+            background-color: var(--cor-vermelho-brilho);
+            border-color: var(--cor-vermelho-brilho);
+        }
+
+        /* --- LISTA DE EQUIPES --- */
+        .entry-list { list-style: none; }
+        .entry-list li {
+            background: rgba(0, 0, 0, 0.25);
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            border-left: 4px solid var(--cor-borda-energia);
+            transition: all 0.3s ease;
+        }
+        .entry-list li:hover {
+            border-left-color: var(--cor-vermelho-sangue);
+            transform: translateX(5px);
+            background: rgba(255, 13, 13, 0.05);
+        }
+        .entry-list .info { flex-grow: 1; font-size: 1.1rem; font-weight: 600; }
+        .entry-list input { width: 90px; text-align: center; }
         .entry-list .actions { display: flex; gap: 10px; }
-        @media (max-width: 900px) { .admin-panel { grid-template-columns: 1fr; } }
-        /* --- ESTILOS PARA O INTERRUPTOR (TOGGLE SWITCH) --- */
-.switch-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.switch-checkbox {
-    height: 0;
-    width: 0;
-    visibility: hidden;
-}
-.switch-label {
-    cursor: pointer;
-    text-indent: -9999px;
-    width: 50px;
-    height: 28px;
-    background: #555; /* Cor quando desligado */
-    display: block;
-    border-radius: 100px;
-    position: relative;
-}
-.switch-label:after {
-    content: '';
-    position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 22px;
-    height: 22px;
-    background: #fff;
-    border-radius: 90px;
-    transition: 0.3s;
-}
-.switch-checkbox:checked + .switch-label {
-    background: #4CAF50; /* Cor quando ligado */
-}
-.switch-checkbox:checked + .switch-label:after {
-    left: calc(100% - 3px);
-    transform: translateX(-100%);
-}
-.switch-label:active:after {
-    width: 30px;
-}
-        /* Estilos para a seção de admin e o toggle switch */
-.admin-section { background-color: #333; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
-.admin-section h2 { margin-top: 0; color: #ff4d4d; }
-.admin-section .form-group { margin-bottom: 15px; display: flex; flex-direction: column; }
-.admin-section label { margin-bottom: 5px; font-weight: bold; }
-.admin-section input[type="text"] { padding: 10px; border-radius: 5px; border: 1px solid #555; background: #222; color: #fff; }
-.admin-section .save-btn { background-color: #ff4d4d; color: white; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
-/* Estilos do Toggle Switch */
-.switch { position: relative; display: inline-block; width: 60px; height: 34px; align-self: flex-start; }
-.switch input { opacity: 0; width: 0; height: 0; }
-.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; }
-.slider.round { border-radius: 34px; }
-.slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-input:checked + .slider { background-color: #4CAF50; }
-input:checked + .slider:before { transform: translateX(26px); }
+        .entry-list .actions button { width: auto; padding: 8px 12px; font-size: 0.8rem; letter-spacing: 1px; border-width: 1px; }
+
+        /* --- STATUS E SEPARADORES --- */
+        #status {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: 600;
+            min-height: 24px;
+            font-size: 1rem;
+            transition: color 0.5s ease;
+        }
+        hr {
+            border: none;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--cor-borda-energia), transparent);
+            margin: 40px 0;
+        }
+
+        /* --- INTERRUPTOR (TOGGLE SWITCH) REIMAGINADO --- */
+        .switch-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        .switch-container label {
+            margin-bottom: 0;
+            color: var(--cor-texto-fantasma);
+        }
+        .switch-checkbox {
+            height: 0;
+            width: 0;
+            visibility: hidden;
+        }
+        .switch-label {
+            cursor: pointer;
+            text-indent: -9999px;
+            width: 52px;
+            height: 28px;
+            background: #222;
+            display: block;
+            border-radius: 14px;
+            position: relative;
+            border: 1px solid #444;
+            transition: background-color 0.4s ease;
+        }
+        .switch-label:after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 22px;
+            height: 22px;
+            background: var(--cor-fundo-profundo);
+            border-radius: 50%;
+            transition: all 0.4s cubic-bezier(.5, .1, .75, 1.35); /* Efeito "elástico" */
+            box-shadow: 0 0 5px black;
+        }
+        .switch-checkbox:checked + .switch-label {
+            background: var(--cor-sucesso-brilho);
+            border-color: var(--cor-sucesso);
+        }
+        .switch-checkbox:checked + .switch-label:after {
+            background: var(--cor-sucesso);
+            transform: translateX(24px);
+        }
+        .switch-checkbox:disabled + .switch-label {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Painel de Controle - Torneio da Entidade</h1>
+        <h1>Painel de Controle</h1>
         
         <div class="panel-section">
             <div class="form-group">
-                <label for="password">Senha de Administrador</label>
-                <input type="password" id="password" placeholder="Digite a senha para habilitar os controles">
+                <label for="password">Chave de Acesso</label>
+                <input type="password" id="password" placeholder="Insira a chave para despertar os controles...">
             </div>
             <p id="status"></p>
         </div>
 
         <div class="admin-panel">
             <div class="panel-section">
-                <h2>Configurações Gerais</h2>
+                <h2>Configurações</h2>
                 
                 <form id="banner-control-form">
-                    <h3>Banner do Próximo Campeonato</h3>
+                    <h3>Data do Próximo Torneio</h3>
                     <div class="form-group switch-container">
-                        <label for="banner-active-toggle">Ativar Banner na Página Principal</label>
+                        <label for="banner-active-toggle">Ativar Banner</label>
                         <div>
                             <input type="checkbox" id="banner-active-toggle" class="switch-checkbox" disabled>
                             <label for="banner-active-toggle" class="switch-label"></label>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="banner-date-input">Texto da Data (Ex: 31 DE OUTUBRO)</label>
-                        <input type="text" id="banner-date-input" placeholder="Digite o texto da data..." disabled>
+                        <label for="banner-date-input">Data</label>
+                        <input type="text" id="banner-date-input" placeholder="Ex: O Presságio se Cumpre em 31 de Outubro" disabled>
                     </div>
                     <div class="form-group">
-                        <label for="banner-time-input">Texto do Horário (Ex: às 20:00)</label>
-                        <input type="text" id="banner-time-input" placeholder="Digite o texto do horário..." disabled>
+                        <label for="banner-time-input">Horário</label>
+                        <input type="text" id="banner-time-input" placeholder="Ex: Ao soar da nona badalada" disabled>
                     </div>
-                    <button type="submit" class="save-btn" id="save-banner-btn" disabled>Salvar Configurações do Banner</button>
+                    <button type="submit" id="save-banner-btn" disabled>Conectar aos Servidores</button>
                 </form>
 
-                <hr style="border-color: #4a0e0e; margin: 30px 0;">
+                <hr>
 
-                <h3>Inscrições</h3>
+                <h3>Portais de Inscrição</h3>
                 <div class="form-group switch-container">
-                    <label for="registration-toggle">Status das Inscrições (Abertas / Fechadas)</label>
+                    <label for="registration-toggle">Status dos Portais (Selados / Abertos)</label>
                     <div>
                         <input type="checkbox" id="registration-toggle" class="switch-checkbox" disabled>
                         <label for="registration-toggle" class="switch-label"></label>
@@ -156,18 +359,18 @@ input:checked + .slider:before { transform: translateX(26px); }
             <div class="panel-section">
                 <h2>Gerenciar Equipes</h2>
                 <div class="form-group">
-                    <label for="equipe-name">Nome da Nova Equipe</label>
+                    <label for="equipe-name">Nome da nova equipe</label>
                     <input type="text" id="equipe-name" disabled>
                 </div>
                 <div class="form-group">
-                    <label for="equipe-score">Pontuação Inicial</label>
+                    <label for="equipe-score">Recompensas Iniciais</label>
                     <input type="number" id="equipe-score" value="0" disabled>
                 </div>
-                <button id="add-equipe-btn" disabled>Adicionar Equipe</button>
+                <button id="add-equipe-btn" disabled>Conectar aos Servidores</button>
                 
-                <hr style="border-color: #4a0e0e; margin: 20px 0;">
+                <hr>
                 
-                <h3>Equipes Atuais</h3>
+                <h3>Almas atuais</h3>
                 <ul id="equipes-list" class="entry-list"></ul>
             </div>
         </div>
@@ -176,155 +379,158 @@ input:checked + .slider:before { transform: translateX(26px); }
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <script>
+    // SEU CÓDIGO JAVASCRIPT PERMANECE EXATAMENTE O MESMO AQUI
+    // COLE-O ABAIXO DESTA LINHA
+    
     // --- COLE AQUI A MESMA CONFIGURAÇÃO DO FIREBASE ---
-const firebaseConfig = {
-    apiKey: "AIzaSyA_eqbuIT9Pe3z1NlTG6EQIForIM3uNv_c",
-    authDomain: "placar-dbd-torneio.firebaseapp.com",
-    databaseURL: "https://placar-dbd-torneio-default-rtdb.firebaseio.com",
-    projectId: "placar-dbd-torneio",
-    storageBucket: "placar-dbd-torneio.appspot.com",
-    messagingSenderId: "704704412861",
-    appId: "1:704704412861:web:0a9214ac40b9518fa64bd4",
-    measurementId: "G-SJL640013X"
-};
-// --- FIM DA CONFIGURAÇÃO ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyA_eqbuIT9Pe3z1NlTG6EQIForIM3uNv_c",
+        authDomain: "placar-dbd-torneio.firebaseapp.com",
+        databaseURL: "https://placar-dbd-torneio-default-rtdb.firebaseio.com",
+        projectId: "placar-dbd-torneio",
+        storageBucket: "placar-dbd-torneio.appspot.com",
+        messagingSenderId: "704704412861",
+        appId: "1:704704412861:web:0a9214ac40b9518fa64bd4",
+        measurementId: "G-SJL640013X"
+    };
+    // --- FIM DA CONFIGURAÇÃO ---
 
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
 
-document.addEventListener('DOMContentLoaded', function() {
-    const ADMIN_PASSWORD = "@Mateus2024";
+    document.addEventListener('DOMContentLoaded', function() {
+        const ADMIN_PASSWORD = "@Mateus2024";
 
-    // --- Referências do DOM ---
-    const passwordInput = document.getElementById('password');
-    const statusElement = document.getElementById('status');
-    
-    // --- Referências do Firebase ---
-    const teamsRef = database.ref('teams');
-    const configRef = database.ref('config');
-    const bannerRef = database.ref('banner'); // ALTERADO: Nova referência direta para o banner
-
-    // --- Função Central de Controle ---
-    function toggleControls(enable) {
-        const allButtons = document.querySelectorAll('button');
-        const allInputs = document.querySelectorAll('input:not(#password)');
-        allButtons.forEach(btn => btn.disabled = !enable);
-        allInputs.forEach(input => input.disabled = !enable);
-    }
-
-    // --- Lógica de Autenticação ---
-    passwordInput.addEventListener('input', () => {
-        const isPasswordCorrect = passwordInput.value === ADMIN_PASSWORD;
-        toggleControls(isPasswordCorrect);
-        if (isPasswordCorrect) {
-            statusElement.textContent = "Acesso liberado. Controles habilitados.";
-            statusElement.style.color = "#4CAF50";
-        } else {
-            statusElement.textContent = "Aguardando senha...";
-            statusElement.style.color = "#f0f0f0";
-        }
-    });
-
-    // --- Lógica das Configurações Gerais (BANNER E INSCRIÇÕES) ---
-    const bannerForm = document.getElementById('banner-control-form');
-    const activeToggle = document.getElementById('banner-active-toggle');
-    const dateInput = document.getElementById('banner-date-input');
-    const timeInput = document.getElementById('banner-time-input');
-    const registrationToggle = document.getElementById('registration-toggle');
-
-    // ALTERADO: Lê as informações do banner do local correto ('banner')
-    bannerRef.on('value', (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-            activeToggle.checked = data.ativo || false;
-            dateInput.value = data.data || '';
-            timeInput.value = data.horario || '';
-        }
-    });
-    
-    // ALTERADO: Lê as informações de inscrição (continua em 'config')
-    configRef.on('value', (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-            registrationToggle.checked = data.registrationsOpen || false;
-        }
-    });
-
-    // ALTERADO: Salva os dados do banner no local e com os nomes corretos
-    bannerForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const bannerData = {
-            ativo: activeToggle.checked,
-            data: dateInput.value,
-            horario: timeInput.value
-        };
-        bannerRef.update(bannerData)
-            .then(() => alert('Configurações do banner salvas com sucesso!'))
-            .catch(err => alert('Erro ao salvar banner: ' + err.message));
-    });
-    
-    registrationToggle.addEventListener('change', () => {
-        configRef.child('registrationsOpen').set(registrationToggle.checked)
-            .then(() => {
-                statusElement.textContent = `Inscrições agora estão ${registrationToggle.checked ? 'ABERTAS' : 'FECHADAS'}.`;
-                statusElement.style.color = "#4CAF50";
-            })
-            .catch(err => alert('Erro ao salvar inscrições: ' + err.message));
-    });
-
-    // --- Lógica de Gerenciamento de EQUIPES (sem alterações) ---
-    const addEquipeBtn = document.getElementById('add-equipe-btn');
-    const equipeNameInput = document.getElementById('equipe-name');
-    const equipeScoreInput = document.getElementById('equipe-score');
-    const equipesList = document.getElementById('equipes-list');
-
-    addEquipeBtn.addEventListener('click', () => {
-        const name = equipeNameInput.value.trim();
-        const score = parseInt(equipeScoreInput.value, 10);
-        if (name) {
-            teamsRef.push({ name, score });
-            equipeNameInput.value = '';
-            equipeScoreInput.value = '0';
-        }
-    });
-
-    teamsRef.on('value', (snapshot) => {
-        equipesList.innerHTML = '';
-        const data = snapshot.val();
-        if (data) {
-            Object.keys(data).forEach((key) => {
-                const entry = data[key];
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <span class="info">${entry.name}</span>
-                    <div class="actions">
-                        <input type="number" value="${entry.score}" id="score-${key}">
-                        <button id="update-${key}">Atualizar</button>
-                        <button id="delete-${key}" class="btn-delete">Remover</button>
-                    </div>`;
-                equipesList.appendChild(li);
-                
-                document.getElementById(`update-${key}`).addEventListener('click', () => {
-                    const newScore = document.getElementById(`score-${key}`).value;
-                    teamsRef.child(key).update({ score: parseInt(newScore, 10) });
-                });
-
-                document.getElementById(`delete-${key}`).addEventListener('click', () => {
-                    if (confirm(`Tem certeza que deseja remover "${entry.name}"?`)) {
-                        teamsRef.child(key).remove();
-                    }
-                });
-            });
-        }
+        // --- Referências do DOM ---
+        const passwordInput = document.getElementById('password');
+        const statusElement = document.getElementById('status');
         
-        // Aplica o estado de bloqueio/desbloqueio sempre que a lista for atualizada
-        const isPasswordCorrect = passwordInput.value === ADMIN_PASSWORD;
-        toggleControls(isPasswordCorrect);
-    });
+        // --- Referências do Firebase ---
+        const teamsRef = database.ref('teams');
+        const configRef = database.ref('config');
+        const bannerRef = database.ref('banner'); // ALTERADO: Nova referência direta para o banner
 
-    // Força o estado inicial para tudo começar bloqueado
-    toggleControls(false); 
-});
+        // --- Função Central de Controle ---
+        function toggleControls(enable) {
+            const allButtons = document.querySelectorAll('button');
+            const allInputs = document.querySelectorAll('input:not(#password)');
+            allButtons.forEach(btn => btn.disabled = !enable);
+            allInputs.forEach(input => input.disabled = !enable);
+        }
+
+        // --- Lógica de Autenticação ---
+        passwordInput.addEventListener('input', () => {
+            const isPasswordCorrect = passwordInput.value === ADMIN_PASSWORD;
+            toggleControls(isPasswordCorrect);
+            if (isPasswordCorrect) {
+                statusElement.textContent = "Acesso Concedido. Protocolos Ativados.";
+                statusElement.style.color = "var(--cor-sucesso)";
+            } else {
+                statusElement.textContent = "";
+                statusElement.style.color = "var(--cor-texto-fantasma)";
+            }
+        });
+
+        // --- Lógica das Configurações Gerais (BANNER E INSCRIÇÕES) ---
+        const bannerForm = document.getElementById('banner-control-form');
+        const activeToggle = document.getElementById('banner-active-toggle');
+        const dateInput = document.getElementById('banner-date-input');
+        const timeInput = document.getElementById('banner-time-input');
+        const registrationToggle = document.getElementById('registration-toggle');
+
+        // ALTERADO: Lê as informações do banner do local correto ('banner')
+        bannerRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                activeToggle.checked = data.ativo || false;
+                dateInput.value = data.data || '';
+                timeInput.value = data.horario || '';
+            }
+        });
+        
+        // ALTERADO: Lê as informações de inscrição (continua em 'config')
+        configRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                registrationToggle.checked = data.registrationsOpen || false;
+            }
+        });
+
+        // ALTERADO: Salva os dados do banner no local e com os nomes corretos
+        bannerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const bannerData = {
+                ativo: activeToggle.checked,
+                data: dateInput.value,
+                horario: timeInput.value
+            };
+            bannerRef.update(bannerData)
+                .then(() => alert('Edito gravado nas runas com sucesso!'))
+                .catch(err => alert('Falha na gravação do edito: ' + err.message));
+        });
+        
+        registrationToggle.addEventListener('change', () => {
+            configRef.child('registrationsOpen').set(registrationToggle.checked)
+                .then(() => {
+                    statusElement.textContent = `Portais de Inscrição agora estão ${registrationToggle.checked ? 'ABERTOS' : 'SELADOS'}.`;
+                    statusElement.style.color = "var(--cor-sucesso)";
+                })
+                .catch(err => alert('Falha ao alterar status dos portais: ' + err.message));
+        });
+
+        // --- Lógica de Gerenciamento de EQUIPES (sem alterações) ---
+        const addEquipeBtn = document.getElementById('add-equipe-btn');
+        const equipeNameInput = document.getElementById('equipe-name');
+        const equipeScoreInput = document.getElementById('equipe-score');
+        const equipesList = document.getElementById('equipes-list');
+
+        addEquipeBtn.addEventListener('click', () => {
+            const name = equipeNameInput.value.trim();
+            const score = parseInt(equipeScoreInput.value, 10);
+            if (name) {
+                teamsRef.push({ name, score });
+                equipeNameInput.value = '';
+                equipeScoreInput.value = '0';
+            }
+        });
+
+        teamsRef.on('value', (snapshot) => {
+            equipesList.innerHTML = '';
+            const data = snapshot.val();
+            if (data) {
+                Object.keys(data).forEach((key) => {
+                    const entry = data[key];
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <span class="info">${entry.name}</span>
+                        <div class="actions">
+                            <input type="number" value="${entry.score}" id="score-${key}">
+                            <button id="update-${key}">Atualizar</button>
+                            <button id="delete-${key}" class="btn-delete">Banir</button>
+                        </div>`;
+                    equipesList.appendChild(li);
+                    
+                    document.getElementById(`update-${key}`).addEventListener('click', () => {
+                        const newScore = document.getElementById(`score-${key}`).value;
+                        teamsRef.child(key).update({ score: parseInt(newScore, 10) });
+                    });
+
+                    document.getElementById(`delete-${key}`).addEventListener('click', () => {
+                        if (confirm(`Tem certeza que deseja banir a legião "${entry.name}" para o vazio?`)) {
+                            teamsRef.child(key).remove();
+                        }
+                    });
+                });
+            }
+            
+            // Aplica o estado de bloqueio/desbloqueio sempre que a lista for atualizada
+            const isPasswordCorrect = passwordInput.value === ADMIN_PASSWORD;
+            toggleControls(isPasswordCorrect);
+        });
+
+        // Força o estado inicial para tudo começar bloqueado
+        toggleControls(false); 
+    });
     </script>
 </body>
 </html>
