@@ -322,26 +322,26 @@
             </div>
             <p id="status"></p>
         </div>
-    <div class="panel-section">
+    <div class="panel-section" data-permission="moderator"> 
     <h2>Participantes do Chat</h2>
     <p>Usuários atualmente online no chat. Clique para banir o dispositivo.</p>
     <ul id="participantes-list" class="entry-list">
         </ul>
 </div>
-    <div class="panel-section">
+    <div class="panel-section" data-permission="moderator">
     <h2>Dispositivos Banidos</h2>
     <p>Dispositivos que foram banidos do chat. Clique para reverter o banimento.</p>
     <ul id="banidos-list" class="entry-list">
         </ul>
 </div>
-    <div class="panel-section">
+    <div class="panel-section" data-permission="moderator">
     <h2>Moderadores Atuais</h2>
     <p>Lista de usuários com permissões de moderador no chat.</p>
     <ul id="moderadores-list" class="entry-list">
         </ul>
 </div>
 
-        <div class="panel-section">
+        <div class="panel-section" data-permission="admin">
             <h2>Configurações</h2>
             
             <form id="banner-control-form">
@@ -385,7 +385,7 @@
             <button type="button" id="save-countdown-btn" disabled>Salvar Data da Contagem</button>
         </div>
 
-        <div class="panel-section">
+        <div class="panel-section" data-permission="admin">
             <h2>Gerenciar Equipes</h2>
             <div class="form-group">
                 <label for="equipe-name">Nome da nova equipe</label>
@@ -408,214 +408,184 @@
     <script>
     // --- CONFIGURAÇÃO DO FIREBASE ---
 const firebaseConfig = {
-    apiKey: "AIzaSyA_eqbuIT9Pe3z1NlTG6EQIForIM3uNv_c",
-    authDomain: "placar-dbd-torneio.firebaseapp.com",
-    databaseURL: "https://placar-dbd-torneio-default-rtdb.firebaseio.com",
-    projectId: "placar-dbd-torneio",
-    storageBucket: "placar-dbd-torneio.appspot.com",
-    messagingSenderId: "704704412861",
-    appId: "1:704704412861:web:0a9214ac40b9518fa64bd4",
-    measurementId: "G-SJL640013X"
-};
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
+        apiKey: "AIzaSyA_eqbuIT9Pe3z1NlTG6EQIForIM3uNv_c",
+        authDomain: "placar-dbd-torneio.firebaseapp.com",
+        databaseURL: "https://placar-dbd-torneio-default-rtdb.firebaseio.com",
+        projectId: "placar-dbd-torneio",
+        storageBucket: "placar-dbd-torneio.appspot.com",
+        messagingSenderId: "704704412861",
+        appId: "1:704704412861:web:0a9214ac40b9518fa64bd4",
+        measurementId: "G-SJL640013X"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
 
-document.addEventListener('DOMContentLoaded', function() {
-    const ADMIN_PASSWORD = "@Mateus2024";
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- SENHAS DE ACESSO ---
+        const ADMIN_PASSWORD = "@Mateus2024";
+        const MODERATOR_PASSWORD = "mod2025"; // Senha para moderadores
 
-    // --- Referências do DOM ---
-    const passwordInput = document.getElementById('password');
-    const statusElement = document.getElementById('status');
-    const equipesList = document.getElementById('equipes-list');
-    const participantesList = document.getElementById('participantes-list');
-    const banidosList = document.getElementById('banidos-list');
-    const moderadoresList = document.getElementById('moderadores-list');
-    
-    // --- Referências do Firebase ---
-    const teamsRef = database.ref('teams');
-    const configRef = database.ref('config');
-    const bannerRef = database.ref('banner');
-    const participantesRef = database.ref('participants');
-    const bannedDevicesRef = database.ref('dispositivosBanidos');
-    const moderatorsRef = database.ref('moderators');
+        // --- Referências do DOM ---
+        const passwordInput = document.getElementById('password');
+        const statusElement = document.getElementById('status');
+        const equipesList = document.getElementById('equipes-list');
+        const participantesList = document.getElementById('participantes-list');
+        const banidosList = document.getElementById('banidos-list');
+        const moderadoresList = document.getElementById('moderadores-list');
+        
+        // --- Referências do Firebase ---
+        const teamsRef = database.ref('teams');
+        const configRef = database.ref('config');
+        const bannerRef = database.ref('banner');
+        const participantesRef = database.ref('participants');
+        const bannedDevicesRef = database.ref('dispositivosBanidos');
+        const moderatorsRef = database.ref('moderators');
 
-    // --- Função Central de Controle ---
-    function toggleControls(enable) {
-        document.querySelectorAll('button, input:not(#password)').forEach(el => el.disabled = !enable);
-    }
-
-    // --- Lógica de Autenticação ---
-    passwordInput.addEventListener('input', () => {
-        const isPasswordCorrect = passwordInput.value === ADMIN_PASSWORD;
-        toggleControls(isPasswordCorrect);
-        statusElement.textContent = isPasswordCorrect ? "Acesso Concedido." : "";
-        statusElement.style.color = isPasswordCorrect ? "var(--cor-sucesso)" : "";
-    });
-    
-    // --- Lógica das Configurações Gerais ---
-    // (Seu código de banner, inscrições, etc., permanece aqui, funcionando)
-    const bannerForm = document.getElementById('banner-control-form');
-    const activeToggle = document.getElementById('banner-active-toggle');
-    const dateInput = document.getElementById('banner-date-input');
-    const timeInput = document.getElementById('banner-time-input');
-    const registrationToggle = document.getElementById('registration-toggle');
-    const countdownInput = document.getElementById('countdown-input');
-    const saveCountdownBtn = document.getElementById('save-countdown-btn');
-
-    bannerRef.on('value', (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-            activeToggle.checked = data.ativo || false;
-            dateInput.value = data.data || '';
-            timeInput.value = data.horario || '';
-        }
-    });
-    
-    configRef.on('value', (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-            registrationToggle.checked = data.registrationsOpen || false;
-            countdownInput.value = data.countdownTarget || '';
-        }
-    });
-
-    bannerForm.addEventListener('submit', (e) => { e.preventDefault(); bannerRef.update({ ativo: activeToggle.checked, data: dateInput.value, horario: timeInput.value }); });
-    registrationToggle.addEventListener('change', () => { configRef.child('registrationsOpen').set(registrationToggle.checked); });
-    saveCountdownBtn.addEventListener('click', () => { if (countdownInput.value) configRef.child('countdownTarget').set(countdownInput.value); });
-
-    // --- Lógica de Gerenciamento de EQUIPES ---
-    const addEquipeBtn = document.getElementById('add-equipe-btn');
-    const equipeNameInput = document.getElementById('equipe-name');
-    const equipeScoreInput = document.getElementById('equipe-score');
-
-    addEquipeBtn.addEventListener('click', () => {
-        const name = equipeNameInput.value.trim();
-        if (name) {
-            teamsRef.push({ name: name, score: parseInt(equipeScoreInput.value, 10) });
-            equipeNameInput.value = '';
-            equipeScoreInput.value = '0';
-        }
-    });
-
-    teamsRef.on('value', (snapshot) => {
-        equipesList.innerHTML = '';
-        const data = snapshot.val();
-        if (data) {
-            Object.keys(data).forEach(key => {
-                const entry = data[key];
-                const li = document.createElement('li');
-                li.innerHTML = `<span class="info">${entry.name}</span><div class="actions"><input type="number" value="${entry.score}" class="score-input" data-key="${key}"><button class="update-btn" data-key="${key}">Atualizar</button><button class="btn-delete delete-btn" data-key="${key}" data-name="${entry.name}">Banir</button></div>`;
-                equipesList.appendChild(li);
-            });
-        }
-        toggleControls(passwordInput.value === ADMIN_PASSWORD);
-    });
-
-    equipesList.addEventListener('click', (e) => {
-        if (e.target.disabled) return;
-        const key = e.target.dataset.key;
-        if (e.target.classList.contains('update-btn')) {
-            const scoreInput = equipesList.querySelector(`.score-input[data-key="${key}"]`);
-            teamsRef.child(key).update({ score: parseInt(scoreInput.value, 10) });
-        }
-        if (e.target.classList.contains('delete-btn')) {
-            if (confirm(`Banir a legião "${e.target.dataset.name}"?`)) {
-                teamsRef.child(key).remove();
+        // --- LÓGICA DE CONTROLE DE PERMISSÕES ---
+        function setControlPermissions(level) {
+            document.querySelectorAll('[data-permission] button, [data-permission] input').forEach(el => el.disabled = true);
+            if (level === 'moderator' || level === 'admin') {
+                document.querySelectorAll('[data-permission="moderator"] button, [data-permission="moderator"] input').forEach(el => el.disabled = false);
+            }
+            if (level === 'admin') {
+                document.querySelectorAll('[data-permission="admin"] button, [data-permission="admin"] input').forEach(el => el.disabled = false);
             }
         }
-    });
+        
+        // --- LÓGICA DE AUTENTICAÇÃO ---
+        passwordInput.addEventListener('input', () => {
+            const enteredPassword = passwordInput.value;
+            let accessLevel = 'none';
+            statusElement.textContent = "";
 
-    // --- Lógica de MODERAÇÃO DO CHAT ---
-    participantesRef.on('value', (snapshot) => {
-        participantesList.innerHTML = '<li>Carregando...</li>';
-        const data = snapshot.val();
-        participantesList.innerHTML = '';
-        if (data) {
-            Object.keys(data).forEach((username) => {
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <span class="info">${username}</span>
-                    <div class="actions">
-                        <button class="promote-btn" data-username="${username}">Promover a Mod</button>
-                        <button class="btn-delete ban-btn" data-username="${username}" data-deviceid="${data[username].deviceId}">Banir</button>
-                    </div>`;
-                participantesList.appendChild(li);
-            });
-        } else {
-            participantesList.innerHTML = '<li>Nenhum participante online.</li>';
-        }
-        toggleControls(passwordInput.value === ADMIN_PASSWORD);
-    });
-
-    bannedDevicesRef.on('value', (snapshot) => {
-        banidosList.innerHTML = '<li>Carregando...</li>';
-        const data = snapshot.val();
-        banidosList.innerHTML = '';
-        if (data) {
-            Object.keys(data).forEach((deviceId) => {
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <span class="info">${data[deviceId].originalUsername}</span>
-                    <div class="actions"><button class="unban-btn" data-deviceid-unban="${deviceId}">Desbanir</button></div>`;
-                banidosList.appendChild(li);
-            });
-        } else {
-            banidosList.innerHTML = '<li>Nenhum dispositivo banido.</li>';
-        }
-        toggleControls(passwordInput.value === ADMIN_PASSWORD);
-    });
-
-    moderatorsRef.on('value', (snapshot) => {
-        moderadoresList.innerHTML = '<li>Carregando...</li>';
-        const data = snapshot.val();
-        moderadoresList.innerHTML = '';
-        if (data) {
-            Object.keys(data).forEach((username) => {
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <span class="info">${username}</span>
-                    <div class="actions"><button class="demote-btn" data-username="${username}">Rebaixar</button></div>`;
-                moderadoresList.appendChild(li);
-            });
-        } else {
-            moderadoresList.innerHTML = '<li>Nenhum moderador definido.</li>';
-        }
-        toggleControls(passwordInput.value === ADMIN_PASSWORD);
-    });
-
-    participantesList.addEventListener('click', (e) => {
-        if (e.target.disabled) return;
-        const username = e.target.dataset.username;
-        if (e.target.classList.contains('ban-btn')) {
-            if (confirm(`Banir o dispositivo de "${username}"?`)) {
-                bannedDevicesRef.child(e.target.dataset.deviceid).set({ originalUsername: username, timestamp: firebase.database.ServerValue.TIMESTAMP });
-                participantesRef.child(username).remove();
+            if (enteredPassword === ADMIN_PASSWORD) {
+                accessLevel = 'admin';
+                statusElement.textContent = "Acesso de Administrador Concedido.";
+                statusElement.style.color = "var(--cor-sucesso)";
+            } else if (enteredPassword === MODERATOR_PASSWORD) {
+                accessLevel = 'moderator';
+                statusElement.textContent = "Acesso de Moderador Concedido.";
+                statusElement.style.color = "#4a90e2";
             }
-        } else if (e.target.classList.contains('promote-btn')) {
-            if (confirm(`Promover "${username}" a moderador?`)) {
-                moderatorsRef.child(username).set(true);
-            }
-        }
-    });
+            
+            setControlPermissions(accessLevel);
+        });
 
-    banidosList.addEventListener('click', (e) => {
-        if (e.target.classList.contains('unban-btn') && !e.target.disabled) {
-            if (confirm('Remover o banimento deste dispositivo?')) {
-                bannedDevicesRef.child(e.target.dataset.deviceidUnban).remove();
-            }
-        }
-    });
-    
-    moderadoresList.addEventListener('click', (e) => {
-        if (e.target.classList.contains('demote-btn') && !e.target.disabled) {
-            if (confirm(`Remover permissões de "${e.target.dataset.username}"?`)) {
-                moderatorsRef.child(e.target.dataset.username).remove();
-            }
-        }
-    });
+        // --- RENDERIZAÇÃO DAS LISTAS DINÂMICAS ---
+        
+        participantesRef.on('value', (snapshot) => {
+            participantesList.innerHTML = '';
+            const data = snapshot.val();
+            if (data) {
+                Object.keys(data).forEach((username) => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<span class="info">${username}</span><div class="actions"><button class="promote-btn" data-username="${username}">Promover a Mod</button><button class="btn-delete ban-btn" data-username="${username}" data-deviceid="${data[username].deviceId}">Banir</button></div>`;
+                    participantesList.appendChild(li);
+                });
+            } else { participantesList.innerHTML = '<li>Nenhum participante online.</li>'; }
+            passwordInput.dispatchEvent(new Event('input'));
+        });
 
-    toggleControls(false); // Inicia com tudo desabilitado
-});
+        bannedDevicesRef.on('value', (snapshot) => {
+            banidosList.innerHTML = '';
+            const data = snapshot.val();
+            if (data) {
+                Object.keys(data).forEach((deviceId) => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<span class="info">${data[deviceId].originalUsername}</span><div class="actions"><button class="unban-btn" data-deviceid-unban="${deviceId}">Desbanir</button></div>`;
+                    banidosList.appendChild(li);
+                });
+            } else { banidosList.innerHTML = '<li>Nenhum dispositivo banido.</li>'; }
+            passwordInput.dispatchEvent(new Event('input'));
+        });
+
+        moderatorsRef.on('value', (snapshot) => {
+            moderadoresList.innerHTML = '';
+            const data = snapshot.val();
+            if (data) {
+                Object.keys(data).forEach((username) => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<span class="info">${username}</span><div class="actions"><button class="demote-btn" data-username="${username}">Rebaixar</button></div>`;
+                    moderadoresList.appendChild(li);
+                });
+            } else { moderadoresList.innerHTML = '<li>Nenhum moderador definido.</li>'; }
+            passwordInput.dispatchEvent(new Event('input'));
+        });
+        
+        teamsRef.on('value', (snapshot) => {
+             equipesList.innerHTML = '';
+             const data = snapshot.val();
+             if (data) {
+                 Object.keys(data).forEach(key => {
+                     const li = document.createElement('li');
+                     li.innerHTML = `<span class="info">${data[key].name}</span><div class="actions"><input type="number" value="${data[key].score}" class="score-input" data-key="${key}"><button class="update-btn" data-key="${key}">Atualizar</button><button class="btn-delete delete-btn" data-key="${key}" data-name="${data[key].name}">Excluir</button></div>`;
+                     equipesList.appendChild(li);
+                 });
+             }
+             passwordInput.dispatchEvent(new Event('input'));
+        });
+
+        // --- AÇÕES DOS BOTÕES ---
+
+        participantesList.addEventListener('click', (e) => {
+            if (e.target.disabled) return;
+            const username = e.target.dataset.username;
+            if (e.target.classList.contains('ban-btn')) {
+                if (confirm(`Banir o dispositivo de "${username}"?`)) {
+                    bannedDevicesRef.child(e.target.dataset.deviceid).set({ originalUsername: username, timestamp: firebase.database.ServerValue.TIMESTAMP });
+                    participantesRef.child(username).remove();
+                }
+            } else if (e.target.classList.contains('promote-btn')) {
+                if (confirm(`Promover "${username}" a moderador?`)) {
+                    moderatorsRef.child(username).set(true);
+                }
+            }
+        });
+
+        banidosList.addEventListener('click', (e) => {
+            if (e.target.classList.contains('unban-btn') && !e.target.disabled) {
+                if (confirm('Remover o banimento deste dispositivo?')) {
+                    bannedDevicesRef.child(e.target.dataset.deviceidUnban).remove();
+                }
+            }
+        });
+        
+        moderadoresList.addEventListener('click', (e) => {
+            if (e.target.classList.contains('demote-btn') && !e.target.disabled) {
+                if (confirm(`Remover permissões de "${e.target.dataset.username}"?`)) {
+                    moderatorsRef.child(e.target.dataset.username).remove();
+                }
+            }
+        });
+        
+        equipesList.addEventListener('click', (e) => {
+            if (e.target.disabled) return;
+            const key = e.target.dataset.key;
+            if (e.target.classList.contains('update-btn')) {
+                const scoreInput = equipesList.querySelector(`.score-input[data-key="${key}"]`);
+                teamsRef.child(key).update({ score: parseInt(scoreInput.value, 10) });
+            }
+            if (e.target.classList.contains('delete-btn')) {
+                if (confirm(`Excluir a equipe "${e.target.dataset.name}"?`)) {
+                    teamsRef.child(key).remove();
+                }
+            }
+        });
+        
+        // --- AÇÕES DAS CONFIGURAÇÕES E EQUIPES ---
+        const bannerForm = document.getElementById('banner-control-form');
+        const registrationToggle = document.getElementById('registration-toggle');
+        const saveCountdownBtn = document.getElementById('save-countdown-btn');
+        const addEquipeBtn = document.getElementById('add-equipe-btn');
+        
+        bannerForm.addEventListener('submit', (e) => { e.preventDefault(); if(bannerForm.querySelector('button').disabled) return; bannerRef.update({ ativo: document.getElementById('banner-active-toggle').checked, data: document.getElementById('banner-date-input').value, horario: document.getElementById('banner-time-input').value }); });
+        registrationToggle.addEventListener('change', () => { if(registrationToggle.disabled) return; configRef.child('registrationsOpen').set(registrationToggle.checked); });
+        saveCountdownBtn.addEventListener('click', () => { if(saveCountdownBtn.disabled) return; const val = document.getElementById('countdown-input').value; if(val) configRef.child('countdownTarget').set(val); });
+        addEquipeBtn.addEventListener('click', () => { if(addEquipeBtn.disabled) return; const nameInput = document.getElementById('equipe-name'); const scoreInput = document.getElementById('equipe-score'); if(nameInput.value.trim()) { teamsRef.push({ name: nameInput.value.trim(), score: parseInt(scoreInput.value, 10) }); nameInput.value = ''; scoreInput.value = '0'; } });
+
+        // Inicia com tudo desabilitado
+        setControlPermissions('none');
+    });
 </script>
 </body>
 </html>
