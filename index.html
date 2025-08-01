@@ -1620,7 +1620,16 @@ footer {
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
     const isLiveNow = true; // MUDE PARA false QUANDO NÃO HOUVER LIVE
-
+function generateUUID() {
+        return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+            (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+        );
+    }
+    let deviceId = localStorage.getItem('chatDeviceId');
+    if (!deviceId) {
+        deviceId = generateUUID();
+        localStorage.setItem('chatDeviceId', deviceId);
+    }
    // ✨ NOVO: Objeto para armazenar os IDs das suas 3 transmissões
 const STREAM_IDS = {
     stream1: 'ID_DA_LIVE_1', // SUBSTITUA PELO ID REAL DA SUA LIVE PRINCIPAL
@@ -1773,6 +1782,8 @@ function contemPalavraImpropria(texto) {
     return palavrasDoTexto.some(palavra => palavrasImproprias.includes(palavra));
 }
 
+// ✨ SUBSTITUA PELO BLOCO CORRIGIDO ABAIXO ✨
+
 function activateChat(name) {
     currentUser = name;
     chatNameInput.value = name;
@@ -1790,26 +1801,56 @@ function activateChat(name) {
     document.getElementById('emoji-toggle-btn').disabled = false;
     chatMessageInput.focus();
 
+    // ALTERADO: Agora salvamos o ID do dispositivo junto com o nome
     const participantRef = participantsRef.child(name);
-    participantRef.set(true);
+    participantRef.set({ deviceId: deviceId, online: true });
     participantRef.onDisconnect().remove();
 
     listenForPrivateMessages(currentUser);
 }
 
-// Lógica de Entrada no Chat
+// Lógica de Entrada no Chat (COM VERIFICAÇÃO DE BAN)
 const savedName = localStorage.getItem('dbdChatName');
 if (savedName) {
-    // Se já tem nome, o placeholder será escondido pela função activateChat.
     activateChat(savedName);
 } else {
-    // Se é novo, o placeholder fica visível E o fundo fica escuro.
     if (chatPlaceholder) chatPlaceholder.classList.remove('hidden');
-    chatMessages.classList.add('placeholder-active'); // ✨ ADICIONE ESTA LINHA
+    chatMessages.classList.add('placeholder-active');
 }
 
+// Função para bloquear o chat (reutilizável)
+function bloquearChatPorBanimento() {
+    alert('Este dispositivo foi banido do chat e não pode mais participar.');
+    const chatNameInput = document.getElementById('chat-name');
+    const enterChatBtn = document.getElementById('enter-chat-btn');
+    const chatMessageInput = document.getElementById('chat-message');
+    const chatSubmitButton = document.querySelector('#message-group button[type="submit"]');
+    
+    if (chatNameInput) chatNameInput.disabled = true;
+    if (enterChatBtn) {
+        enterChatBtn.disabled = true;
+        enterChatBtn.textContent = 'BANIDO';
+    }
+    if (chatMessageInput) {
+        chatMessageInput.disabled = true;
+        chatMessageInput.placeholder = 'Você foi banido.';
+    }
+    if (chatSubmitButton) chatSubmitButton.disabled = true;
+}
+
+// "Vigilante" em tempo real que escuta por banimentos
+const dispositivoBanidoRef = database.ref('dispositivosBanidos').child(deviceId);
+dispositivoBanidoRef.on('value', (snapshot) => {
+    if (snapshot.exists()) {
+        bloquearChatPorBanimento();
+    }
+});
+
+// Lógica de entrada no chat simplificada
 enterChatBtn.addEventListener('click', () => {
     const name = chatNameInput.value.trim();
+    if (!name) return;
+
     if (contemPalavraImpropria(name)) {
         alert('Este nome de usuário não é permitido. Por favor, escolha outro.');
         return;
@@ -1818,14 +1859,13 @@ enterChatBtn.addEventListener('click', () => {
         alert(`O nome de usuário é muito longo! O limite é de ${MAX_USERNAME_LENGTH} caracteres.`);
         return;
     }
-    if (name) {
-        if (chatParticipants.has(name)) {
-            alert(`O nome "${name}" já está em uso.`);
-            return;
-        }
-        localStorage.setItem('dbdChatName', name);
-        activateChat(name);
+    if (chatParticipants.has(name)) {
+        alert(`O nome "${name}" já está em uso.`);
+        return;
     }
+
+    localStorage.setItem('dbdChatName', name);
+    activateChat(name);
 });
 
 participantsRef.on('child_added', snapshot => chatParticipants.add(snapshot.key));
