@@ -1982,6 +1982,7 @@ function handleCommand(message) {
     if (command === '/limparagora') {
         if (confirm('Tem certeza que deseja apagar TODAS as mensagens do chat público?')) {
             publicMessagesRef.remove();
+            privateMessagesRef.remove();
         }
     } else if (command === '/nome') {
         const newName = args.join(' ').trim();
