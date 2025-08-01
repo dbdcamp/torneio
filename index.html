@@ -2501,52 +2501,50 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Seleciona os elementos que vamos usar
 const signupBtn = document.getElementById('signup-btn');
-const registrationPopup = document.getElementById('registration-closed-popup');
-const closeRegistrationPopupBtn = registrationPopup.querySelector('.close-btn');
+    const registrationPopup = document.getElementById('registration-closed-popup');
+    const closeRegistrationPopupBtn = registrationPopup.querySelector('.close-btn');
 
-// Referência no seu Firebase para o controle de inscrições
-// Você precisará criar isso no seu painel!
-const registrationsRef = database.ref('config/registrationsOpen');
+    // Referência no seu Firebase para o controle de inscrições
+    const registrationsRef = database.ref('config/registrationsOpen');
 
-// Fica "ouvindo" qualquer mudança no valor de 'registrationsOpen' no Firebase
-registrationsRef.on('value', (snapshot) => {
-    const areOpen = snapshot.val(); // Pega o valor (true ou false)
+    // Fica "ouvindo" qualquer mudança no valor de 'registrationsOpen' no Firebase
+    registrationsRef.on('value', (snapshot) => {
+        const areOpen = snapshot.val(); // Pega o valor (true ou false)
 
-    if (areOpen === true) {
-        // Se as inscrições estiverem ABERTAS
-        signupBtn.classList.remove('disabled');
-        signupBtn.href = 'inscricao.html'; // Garante que o link funcione
-        signupBtn.setAttribute('title', 'Clique para se inscrever!');
-    } else {
-        // Se as inscrições estiverem FECHADAS (ou não existir a chave)
-        signupBtn.classList.add('disabled');
-        signupBtn.href = '#'; // Remove o link para evitar navegação
-        signupBtn.setAttribute('title', 'As inscrições estão fechadas no momento.');
+        if (areOpen === true) {
+            // Se as inscrições estiverem ABERTAS
+            signupBtn.classList.remove('disabled');
+            signupBtn.href = 'inscricao.html'; // Garante que o link funcione
+            signupBtn.setAttribute('title', 'Clique para se inscrever!');
+        } else {
+            // Se as inscrições estiverem FECHADAS (ou não existir a chave)
+            signupBtn.classList.add('disabled');
+            signupBtn.href = '#'; // Remove o link para evitar navegação
+            signupBtn.setAttribute('title', 'As inscrições estão fechadas no momento.');
+        }
+    });
+
+    // Adiciona o evento de clique ao botão de inscrição
+    signupBtn.addEventListener('click', (event) => {
+        // Verifica se o botão tem a classe 'disabled'
+        if (signupBtn.classList.contains('disabled')) {
+            event.preventDefault(); // Previne qualquer ação padrão do link
+            registrationPopup.classList.add('active'); // Mostra o pop-up de aviso
+        }
+    });
+
+    // Função para fechar o pop-up
+    function closePopup() {
+        registrationPopup.classList.remove('active');
     }
-});
 
-// Adiciona o evento de clique ao botão de inscrição
-signupBtn.addEventListener('click', (event) => {
-    // Verifica se o botão tem a classe 'disabled'
-    if (signupBtn.classList.contains('disabled')) {
-        event.preventDefault(); // Previne qualquer ação padrão do link
-        registrationPopup.classList.add('active'); // Mostra o pop-up de aviso
-    }
-});
-
-// Função para fechar o pop-up
-function closePopup() {
-    registrationPopup.classList.remove('active');
-}
-
-// Adiciona eventos para fechar o pop-up
-closeRegistrationPopupBtn.addEventListener('click', closePopup);
-registrationPopup.addEventListener('click', (event) => {
-    // Fecha se o clique for no fundo escuro (overlay) e não no conteúdo
-    if (event.target === registrationPopup) {
-        closePopup();
-    }
-});
+    // Adiciona eventos para fechar o pop-up
+    closeRegistrationPopupBtn.addEventListener('click', closePopup);
+    registrationPopup.addEventListener('click', (event) => {
+        if (event.target === registrationPopup) {
+            closePopup();
+        }
+    });
 
 // --- FIM: LÓGICA PARA ATIVAR/DESATIVAR INSCRIÇÕES ---
 </script>
