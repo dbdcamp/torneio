@@ -109,16 +109,33 @@
         @keyframes glitch { 2%, 64% { transform: translate(2px, 0) skew(0deg); } 4%, 60% { transform: translate(-2px, 0) skew(0deg); } 62% { transform: translate(0, 0) skew(5deg); } }
         @keyframes glitch-2 { 0%, 100% { clip-path: inset(0 0 98% 0); } 25% { clip-path: inset(25% 0 55% 0); } 50% { clip-path: inset(50% 0 15% 0); } 75% { clip-path: inset(80% 0 5% 0); } }
         
-        #popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(5px); }
+        .popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(5px); }
         .popup-content { background-color: #1a1a1a; padding: 30px 40px; border-radius: 10px; text-align: center; border: 2px solid var(--killer-border); box-shadow: 0 0 30px var(--killer-shadow); animation: popup-anim 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); transform: scale(0); }
         @keyframes popup-anim { 0% { transform: scale(0.7); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         .popup-content h2 { font-family: 'Creepster', cursive; color: var(--killer-red); font-size: 2.5rem; margin-top: 0; }
         .popup-content p { color: #ccc; font-size: 1.1rem; max-width: 400px; }
+        
+        /* ESTILOS PARA O CONSENTIMENTO DE REGRAS */
+        .rules-consent-group { margin-top: 30px; display: flex; align-items: flex-start; gap: 15px; padding: 15px; background-color: rgba(0, 0, 0, 0.2); border-radius: 5px; }
+        .rules-consent-group input[type="checkbox"] { appearance: none; -webkit-appearance: none; flex-shrink: 0; margin-top: 4px; width: 22px; height: 22px; background-color: transparent; border: 2px solid #888; border-radius: 4px; cursor: pointer; position: relative; transition: all 0.2s; }
+        .rules-consent-group input[type="checkbox"]:checked { border-color: var(--killer-red); background-color: var(--killer-red); }
+        .rules-consent-group input[type="checkbox"]:checked::after { content: '✔'; font-size: 18px; color: #0a0000; font-weight: bold; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .rules-consent-group label { color: #ccc; font-size: 1rem; line-height: 1.5; cursor: pointer; margin-bottom: 0; }
+        .rules-consent-group label a { color: var(--warning-yellow); font-weight: bold; text-decoration: underline; }
+
+        /* ESTILOS PARA O POPUP DE REGRAS */
+        .rules-popup-content { max-width: 700px; width: 90%; position: relative; }
+        .close-popup-btn { position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 2.5rem; color: #888; cursor: pointer; transition: color 0.3s, transform 0.3s; z-index: 2001; }
+        .close-popup-btn:hover { color: var(--killer-red); transform: scale(1.1); }
+        .rules-list { text-align: left; padding-left: 20px; max-height: 60vh; overflow-y: auto; margin-top: 20px; padding-right: 15px; }
+        .rules-list li { margin-bottom: 15px; line-height: 1.6; }
+        .rules-list::-webkit-scrollbar { width: 8px; }
+        .rules-list::-webkit-scrollbar-track { background: #222; }
+        .rules-list::-webkit-scrollbar-thumb { background: var(--killer-border); border-radius: 4px; }
     </style>
 </head>
 <body>
     <div class="form-container">
-        
         <div class="form-header">
             <h1>Inscrição de Equipe</h1>
         </div>
@@ -165,6 +182,15 @@
             <div class="disclaimer">
                 <strong>Atenção:</strong> A equipe deve estar completa no momento dos jogos. A ausência de qualquer membro resultará na <strong>desclassificação automática</strong> da equipe.
             </div>
+            
+            <div class="rules-consent-group">
+                <input type="checkbox" id="rules-consent" name="Consentimento das Regras" value="CIENTE" required>
+                <label for="rules-consent">
+                    Eu li e estou ciente de todas as 
+                    <a href="#" id="open-rules-popup">regras do torneio</a>. 
+                    Entendo que qualquer quebra de regra resultará na expulsão da minha equipe deste e de possíveis torneios futuros.
+                </label>
+            </div>
 
             <button type="submit" class="submit-btn">Começar a Caçada</button>
         </form>
@@ -174,15 +200,41 @@
         </div>
     </div>
 
-    <div id="popup">
+    <div id="popup" class="popup">
         <div class="popup-content">
             <h2 id="popup-title">Inscrição Enviada!</h2>
             <p id="popup-message">Sua equipe foi registrada. Você será redirecionado para o Discord em breve para aguardar as próximas instruções.</p>
         </div>
     </div>
 
+    <div id="rules-popup" class="popup">
+        <div class="popup-content rules-popup-content">
+            <button id="close-rules-btn" class="close-popup-btn">×</button>
+            <h2>Regras do Torneio</h2>
+            <ul class="rules-list">
+                <li>Cada esquadrão será formado por cinco almas: quatro para Sobrevivência e uma para a Caçada.</li>
+                <li>A tolerância para atrasos é de 5 minutos, implicando em derrota automática (W.O.).</li>
+                <li>As decisões da organização são absolutas e não sujeitas a apelações.</li>
+                <li>Ao "espelhar" um Assassino, a equipe também deve espelhar o mapa da partida anterior.</li>
+                <li>É proibido 'camperar' com Assassinos de abate instantâneo (exceto Ghost Face).</li>
+                <li>O Assassino pode equipar no máximo DUAS (2) vantagens entre: Ressonância, Impasse, Intervenção e Sem Saída.</li>
+                <li>Michael Myers está proibido de usar os fragmentos ou o acessório Lápide de Judith.</li>
+                <li>A vantagem "Ninguém Escapa da Morte (NOED)" é estritamente proibida.</li>
+                <li>Atos de desrespeito ou preconceito resultarão na expulsão da equipe.</li>
+                <li>Com duas presas caídas, o Assassino deve enganchar uma antes de perseguir outras.</li>
+                <li>Cada partida deve iniciar com uma oferenda que conjure a Escotilha no Santuário ou no prédio principal.</li>
+                <li>É proibida a repetição de itens entre os quatro Sobreviventes.</li>
+                <li>A equipe de Sobreviventes pode equipar apenas UMA (1) vantagem no total entre: Adrenalina, Inquebrável, Extraoficialmente, Duro na Queda e Ataque Decisivo.</li>
+                <li>É proibido o uso de qualquer bug, glitch ou exploit.</li>
+                <li>Partidas serão reiniciadas por desconexão apenas se nenhuma perseguição tiver começado.</li>
+                <li>A desobediência às regras pode levar à perda de pontos ou desclassificação.</li>
+            </ul>
+        </div>
+    </div>
+
     <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // --- LÓGICA DO KILLER ANDANDO ---
         const walkingKillerGif = document.getElementById('walking-killer-gif');
         const killerGifs = [
             'https://i.postimg.cc/L4L7K5Kr/sadako.gif', 'https://i.postimg.cc/vB9PsqjW/ghost.gif',
@@ -200,16 +252,39 @@
         chooseRandomKillerGif();
         setInterval(chooseRandomKillerGif, 20000);
 
+        // --- LÓGICA PARA ATRIBUIR NOME DO CAPITÃO ---
         const memberCards = document.querySelectorAll('.member-card');
         memberCards.forEach(card => {
             const nameInput = card.querySelector('.member-name-input');
             const radioInput = card.querySelector('.captain-radio');
             nameInput.addEventListener('input', () => {
-                // Atualiza o valor do radio button com o nome digitado, garantindo que o nome do capitão seja enviado
                 radioInput.value = nameInput.value.trim() === '' ? 'Não preenchido' : nameInput.value;
             });
         });
 
+        // --- LÓGICA DO POPUP DE REGRAS ---
+        const rulesPopup = document.getElementById('rules-popup');
+        const openRulesLink = document.getElementById('open-rules-popup');
+        const closeRulesBtn = document.getElementById('close-rules-btn');
+
+        openRulesLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            rulesPopup.style.display = 'flex';
+            rulesPopup.querySelector('.popup-content').style.transform = 'scale(1)';
+        });
+
+        function closeRulesPopup() {
+            rulesPopup.style.display = 'none';
+            rulesPopup.querySelector('.popup-content').style.transform = 'scale(0)';
+        }
+        closeRulesBtn.addEventListener('click', closeRulesPopup);
+        rulesPopup.addEventListener('click', function(e) {
+            if (e.target === rulesPopup) {
+                closeRulesPopup();
+            }
+        });
+
+        // --- LÓGICA DE SUBMISSÃO DO FORMULÁRIO ---
         const form = document.getElementById('team-form');
         const popup = document.getElementById('popup');
         const popupContent = popup.querySelector('.popup-content');
@@ -217,15 +292,11 @@
         form.addEventListener('submit', function(e) {
             e.preventDefault();
 
-            // --- VALIDAÇÃO DO CAPITÃO ---
-            // Verifica se um radio button com o nome 'Capitao da Equipe' está selecionado
             const selectedCaptain = document.querySelector('input[name="Capitao da Equipe"]:checked');
             if (!selectedCaptain) {
-                // Se nenhum capitão foi selecionado, exibe um alerta e impede o envio.
                 alert('Por favor, selecione um capitão para a equipe antes de enviar.');
-                return; // Para a execução da função aqui.
+                return;
             }
-            // --- FIM DA VALIDAÇÃO ---
 
             const formData = new FormData(form);
             const action = form.getAttribute('action');
