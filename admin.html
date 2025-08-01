@@ -322,6 +322,18 @@
             </div>
             <p id="status"></p>
         </div>
+    <div class="panel-section">
+    <h2>Participantes do Chat</h2>
+    <p>Usuários atualmente online no chat. Clique para banir o dispositivo.</p>
+    <ul id="participantes-list" class="entry-list">
+        </ul>
+</div>
+    <div class="panel-section">
+    <h2>Dispositivos Banidos</h2>
+    <p>Dispositivos que foram banidos do chat. Clique para reverter o banimento.</p>
+    <ul id="banidos-list" class="entry-list">
+        </ul>
+</div>
 
         <div class="panel-section">
             <h2>Configurações</h2>
@@ -388,11 +400,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <script>
-    // SEU CÓDIGO JAVASCRIPT PERMANECE EXATAMENTE O MESMO AQUI
-    // COLE-O ABAIXO DESTA LINHA
-    
     // --- COLE AQUI A MESMA CONFIGURAÇÃO DO FIREBASE ---
-    // --- CONFIGURAÇÃO DO FIREBASE ---
     const firebaseConfig = {
         apiKey: "AIzaSyA_eqbuIT9Pe3z1NlTG6EQIForIM3uNv_c",
         authDomain: "placar-dbd-torneio.firebaseapp.com",
@@ -414,11 +422,16 @@
         // --- Referências do DOM ---
         const passwordInput = document.getElementById('password');
         const statusElement = document.getElementById('status');
+        const equipesList = document.getElementById('equipes-list');
+        const participantesList = document.getElementById('participantes-list');
+        const banidosList = document.getElementById('banidos-list');
         
         // --- Referências do Firebase ---
         const teamsRef = database.ref('teams');
         const configRef = database.ref('config');
         const bannerRef = database.ref('banner');
+        const participantesRef = database.ref('participants');
+        const bannedDevicesRef = database.ref('dispositivosBanidos');
 
         // --- Função Central de Controle ---
         function toggleControls(enable) {
@@ -440,7 +453,7 @@
                 statusElement.style.color = "var(--cor-texto-fantasma)";
             }
         });
-
+        
         // --- Lógica das Configurações Gerais ---
         const bannerForm = document.getElementById('banner-control-form');
         const activeToggle = document.getElementById('banner-active-toggle');
@@ -450,7 +463,6 @@
         const countdownInput = document.getElementById('countdown-input');
         const saveCountdownBtn = document.getElementById('save-countdown-btn');
 
-        // Lê as informações do banner
         bannerRef.on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -460,7 +472,6 @@
             }
         });
         
-        // Lê as informações de config (inscrições e contagem)
         configRef.on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -469,46 +480,25 @@
             }
         });
 
-        // Salva os dados do banner
         bannerForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const bannerData = {
-                ativo: activeToggle.checked,
-                data: dateInput.value,
-                horario: timeInput.value
-            };
-            bannerRef.update(bannerData)
-                .then(() => alert('Edito do banner gravado com sucesso!'))
-                .catch(err => alert('Falha na gravação do edito: ' + err.message));
+            const bannerData = { ativo: activeToggle.checked, data: dateInput.value, horario: timeInput.value };
+            bannerRef.update(bannerData).then(() => alert('Banner salvo!')).catch(err => alert('Erro: ' + err.message));
         });
         
-        // Altera status das inscrições
         registrationToggle.addEventListener('change', () => {
-            configRef.child('registrationsOpen').set(registrationToggle.checked)
-                .then(() => {
-                    statusElement.textContent = `Portais de Inscrição agora estão ${registrationToggle.checked ? 'ABERTAS' : 'SELADOS'}.`;
-                    statusElement.style.color = "var(--cor-sucesso)";
-                })
-                .catch(err => alert('Falha ao alterar status dos portais: ' + err.message));
+            configRef.child('registrationsOpen').set(registrationToggle.checked);
         });
 
-        // Salva a data da contagem regressiva
         saveCountdownBtn.addEventListener('click', () => {
-            const targetDate = countdownInput.value;
-            if (!targetDate) {
-                alert('Por favor, selecione uma data e hora.');
-                return;
-            }
-            configRef.child('countdownTarget').set(targetDate)
-                .then(() => alert('Data da contagem regressiva salva com sucesso!'))
-                .catch(err => alert('Falha ao salvar a data da contagem: ' + err.message));
+            if (!countdownInput.value) return alert('Selecione uma data.');
+            configRef.child('countdownTarget').set(countdownInput.value).then(() => alert('Contagem salva!')).catch(err => alert('Erro: ' + err.message));
         });
 
         // --- Lógica de Gerenciamento de EQUIPES ---
         const addEquipeBtn = document.getElementById('add-equipe-btn');
         const equipeNameInput = document.getElementById('equipe-name');
         const equipeScoreInput = document.getElementById('equipe-score');
-        const equipesList = document.getElementById('equipes-list');
 
         addEquipeBtn.addEventListener('click', () => {
             const name = equipeNameInput.value.trim();
@@ -530,31 +520,105 @@
                     li.innerHTML = `
                         <span class="info">${entry.name}</span>
                         <div class="actions">
-                            <input type="number" value="${entry.score}" id="score-${key}">
-                            <button id="update-${key}">Atualizar</button>
-                            <button id="delete-${key}" class="btn-delete">Banir</button>
+                            <input type="number" value="${entry.score}" data-key="${key}" class="score-input">
+                            <button data-key="${key}" class="update-btn">Atualizar</button>
+                            <button data-key="${key}" data-name="${entry.name}" class="btn-delete delete-btn">Banir</button>
                         </div>`;
                     equipesList.appendChild(li);
-                    
-                    document.getElementById(`update-${key}`).addEventListener('click', () => {
-                        const newScore = document.getElementById(`score-${key}`).value;
-                        teamsRef.child(key).update({ score: parseInt(newScore, 10) });
-                    });
-
-                    document.getElementById(`delete-${key}`).addEventListener('click', () => {
-                        if (confirm(`Tem certeza que deseja banir a legião "${entry.name}" para o vazio?`)) {
-                            teamsRef.child(key).remove();
-                        }
-                    });
                 });
             }
-            
-            const isPasswordCorrect = passwordInput.value === ADMIN_PASSWORD;
-            toggleControls(isPasswordCorrect);
+            toggleControls(passwordInput.value === ADMIN_PASSWORD);
         });
 
-        toggleControls(false); 
-    }); 
-    </script>
+        equipesList.addEventListener('click', (e) => {
+            const key = e.target.dataset.key;
+            if (!key || e.target.disabled) return;
+
+            if (e.target.classList.contains('update-btn')) {
+                const scoreInput = equipesList.querySelector(`.score-input[data-key="${key}"]`);
+                teamsRef.child(key).update({ score: parseInt(scoreInput.value, 10) });
+            }
+            if (e.target.classList.contains('delete-btn')) {
+                if (confirm(`Tem certeza que deseja banir a legião "${e.target.dataset.name}"?`)) {
+                    teamsRef.child(key).remove();
+                }
+            }
+        });
+
+        // --- Lógica de MODERAÇÃO DO CHAT ---
+        participantesRef.on('value', (snapshot) => {
+            participantesList.innerHTML = '<li>Carregando...</li>';
+            const data = snapshot.val();
+            if (data) {
+                participantesList.innerHTML = '';
+                Object.keys(data).forEach((username) => {
+                    const participantData = data[username];
+                    if (!participantData || !participantData.deviceId) return;
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <span class="info">${username}</span>
+                        <div class="actions">
+                            <button class="btn-delete ban-btn" data-username="${username}" data-deviceid="${participantData.deviceId}">Banir Dispositivo</button>
+                        </div>`;
+                    participantesList.appendChild(li);
+                });
+            } else {
+                participantesList.innerHTML = '<li>Nenhum participante online.</li>';
+            }
+            toggleControls(passwordInput.value === ADMIN_PASSWORD);
+        });
+
+        bannedDevicesRef.on('value', (snapshot) => {
+            banidosList.innerHTML = '<li>Carregando...</li>';
+            const data = snapshot.val();
+            if (data) {
+                banidosList.innerHTML = '';
+                Object.keys(data).forEach((deviceId) => {
+                    const banInfo = data[deviceId];
+                    const timestamp = new Date(banInfo.timestamp).toLocaleString('pt-BR');
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <span class="info">${banInfo.originalUsername}<br><small style="color: #aaa;">Banido em: ${timestamp}</small></span>
+                        <div class="actions">
+                            <button class="unban-btn" data-deviceid-unban="${deviceId}">Desbanir</button>
+                        </div>`;
+                    banidosList.appendChild(li);
+                });
+            } else {
+                banidosList.innerHTML = '<li>Nenhum dispositivo banido.</li>';
+            }
+            toggleControls(passwordInput.value === ADMIN_PASSWORD);
+        });
+
+        participantesList.addEventListener('click', (e) => {
+            if (e.target.classList.contains('ban-btn') && !e.target.disabled) {
+                const usernameToBan = e.target.dataset.username;
+                const deviceIdToBan = e.target.dataset.deviceid;
+                if (confirm(`Banir PERMANENTEMENTE o dispositivo do usuário "${usernameToBan}"?`)) {
+                    bannedDevicesRef.child(deviceIdToBan).set({
+                        bannedBy: 'Admin',
+                        originalUsername: usernameToBan,
+                        timestamp: firebase.database.ServerValue.TIMESTAMP
+                    });
+                    participantesRef.child(usernameToBan).remove();
+                    alert(`Dispositivo do usuário ${usernameToBan} banido.`);
+                }
+            }
+        });
+
+        banidosList.addEventListener('click', (e) => {
+            if (e.target.classList.contains('unban-btn') && !e.target.disabled) {
+                const deviceIdToUnban = e.target.dataset.deviceidUnban;
+                if (confirm('Remover o banimento deste dispositivo?')) {
+                    bannedDevicesRef.child(deviceIdToUnban).remove();
+                    alert('Dispositivo desbanido.');
+                }
+            }
+        });
+
+        // Inicia com tudo desabilitado
+        toggleControls(false);
+    });
+</script>
 </body>
 </html>
