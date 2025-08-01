@@ -1116,6 +1116,21 @@ footer {
 /* --- INÍCIO: ESTILOS PARA DISPOSITIVOS MÓVEIS --- */
 /* =================================================== */
 @media (max-width: 800px) {
+    /* ========================================= */
+/* ✨ CORREÇÃO PARA LARGURA DO CHAT NO MOBILE ✨ */
+/* ========================================= */
+
+/* Encontre a sua seção de @media (max-width: 800px) ou similar e cole isto dentro */
+
+#regras.section-container {
+    /* Remove os espaçamentos laterais apenas nesta seção */
+    padding-left: 0px;
+    padding-right: 0px;
+    
+    /* Opcional: remove as bordas laterais para um visual mais limpo */
+    border-left: none;
+    border-right: none;
+}
     #transmissao {
     padding-left: 0;
     padding-right: 0;
