@@ -195,7 +195,16 @@
             box-shadow: 0 0 20px var(--cor-borda-energia);
             color: white;
         }
-
+.btn-success {
+    background-color: var(--cor-sucesso-brilho) !important;
+    border-color: var(--cor-sucesso) !important;
+    color: var(--cor-fundo-profundo) !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+}
+.btn-success::before {
+    background: none !important; /* Remove a animação de brilho no estado de sucesso */
+}
         button:disabled {
             border-color: #444;
             color: #777;
@@ -385,7 +394,7 @@
             <button type="button" id="save-countdown-btn" disabled>Salvar Data da Contagem</button>
         </div>
 
-        <div class="panel-section" data-permission="admin">
+        <div class="panel-section" data-permission="moderator">
             <h2>Gerenciar Equipes</h2>
             <div class="form-group">
                 <label for="equipe-name">Nome da nova equipe</label>
@@ -440,6 +449,25 @@ const firebaseConfig = {
         const participantesRef = database.ref('participants');
         const bannedDevicesRef = database.ref('dispositivosBanidos');
         const moderatorsRef = database.ref('moderators');
+        // ===================================================================
+// ✨ FUNÇÃO DE FEEDBACK VISUAL PARA BOTÕES ✨
+// ===================================================================
+function showButtonFeedback(buttonElement, successText, originalText) {
+    // Salva o texto original se ainda não foi salvo
+    if (!buttonElement.dataset.originalText) {
+        buttonElement.dataset.originalText = originalText;
+    }
+    
+    // Aplica o estado de sucesso
+    buttonElement.classList.add('btn-success');
+    buttonElement.textContent = successText;
+    
+    // Retorna ao estado original após 2 segundos
+    setTimeout(() => {
+        buttonElement.classList.remove('btn-success');
+        buttonElement.textContent = buttonElement.dataset.originalText;
+    }, 2000); // 2000ms = 2 segundos
+}
 
         // --- LÓGICA DE CONTROLE DE PERMISSÕES ---
         function setControlPermissions(level) {
@@ -559,12 +587,13 @@ const firebaseConfig = {
         });
         
         equipesList.addEventListener('click', (e) => {
-            if (e.target.disabled) return;
-            const key = e.target.dataset.key;
-            if (e.target.classList.contains('update-btn')) {
-                const scoreInput = equipesList.querySelector(`.score-input[data-key="${key}"]`);
-                teamsRef.child(key).update({ score: parseInt(scoreInput.value, 10) });
-            }
+    if (e.target.disabled) return;
+    const key = e.target.dataset.key;
+    if (e.target.classList.contains('update-btn')) {
+        const scoreInput = equipesList.querySelector(`.score-input[data-key="${key}"]`);
+        teamsRef.child(key).update({ score: parseInt(scoreInput.value, 10) });
+        showButtonFeedback(e.target, 'Atualizado!', 'Atualizar'); // e.target é o botão que foi clicado
+    }
             if (e.target.classList.contains('delete-btn')) {
                 if (confirm(`Excluir a equipe "${e.target.dataset.name}"?`)) {
                     teamsRef.child(key).remove();
@@ -578,10 +607,38 @@ const firebaseConfig = {
         const saveCountdownBtn = document.getElementById('save-countdown-btn');
         const addEquipeBtn = document.getElementById('add-equipe-btn');
         
-        bannerForm.addEventListener('submit', (e) => { e.preventDefault(); if(bannerForm.querySelector('button').disabled) return; bannerRef.update({ ativo: document.getElementById('banner-active-toggle').checked, data: document.getElementById('banner-date-input').value, horario: document.getElementById('banner-time-input').value }); });
+        bannerForm.addEventListener('submit', (e) => { 
+    e.preventDefault(); 
+    const bannerButton = bannerForm.querySelector('button');
+    if(bannerButton.disabled) return; 
+    
+    bannerRef.update({ 
+        ativo: document.getElementById('banner-active-toggle').checked, 
+        data: document.getElementById('banner-date-input').value, 
+        horario: document.getElementById('banner-time-input').value 
+    });
+    showButtonFeedback(bannerButton, 'Banner Salvo!', 'Conectar aos Servidores');
+});
         registrationToggle.addEventListener('change', () => { if(registrationToggle.disabled) return; configRef.child('registrationsOpen').set(registrationToggle.checked); });
-        saveCountdownBtn.addEventListener('click', () => { if(saveCountdownBtn.disabled) return; const val = document.getElementById('countdown-input').value; if(val) configRef.child('countdownTarget').set(val); });
-        addEquipeBtn.addEventListener('click', () => { if(addEquipeBtn.disabled) return; const nameInput = document.getElementById('equipe-name'); const scoreInput = document.getElementById('equipe-score'); if(nameInput.value.trim()) { teamsRef.push({ name: nameInput.value.trim(), score: parseInt(scoreInput.value, 10) }); nameInput.value = ''; scoreInput.value = '0'; } });
+        saveCountdownBtn.addEventListener('click', () => { 
+    if(saveCountdownBtn.disabled) return; 
+    const val = document.getElementById('countdown-input').value; 
+    if(val) {
+        configRef.child('countdownTarget').set(val);
+        showButtonFeedback(saveCountdownBtn, 'Data Salva!', 'Salvar Data da Contagem');
+    }
+});
+        addEquipeBtn.addEventListener('click', () => { 
+    if(addEquipeBtn.disabled) return; 
+    const nameInput = document.getElementById('equipe-name'); 
+    const scoreInput = document.getElementById('equipe-score'); 
+    if(nameInput.value.trim()) { 
+        teamsRef.push({ name: nameInput.value.trim(), score: parseInt(scoreInput.value, 10) }); 
+        nameInput.value = ''; 
+        scoreInput.value = '0'; 
+        showButtonFeedback(addEquipeBtn, 'Equipe Adicionada!', 'Conectar aos Servidores');
+    } 
+});
 
         // Inicia com tudo desabilitado
         setControlPermissions('none');
