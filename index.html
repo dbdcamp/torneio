@@ -327,6 +327,33 @@
         .leaderboard-list li:nth-child(odd) { background-color: rgba(255,255,255,0.05); }
         .leaderboard-list .name { font-weight: bold; }
         .leaderboard-list .score { color: var(--cor-principal); font-weight: bold; }
+        /* Estilo para a mensagem inteira de um moderador */
+.moderator-message {
+    background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0) 70%);
+    border-left: 4px solid #FFD700; /* Borda dourada */
+    padding-left: 15px !important; /* Adiciona um recuo para destacar */
+}
+
+/* Estilo para o NOME do moderador */
+.moderator-message .name {
+    color: #FFD700; /* Cor dourada */
+    font-weight: bold;
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.8), 0 0 3px black; /* Efeito de brilho */
+}
+
+/* Adiciona um ícone de escudo antes do nome do moderador */
+.moderator-message .name::before {
+    content: ''; /* Apaga o emoji de escudo */
+    display: inline-block;
+    width: 60px;          /* Largura do seu selo (ajuste se quiser) */
+    height: 60px;         /* Altura do seu selo (ajuste se quiser) */
+    margin-right: 8px;    /* Espaço entre o selo e o nome */
+    vertical-align: middle; /* Alinha o selo com o texto */
+    background-image: url('https://i.imgur.com/2L3vqPA.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
         /* ===== NOVO LAYOUT DO CHAT (STATUS ACIMA, MENSAGEM AO LADO) ===== */
 .chat-message {
     line-height: 1.4;
@@ -1417,6 +1444,21 @@ footer {
     #countdown-container {
         display: none !important;
     }
+    /* ✨ ESTILO PARA MODERADORES ✨ */
+.moderator-message {
+    background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0) 70%);
+    border-left: 4px solid #FFD700;
+    padding-left: 15px;
+    border-radius: 4px;
+}
+.moderator-message .name {
+    color: #FFD700;
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+}
+.moderator-message .name::before {
+    content: '🛡️';
+    margin-right: 6px;
+}
 }
     </style>
 </head>
@@ -1745,6 +1787,13 @@ const suggestionsBox = document.getElementById('mention-suggestions');
 const publicMessagesRef = database.ref('chatMessages');
 const privateMessagesRef = database.ref('privateMessages');
 const participantsRef = database.ref('participants');
+        // COLE ESTAS 5 LINHAS ABAIXO
+const moderatorsRef = database.ref('moderators');
+let moderatorList = {}; // Guarda a lista de mods
+
+moderatorsRef.on('value', (snapshot) => {
+    moderatorList = snapshot.val() || {}; // Atualiza a lista em tempo real
+});
 
 // Variáveis de estado
 let chatParticipants = new Set();
@@ -1950,9 +1999,15 @@ publicMessagesRef.limitToLast(100).on('child_added', (snapshot) => {
     displayPublicMessage(msg);
 });
 
+// SUBSTITUA SUA FUNÇÃO ANTIGA POR ESTA
 function displayPublicMessage(msg) {
     const messageElement = document.createElement('div');
     messageElement.classList.add('chat-message');
+
+    // Adiciona a classe de moderador se o autor estiver na lista
+    if (moderatorList[msg.name]) {
+        messageElement.classList.add('moderator-message');
+    }
 
     if (msg.watchingStream) {
         const streamIndicator = document.createElement('span');
@@ -1974,11 +2029,8 @@ function displayPublicMessage(msg) {
     messageSpan.innerHTML = escapeHTML(msg.message).replace(/@([\wÀ-ú]+)/g, '<span class="mention">@$1</span>');
     messageElement.appendChild(messageSpan);
 
-    // Adiciona a mensagem ao chat
     chatMessages.appendChild(messageElement);
     
-    // ✨ CORREÇÃO DEFINITIVA DA ROLAGEM:
-    // Só rola o chat para o final se as instruções NÃO estiverem na tela.
     if (!chatMessages.classList.contains('placeholder-active')) {
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
