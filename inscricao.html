@@ -149,7 +149,10 @@
             </div>
 
             <div class="team-section">
-                <h2>Membros da Equipe (5 Jogadores)</h2>
+                <h2>Membros da Equipe (Mínimo 4)</h2>
+<p style="text-align: center; color: #ccc; margin-top: -10px; margin-bottom: 20px;">
+    A inscrição de 4 membros é obrigatória. O 5º membro é opcional.
+</p>
                 <div class="member-grid">
                     <div class="member-card" data-member-id="1">
                         <div class="form-group"><label>Discord do Jogador 1</label><input type="text" class="member-name-input" name="Membro 1 - Nome" required></div>
@@ -172,10 +175,10 @@
                         <div class="captain-select"><input type="radio" class="captain-radio" name="Capitao da Equipe" required><label>Tornar Capitão</label></div>
                     </div>
                     <div class="member-card" data-member-id="5">
-                        <div class="form-group"><label>Discord do Jogador 5</label><input type="text" class="member-name-input" name="Membro 5 - Nome" required></div>
-                        <div class="form-group"><label>Nickname</label><input type="text" name="Membro 5 - Nickname" required></div>
-                        <div class="captain-select"><input type="radio" class="captain-radio" name="Capitao da Equipe" required><label>Tornar Capitão</label></div>
-                    </div>
+    <div class="form-group"><label>Discord do Jogador 5 (Opcional)</label><input type="text" class="member-name-input" name="Membro 5 - Nome"></div>
+    <div class="form-group"><label>Nickname (Opcional)</label><input type="text" name="Membro 5 - Nickname"></div>
+    <div class="captain-select"><input type="radio" class="captain-radio" name="Capitao da Equipe"><label>Tornar Capitão</label></div>
+</div>
                 </div>
             </div>
 
@@ -291,6 +294,16 @@
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
+            const member5NameInput = document.querySelector('input[name="Membro 5 - Nome"]');
+        const member5NickInput = document.querySelector('input[name="Membro 5 - Nickname"]');
+        const member5Name = member5NameInput.value.trim();
+        const member5Nick = member5NickInput.value.trim();
+
+        // Se um campo do membro 5 foi preenchido mas o outro não, exibe um alerta.
+        if ((member5Name && !member5Nick) || (!member5Name && member5Nick)) {
+            alert('Para o Jogador 5 (Opcional), por favor, preencha ambos os campos (Discord e Nickname) ou deixe ambos em branco.');
+            return; // Impede o envio do formulário
+        }
 
             const selectedCaptain = document.querySelector('input[name="Capitao da Equipe"]:checked');
             if (!selectedCaptain) {
@@ -310,7 +323,7 @@
                     popup.style.display = 'flex';
                     popupContent.style.transform = 'scale(1)';
                     setTimeout(() => {
-                        window.location.href = 'https://discord.gg/SEU_LINK_AQUI'; 
+                        window.location.href = 'https://discord.gg/MMuekShSeF'; 
                     }, 4000);
                 } else {
                     response.json().then(data => {
