@@ -9,6 +9,49 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        /* ✨ INÍCIO: ESTILOS PARA O MENU DE OPÇÕES DA MENSAGEM ✨ */
+.message-options-menu {
+    position: absolute;
+    z-index: 1001; /* Acima das mensagens, mas abaixo de popups maiores */
+    background-color: #2c2c2c;
+    border: 1px solid var(--cor-borda);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.options-menu-item {
+    padding: 8px 15px;
+    color: var(--cor-texto);
+    cursor: pointer;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.options-menu-item:hover {
+    background-color: var(--cor-borda-forte);
+}
+
+.options-menu-item.delete { /* Cor especial para a opção de apagar */
+    color: #ff5c5c;
+}
+
+.options-menu-item.delete:hover {
+    background-color: #ff4d4d;
+    color: #fff;
+}
+
+.chat-message .edited-indicator {
+    font-size: 0.75rem;
+    color: #999;
+    font-style: italic;
+    margin-left: 8px;
+}
+/* ✨ FIM: ESTILOS DO MENU DE OPÇÕES ✨ */
         /* ✨ INÍCIO: ESTILOS DO BANNER DE CAMPEONATO ✨ */
 #campeonato-banner {
     position: sticky; /* Fica fixo no topo ao rolar a página */
@@ -1964,12 +2007,14 @@ chatForm.addEventListener('submit', (e) => {
             timestamp: firebase.database.ServerValue.TIMESTAMP
         });
     } else {
-        publicMessagesRef.push({
-            name: currentUser, message,
-            timestamp: firebase.database.ServerValue.TIMESTAMP,
-            watchingStream: isLiveNow ? currentStreamKey : 'offline'
-        });
-    }
+    publicMessagesRef.push({
+        name: currentUser,
+        message,
+        timestamp: firebase.database.ServerValue.TIMESTAMP,
+        watchingStream: isLiveNow ? currentStreamKey : 'offline',
+        senderDeviceId: deviceId // <-- ESTA É A LINHA ADICIONADA
+    });
+}
     chatMessageInput.value = '';
 });
 
@@ -2008,19 +2053,55 @@ function handleCommand(message) {
     }
 }
 
-// Lógica para RENDERIZAR mensagens públicas
+// 🔧 ALTERADO: Lógica para RENDERIZAR mensagens públicas
 publicMessagesRef.limitToLast(100).on('child_added', (snapshot) => {
     const msg = snapshot.val();
+    const messageKey = snapshot.key; // Pega a chave única da mensagem
     if (!msg || !msg.name || !msg.message || msg.to) return;
-    displayPublicMessage(msg);
+    displayPublicMessage(msg, messageKey); // Passa a chave para a função de exibição
 });
 
-// SUBSTITUA SUA FUNÇÃO ANTIGA POR ESTA
-function displayPublicMessage(msg) {
+// Escuta por mensagens alteradas (editadas ou apagadas)
+publicMessagesRef.limitToLast(100).on('child_changed', (snapshot) => {
+    const msg = snapshot.val();
+    const messageKey = snapshot.key;
+    const messageElement = document.querySelector(`[data-message-id="${messageKey}"]`);
+
+    if (messageElement) {
+        const textSpan = messageElement.querySelector('.text');
+        const editedIndicator = messageElement.querySelector('.edited-indicator');
+
+        // Atualiza o texto da mensagem
+        textSpan.innerHTML = escapeHTML(msg.message).replace(/@([\wÀ-ú]+)/g, '<span class="mention">@$1</span>');
+
+        // Adiciona ou confirma o indicador "(editado)"
+        if (msg.isEdited && !editedIndicator) {
+            const indicator = document.createElement('span');
+            indicator.className = 'edited-indicator';
+            indicator.textContent = '(editado)';
+            messageElement.appendChild(indicator);
+        }
+
+        // Se a mensagem foi "apagada" (texto substituído)
+        if (msg.isDeleted) {
+             textSpan.style.color = '#888';
+             textSpan.style.fontStyle = 'italic';
+             messageElement.style.pointerEvents = 'none'; // Impede novos cliques
+        }
+    }
+});
+
+// 🔧 ALTERADO: Função para exibir a mensagem pública
+function displayPublicMessage(msg, messageKey) { // Recebe a chave da mensagem
     const messageElement = document.createElement('div');
     messageElement.classList.add('chat-message');
 
-    // Adiciona a classe de moderador se o autor estiver na lista
+    // ✨ NOVO: Adiciona atributos de dados para identificar a mensagem
+    messageElement.dataset.messageId = messageKey;
+    if(msg.timestamp) messageElement.dataset.timestamp = msg.timestamp;
+    if(msg.senderDeviceId) messageElement.dataset.senderDeviceId = msg.senderDeviceId;
+
+    // Adiciona a classe de moderador
     if (moderatorList[msg.name]) {
         messageElement.classList.add('moderator-message');
     }
@@ -2042,11 +2123,28 @@ function displayPublicMessage(msg) {
 
     const messageSpan = document.createElement('span');
     messageSpan.className = 'text';
-    messageSpan.innerHTML = escapeHTML(msg.message).replace(/@([\wÀ-ú]+)/g, '<span class="mention">@$1</span>');
+
+    // ✨ NOVO: Verifica se a mensagem foi "apagada"
+    if (msg.isDeleted) {
+        messageSpan.textContent = msg.message;
+        messageSpan.style.color = '#888';
+        messageSpan.style.fontStyle = 'italic';
+        messageElement.style.pointerEvents = 'none'; // Impede cliques em mensagens apagadas
+    } else {
+        messageSpan.innerHTML = escapeHTML(msg.message).replace(/@([\wÀ-ú]+)/g, '<span class="mention">@$1</span>');
+    }
     messageElement.appendChild(messageSpan);
 
+    // ✨ NOVO: Adiciona o indicador "(editado)" se necessário
+    if (msg.isEdited) {
+        const indicator = document.createElement('span');
+        indicator.className = 'edited-indicator';
+        indicator.textContent = '(editado)';
+        messageElement.appendChild(indicator);
+    }
+
     chatMessages.appendChild(messageElement);
-    
+
     if (!chatMessages.classList.contains('placeholder-active')) {
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
@@ -2207,6 +2305,83 @@ publicMessagesRef.on('value', (snapshot) => {
         }
     }
 });
+        // ✨ INÍCIO: LÓGICA PARA EDITAR E APAGAR MENSAGENS ✨
+
+const TIME_LIMIT_MS = 15 * 60 * 1000; // 15 minutos em milissegundos
+
+// Usamos delegação de evento no container de mensagens para performance
+chatMessages.addEventListener('click', (e) => {
+    // Remove qualquer menu anterior que possa estar aberto
+    const existingMenu = document.querySelector('.message-options-menu');
+    if (existingMenu) existingMenu.remove();
+
+    const messageElement = e.target.closest('.chat-message');
+    if (!messageElement) return; // Se o clique não foi em uma mensagem, sai
+
+    // Pega as informações que guardamos nos data-attributes
+    const messageId = messageElement.dataset.messageId;
+    const senderId = messageElement.dataset.senderDeviceId;
+    const timestamp = parseInt(messageElement.dataset.timestamp, 10);
+    const messageText = messageElement.querySelector('.text').textContent;
+
+    // CONDIÇÕES PARA MOSTRAR O MENU:
+    // 1. O remetente da msg é o usuário atual?
+    // 2. A mensagem tem um timestamp válido?
+    // 3. O tempo decorrido é menor que 15 minutos?
+    if (senderId === deviceId && timestamp && (Date.now() - timestamp < TIME_LIMIT_MS)) {
+        createMessageOptionsMenu(e.pageX, e.pageY, messageId, messageText);
+    }
+});
+
+function createMessageOptionsMenu(x, y, messageId, currentText) {
+    const menu = document.createElement('div');
+    menu.className = 'message-options-menu';
+    // Ajusta a posição para não sair da tela
+    menu.style.left = `${Math.min(x, window.innerWidth - 150)}px`; 
+    menu.style.top = `${y}px`;
+
+    // Opção de Editar
+    const editItem = document.createElement('div');
+    editItem.className = 'options-menu-item';
+    editItem.textContent = 'Editar';
+    editItem.onclick = () => {
+        const newText = prompt('Edite sua mensagem:', currentText);
+        // Se o usuário não clicou em "cancelar" e o texto não está vazio
+        if (newText !== null && newText.trim() !== '') {
+            publicMessagesRef.child(messageId).update({
+                message: newText.trim(),
+                isEdited: true
+            });
+        }
+        menu.remove();
+    };
+
+    // Opção de Apagar
+    const deleteItem = document.createElement('div');
+    deleteItem.className = 'options-menu-item delete';
+    deleteItem.textContent = 'Apagar para todos';
+    deleteItem.onclick = () => {
+        if (confirm('Tem certeza de que deseja apagar esta mensagem para todos?')) {
+            // Em vez de remover, substituímos o conteúdo. Fica mais limpo.
+            publicMessagesRef.child(messageId).update({
+                message: 'Mensagem apagada pelo autor.',
+                isDeleted: true
+            });
+        }
+        menu.remove();
+    };
+
+    menu.appendChild(editItem);
+    menu.appendChild(deleteItem);
+    document.body.appendChild(menu);
+
+    // Garante que o menu seja removido se o usuário clicar fora dele
+    setTimeout(() => {
+        document.body.addEventListener('click', () => menu.remove(), { once: true });
+    }, 0);
+}
+
+// ✨ FIM: LÓGICA PARA EDITAR E APAGAR MENSAGENS ✨
 // --- FIM: LÓGICA DO CHAT AO VIVO ---
         // ✨ INÍCIO: LÓGICA DO SELETOR DE EMOJIS ✨
 const emojiBtn = document.getElementById('emoji-toggle-btn');
