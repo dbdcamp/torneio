@@ -393,7 +393,25 @@
             </div>
             <button type="button" id="save-countdown-btn" disabled>Salvar Data da Contagem</button>
         </div>
-
+<div class="panel-section" data-permission="admin">
+    <h2>Controle do Oráculo</h2>
+    <div class="form-group switch-container">
+        <label for="oraculo-toggle">Ativar Palpites (Visível por 20s)</label>
+        <div>
+            <input type="checkbox" id="oraculo-toggle" class="switch-checkbox" disabled>
+            <label for="oraculo-toggle" class="switch-label"></label>
+        </div>
+    </div>
+    
+    <button type="button" id="limpar-respostas-btn" disabled>Limpar Palpites Anteriores</button>
+    
+    <hr>
+    
+    <h3>Palpites Recebidos</h3>
+    <ul id="respostas-oraculo-list" class="entry-list">
+        <li>Nenhum palpite recebido ainda.</li>
+    </ul>
+</div>
         <div class="panel-section" data-permission="moderator">
             <h2>Gerenciar Equipes</h2>
             <div class="form-group">
@@ -430,6 +448,58 @@ const firebaseConfig = {
     const database = firebase.database();
 
     document.addEventListener('DOMContentLoaded', function() {
+        // No início do seu script, junto com as outras referências do DOM:
+const oraculoToggle = document.getElementById('oraculo-toggle');
+const limparRespostasBtn = document.getElementById('limpar-respostas-btn');
+const respostasOraculoList = document.getElementById('respostas-oraculo-list');
+
+// Junto com as outras referências do Firebase:
+const oraculoRef = database.ref('oraculo');
+
+// ===================================================================
+// ✨ LÓGICA DO ORÁCULO ✨
+// ===================================================================
+
+// Ouve o estado atual do toggle para manter o botão sincronizado
+oraculoRef.child('ativo').on('value', (snapshot) => {
+    oraculoToggle.checked = !!snapshot.val();
+});
+
+// Ouve as respostas enviadas pelos usuários e as exibe na lista
+oraculoRef.child('respostas').on('value', (snapshot) => {
+    respostasOraculoList.innerHTML = '';
+    const data = snapshot.val();
+    if (data) {
+        Object.keys(data).forEach(username => {
+            const resposta = data[username];
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <span class="info"><strong>${resposta.username}</strong></span>
+                <span>Sobreviventes: <strong>${resposta.sobreviventes || '?'}</strong></span>
+                <span>5 Geradores: <strong>${resposta.geradores || '?'}</strong></span>
+                <span>MVP: <strong>${resposta.maisPontos || '?'}</strong></span>
+            `;
+            respostasOraculoList.appendChild(li);
+        });
+    } else {
+        respostasOraculoList.innerHTML = '<li>Nenhum palpite recebido ainda.</li>';
+    }
+});
+
+// Ação para o toggle de ativar/desativar o oráculo
+oraculoToggle.addEventListener('change', () => {
+    if (oraculoToggle.disabled) return;
+    oraculoRef.child('ativo').set(oraculoToggle.checked);
+});
+
+// Ação do botão para limpar as respostas
+limparRespostasBtn.addEventListener('click', () => {
+    if (limparRespostasBtn.disabled) return;
+    if (confirm('Tem certeza que deseja apagar TODOS os palpites recebidos? Esta ação não pode ser desfeita.')) {
+        oraculoRef.child('respostas').remove();
+        showButtonFeedback(limparRespostasBtn, 'Palpites Apagados!', 'Limpar Palpites Anteriores');
+    }
+});
         // --- SENHAS DE ACESSO ---
         const ADMIN_PASSWORD = "@Mateus2024";
         const MODERATOR_PASSWORD = "mod2025"; // Senha para moderadores
