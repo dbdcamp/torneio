@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O Oráculo</title>
+    <link rel="icon" type="image/png" href="https://i.imgur.com/b31EnMe.jpeg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cor-vermelho-sangue: #ff0d0d;
+            --cor-vermelho-brilho: rgba(255, 13, 13, 0.7);
+            --cor-fundo-profundo: #0a0a0c;
+            --cor-painel-vidro: rgba(12, 12, 16, 0.75);
+            --cor-borda-energia: rgba(255, 13, 13, 0.25);
+            --cor-texto-fantasma: #c9c9d1;
+            --cor-texto-titulo: #ffffff;
+            --cor-glifo: #ff0d0d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--cor-texto-fantasma);
+            background-color: var(--cor-fundo-profundo);
+            background-image: url('https://i.imgur.com/DdHzTvV.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, rgba(10, 10, 12, 0) 50%, var(--cor-fundo-profundo) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            padding: 20px;
+        }
+
+        h1 {
+            font-family: 'Creepster', cursive;
+            color: var(--cor-texto-titulo);
+            font-size: 4.5rem;
+            letter-spacing: 4px;
+            text-shadow: 0 0 10px var(--cor-vermelho-brilho), 0 0 20px var(--cor-vermelho-brilho), 0 0 40px black;
+            margin-bottom: 20px;
+        }
+
+        /* --- Seção de Username --- */
+        #username-section {
+            background: var(--cor-painel-vidro);
+            border: 1px solid var(--cor-borda-energia);
+            border-radius: 12px;
+            padding: 30px 35px;
+            backdrop-filter: blur(12px) saturate(150%);
+            max-width: 400px;
+        }
+
+        #username-section h3 {
+            font-family: 'Creepster', cursive;
+            color: var(--cor-texto-titulo);
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        /* --- Botão de Invocação --- */
+        #invocar-oraculo-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 20px;
+            display: none; /* Começa oculto */
+            animation: fadeIn 1s forwards, pulse 2s infinite ease-in-out;
+        }
+
+        #invocar-oraculo-btn svg {
+            width: 100px;
+            height: 100px;
+            filter: drop-shadow(0 0 10px var(--cor-vermelho-brilho));
+            transition: transform 0.3s ease;
+        }
+
+        #invocar-oraculo-btn:hover svg {
+            transform: scale(1.15);
+            filter: drop-shadow(0 0 15px var(--cor-glifo));
+        }
+        
+        #status-oraculo {
+            font-size: 1.2rem;
+            text-shadow: 0 0 5px black;
+        }
+
+        /* --- Card do Oráculo --- */
+        #oraculo-card {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 500px;
+            background: var(--cor-painel-vidro);
+            border: 1px solid var(--cor-borda-energia);
+            border-radius: 12px;
+            padding: 30px 35px;
+            backdrop-filter: blur(12px) saturate(180%);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            display: none; /* Começa oculto */
+            animation: fadeInScale 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        
+        #oraculo-card h3 {
+            font-family: 'Creepster', cursive;
+            color: var(--cor-texto-titulo);
+            font-size: 2.5rem;
+            text-shadow: 0 0 8px var(--cor-vermelho-brilho);
+            margin-bottom: 20px;
+        }
+        
+        #timer {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--cor-vermelho-sangue);
+            text-shadow: 0 0 5px var(--cor-vermelho-brilho);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: var(--cor-texto-fantasma);
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease-in-out;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--cor-vermelho-brilho);
+            background: rgba(0, 0, 0, 0.2);
+            box-shadow: 0 0 15px var(--cor-borda-energia);
+        }
+        
+        button {
+            width: 100%;
+            padding: 15px 20px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--cor-texto-titulo);
+            background: transparent;
+            border: 2px solid var(--cor-vermelho-brilho);
+            border-radius: 8px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease-in-out;
+            text-shadow: 0 0 5px black;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--cor-vermelho-brilho), transparent);
+            transition: left 0.4s ease-in-out;
+        }
+        
+        button:hover {
+            box-shadow: 0 0 20px var(--cor-borda-energia);
+            color: white;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        /* Animações */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="username-section">
+            <h3>Identifique-se para o Oráculo</h3>
+            <div class="form-group">
+                <input type="text" id="username-input" placeholder="Seu nome de espectador...">
+            </div>
+            <button id="save-username-btn">Entrar na Sessão</button>
+        </div>
+
+        <div id="oraculo-content" style="display: none;">
+            <h1 id="main-title">Aguardando o Chamado...</h1>
+            <p id="status-oraculo">O Oráculo dorme. O administrador ainda não o despertou.</p>
+            <button id="invocar-oraculo-btn">
+                 <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M50 10V2M50 98V90M90 50H98M2 50H10M82.9289 17.0711L88.3848 11.6152M11.6152 88.3848L17.0711 82.9289M82.9289 82.9289L88.3848 88.3848M11.6152 11.6152L17.0711 17.0711" stroke="var(--cor-glifo)" stroke-width="4" stroke-linecap="round"/>
+                    <circle cx="50" cy="50" r="30" stroke="var(--cor-glifo)" stroke-width="4"/>
+                    <circle cx="50" cy="50" r="15" stroke="var(--cor-glifo)" stroke-width="4"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+    
+    <div id="oraculo-card">
+        <span id="timer">20</span>
+        <h3>O Oráculo Exige Respostas</h3>
+        <form id="oraculo-form">
+            <div class="form-group">
+                <label for="q-sobreviventes">Quantos sobreviventes escaparão?</label>
+                <input type="number" id="q-sobreviventes" min="0" max="4" required>
+            </div>
+            <div class="form-group">
+                <label for="q-geradores">A partida terminará com os 5 geradores ligados?</label>
+                <select id="q-geradores" required>
+                    <option value="" disabled selected>Escolha uma opção...</option>
+                    <option value="Sim">Sim</option>
+                    <option value="Não">Não</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="q-mais-pontos">Qual sobrevivente irá pontuar mais?</label>
+                <input type="text" id="q-mais-pontos" placeholder="Nome do jogador..." required>
+            </div>
+            <button type="submit">Enviar Destino</button>
+        </form>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script>
+        // --- CONFIGURAÇÃO DO FIREBASE (USE A MESMA DO SEU PAINEL ADMIN) ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyA_eqbuIT9Pe3z1NlTG6EQIForIM3uNv_c",
+            authDomain: "placar-dbd-torneio.firebaseapp.com",
+            databaseURL: "https://placar-dbd-torneio-default-rtdb.firebaseio.com",
+            projectId: "placar-dbd-torneio",
+            storageBucket: "placar-dbd-torneio.appspot.com",
+            messagingSenderId: "704704412861",
+            appId: "1:704704412861:web:0a9214ac40b9518fa64bd4",
+            measurementId: "G-SJL640013X"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const oraculoRef = database.ref('oraculo');
+
+        // --- LÓGICA DA PÁGINA ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const usernameSection = document.getElementById('username-section');
+            const oraculoContent = document.getElementById('oraculo-content');
+            const usernameInput = document.getElementById('username-input');
+            const saveUsernameBtn = document.getElementById('save-username-btn');
+            
+            const mainTitle = document.getElementById('main-title');
+            const statusOraculo = document.getElementById('status-oraculo');
+            const invocarBtn = document.getElementById('invocar-oraculo-btn');
+            const oraculoCard = document.getElementById('oraculo-card');
+            const oraculoForm = document.getElementById('oraculo-form');
+            const timerElement = document.getElementById('timer');
+
+            let username = localStorage.getItem('oraculoUsername');
+            let hasSubmitted = false;
+            let timerInterval;
+
+            // Função para iniciar a aplicação
+            function initApp() {
+                usernameSection.style.display = 'none';
+                oraculoContent.style.display = 'block';
+                mainTitle.textContent = `Bem-vindo, ${username}.`;
+                listenToOraculo();
+            }
+
+            // Verifica se o usuário já tem um nome salvo
+            if (username) {
+                initApp();
+            } else {
+                usernameSection.style.display = 'block';
+            }
+
+            // Salva o nome de usuário
+            saveUsernameBtn.addEventListener('click', () => {
+                const name = usernameInput.value.trim();
+                if (name) {
+                    username = name;
+                    localStorage.setItem('oraculoUsername', username);
+                    initApp();
+                } else {
+                    alert('Por favor, insira um nome válido.');
+                }
+            });
+
+            // Ouve as mudanças no status do Oráculo (ativado/desativado pelo admin)
+            function listenToOraculo() {
+                oraculoRef.child('ativo').on('value', snapshot => {
+                    const isAtivo = snapshot.val();
+                    if (isAtivo && !hasSubmitted) {
+                        statusOraculo.textContent = "O Oráculo foi despertado! Faça seu palpite.";
+                        statusOraculo.style.color = "var(--cor-vermelho-sangue)";
+                        invocarBtn.style.display = 'inline-block';
+                    } else {
+                        statusOraculo.textContent = "O Oráculo dorme. Aguarde o próximo chamado.";
+                        statusOraculo.style.color = "var(--cor-texto-fantasma)";
+                        invocarBtn.style.display = 'none';
+                        
+                        // Reseta o status de submissão para a próxima ativação
+                        if (!isAtivo) {
+                            hasSubmitted = false;
+                        }
+                    }
+                });
+            }
+            
+            // Abre o card de palpites
+            invocarBtn.addEventListener('click', () => {
+                if (hasSubmitted) return;
+                oraculoCard.style.display = 'block';
+                invocarBtn.style.display = 'none';
+                startTimer();
+            });
+
+            // Lógica do Timer
+            function startTimer() {
+                let timeLeft = 20;
+                timerElement.textContent = timeLeft;
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    timerElement.textContent = timeLeft;
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        submitForm();
+                    }
+                }, 1000);
+            }
+
+            // Lógica de Envio do Formulário
+            oraculoForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                clearInterval(timerInterval); // Para o timer se o usuário enviar antes
+                submitForm();
+            });
+
+            function submitForm() {
+                if (hasSubmitted) return;
+                hasSubmitted = true;
+
+                const respostas = {
+                    username: username,
+                    sobreviventes: document.getElementById('q-sobreviventes').value,
+                    geradores: document.getElementById('q-geradores').value,
+                    maisPontos: document.getElementById('q-mais-pontos').value,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                };
+
+                // Envia para o Firebase usando o username como chave para evitar duplicados
+                oraculoRef.child('respostas').child(username).set(respostas)
+                    .then(() => {
+                        oraculoCard.style.display = 'none';
+                        statusOraculo.textContent = "Seu destino foi selado. Aguarde os resultados.";
+                        statusOraculo.style.color = "#00ffae";
+                    })
+                    .catch(error => {
+                        console.error("Erro ao enviar palpite: ", error);
+                        statusOraculo.textContent = "Falha na conexão com o Oráculo.";
+                    });
+            }
+        });
+    </script>
+</body>
+</html>
