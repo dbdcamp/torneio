@@ -97,6 +97,48 @@
         .captain-select input[type="radio"]:checked::after { content: ''; display: block; width: 10px; height: 10px; background-color: var(--killer-red); border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: pulse-captain 1s; }
         @keyframes pulse-captain { from { transform: translate(-50%, -50%) scale(0.5); } to { transform: translate(-50%, -50%) scale(1); } }
         .captain-select label { color: #ccc; cursor: pointer; font-weight: normal; }
+        /* ✨ ESTILOS PARA O SELETOR DE KILLER ✨ */
+.killer-select {
+    margin-top: 10px; /* Menos espaço que o do capitão */
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.killer-select label {
+    color: #ccc;
+    cursor: pointer;
+    font-weight: normal;
+}
+
+.killer-select input[type="radio"] {
+    appearance: none; -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #888;
+    border-radius: 4px; /* Quadrado para diferenciar */
+    margin-right: 10px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+}
+
+.killer-select input[type="radio"]:checked {
+    border-color: var(--killer-red);
+    background-color: var(--killer-red);
+}
+
+/* Ícone de caveira temático para o killer */
+.killer-select input[type="radio"]:checked::after {
+    content: '💀';
+    font-size: 14px;
+    color: #0a0000;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: pulse-captain 0.5s; /* Reutilizando a animação */
+}
 
         .disclaimer { margin-top: 30px; padding: 15px; background-color: rgba(255, 215, 0, 0.1); border: 1px solid var(--warning-yellow); border-radius: 5px; text-align: center; color: var(--warning-yellow); font-size: 0.9rem; }
         .disclaimer strong { text-transform: uppercase; }
@@ -158,26 +200,44 @@
                         <div class="form-group"><label>Discord do Jogador 1</label><input type="text" class="member-name-input" name="Membro 1 - Nome" required></div>
                         <div class="form-group"><label>Nickname</label><input type="text" name="Membro 1 - Nickname" required></div>
                         <div class="captain-select"><input type="radio" class="captain-radio" name="Capitao da Equipe" required><label>Tornar Capitão</label></div>
+                        <div class="killer-select">
+    <input type="radio" class="killer-radio" name="Assassino da Equipe" required>
+    <label>Tornar Assassino</label>
+                            </div>
                     </div>
                     <div class="member-card" data-member-id="2">
                         <div class="form-group"><label>Discord do Jogador 2</label><input type="text" class="member-name-input" name="Membro 2 - Nome" required></div>
                         <div class="form-group"><label>Nickname</label><input type="text" name="Membro 2 - Nickname" required></div>
                         <div class="captain-select"><input type="radio" class="captain-radio" name="Capitao da Equipe" required><label>Tornar Capitão</label></div>
+                        <div class="killer-select">
+    <input type="radio" class="killer-radio" name="Assassino da Equipe" required>
+    <label>Tornar Assassino</label>
+                            </div>
                     </div>
                     <div class="member-card" data-member-id="3">
                         <div class="form-group"><label>Discord do Jogador 3</label><input type="text" class="member-name-input" name="Membro 3 - Nome" required></div>
                         <div class="form-group"><label>Nickname</label><input type="text" name="Membro 3 - Nickname" required></div>
                         <div class="captain-select"><input type="radio" class="captain-radio" name="Capitao da Equipe" required><label>Tornar Capitão</label></div>
+                        <div class="killer-select">
+    <input type="radio" class="killer-radio" name="Assassino da Equipe" required>
+    <label>Tornar Assassino</label>
+                            </div>
                     </div>
                     <div class="member-card" data-member-id="4">
                         <div class="form-group"><label>Discord do Jogador 4</label><input type="text" class="member-name-input" name="Membro 4 - Nome" required></div>
                         <div class="form-group"><label>Nickname</label><input type="text" name="Membro 4 - Nickname" required></div>
                         <div class="captain-select"><input type="radio" class="captain-radio" name="Capitao da Equipe" required><label>Tornar Capitão</label></div>
+                        <div class="killer-select">
+    <input type="radio" class="killer-radio" name="Assassino da Equipe" required>
+    <label>Tornar Assassino</label>
+                            </div>
                     </div>
                     <div class="member-card" data-member-id="5">
     <div class="form-group"><label>Discord do Jogador 5 (Opcional)</label><input type="text" class="member-name-input" name="Membro 5 - Nome"></div>
     <div class="form-group"><label>Nickname (Opcional)</label><input type="text" name="Membro 5 - Nickname"></div>
     <div class="captain-select"><input type="radio" class="captain-radio" name="Capitao da Equipe"><label>Tornar Capitão</label></div>
+                        <div class="killer-select">
+    <input type="radio" class="killer-radio" name="Assassino da Equipe"><label>Tornar Assassino</label>
 </div>
                 </div>
             </div>
@@ -255,15 +315,26 @@
         chooseRandomKillerGif();
         setInterval(chooseRandomKillerGif, 20000);
 
-        // --- LÓGICA PARA ATRIBUIR NOME DO CAPITÃO ---
-        const memberCards = document.querySelectorAll('.member-card');
-        memberCards.forEach(card => {
-            const nameInput = card.querySelector('.member-name-input');
-            const radioInput = card.querySelector('.captain-radio');
-            nameInput.addEventListener('input', () => {
-                radioInput.value = nameInput.value.trim() === '' ? 'Não preenchido' : nameInput.value;
-            });
-        });
+        // --- LÓGICA ATUALIZADA PARA ATRIBUIR NOMES (CAPITÃO E KILLER) ---
+const memberCards = document.querySelectorAll('.member-card');
+memberCards.forEach(card => {
+    const nameInput = card.querySelector('.member-name-input');
+    const captainRadio = card.querySelector('.captain-radio');
+    const killerRadio = card.querySelector('.killer-radio'); // Pega o novo rádio
+
+    nameInput.addEventListener('input', () => {
+        const playerName = nameInput.value.trim();
+        const valueToSet = playerName === '' ? 'Não preenchido' : playerName;
+        
+        // Atualiza o valor de ambos os botões de rádio
+        if (captainRadio) {
+            captainRadio.value = valueToSet;
+        }
+        if (killerRadio) {
+            killerRadio.value = valueToSet;
+        }
+    });
+});
 
         // --- LÓGICA DO POPUP DE REGRAS ---
         const rulesPopup = document.getElementById('rules-popup');
@@ -310,6 +381,12 @@
                 alert('Por favor, selecione um capitão para a equipe antes de enviar.');
                 return;
             }
+            // ✨ VERIFICAÇÃO DO ASSASSINO ✨
+const selectedKiller = document.querySelector('input[name="Assassino da Equipe"]:checked');
+if (!selectedKiller) {
+    alert('Por favor, selecione um assassino para a equipe antes de enviar.');
+    return; // Impede o envio do formulário
+}
 
             const formData = new FormData(form);
             const action = form.getAttribute('action');
