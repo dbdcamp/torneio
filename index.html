@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
     <style>
         /* ✨ INÍCIO: ESTILOS PARA O MENU DE OPÇÕES DA MENSAGEM ✨ */
 .message-options-menu {
@@ -193,7 +194,7 @@
         .section-container {
             background-color: var(--cor-fundo-container); padding: 30px; border-radius: 10px;
             border: 2px solid var(--cor-borda); box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
-            margin-bottom: 40px; animation: fadeIn 1s ease-in-out;
+            margin-bottom: 30px; animation: fadeIn 1s ease-in-out;
             position: relative; 
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -214,10 +215,31 @@
         }
         @keyframes pulse { 50% { box-shadow: 0 0 20px rgba(255, 77, 77, 1); } }
         .hidden { display: none !important; }
+#regras ul {
+    font-family: 'Special Elite', monospace; /* Nova fonte */
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #ccc; /* Cor um pouco mais apagada, como tinta antiga */
+}
 
+/* Destaca números ou palavras-chave */
+#regras li strong {
+    color: var(--cor-principal);
+    font-weight: normal; /* A fonte já é marcante, não precisa de negrito extra */
+}
         #regras ul { list-style: none; padding: 0; }
         #regras li { background-color: rgba(0, 0, 0, 0.2); padding: 15px 20px; margin-bottom: 10px; border-left: 4px solid var(--cor-borda-forte); }
-        #regras li::before { content: "☠️"; margin-right: 15px; }
+        #regras li::before {
+    content: ''; /* Remove o emoji */
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: var(--cor-principal);
+    border-radius: 2px;
+    margin-right: 15px;
+    transform: rotate(45deg); /* Cria um losango, como um gerador */
+    filter: drop-shadow(0 0 4px var(--cor-principal));
+}
 
         #dbd-unmute-popup {
             position: absolute; bottom: 30px; left: 50%;
@@ -759,7 +781,13 @@
     /* color: var(--cor-principal); -- REMOVIDO DAQUI */
     margin-right: 8px; 
 }
-
+/* Adicione isso ao seu CSS */
+.feedback-popup .form-group input:focus, 
+.feedback-popup .form-group textarea:focus,
+#chat-form input:focus {
+    border-color: var(--cor-principal);
+    box-shadow: 0 0 10px rgba(255, 77, 77, 0.5);
+}
 /* NOVO: Estilo para menções no chat */
 .chat-message .mention {
     background-color: var(--cor-principal);
