@@ -1536,6 +1536,80 @@ footer {
     margin-right: 6px;
 }
 }
+    /* --- INÍCIO: ESTILOS DO POP-UP DE MEMBROS DA EQUIPE --- */
+
+/* Torna o nome da equipe no placar clicável e com efeito hover */
+.leaderboard-list .name {
+    cursor: pointer;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+.leaderboard-list .name:hover {
+    color: var(--cor-principal);
+    text-shadow: 0 0 8px var(--cor-principal);
+}
+
+/* Estilo da lista de membros dentro do pop-up */
+#team-info-members-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 30px;
+}
+
+#team-info-members-list li {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    border-left: 3px solid #666;
+    font-size: 1.2rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+#team-info-members-list li:hover {
+    transform: translateX(5px);
+    border-left-color: var(--cor-principal);
+}
+
+/* ✨ ESTILO DE DESTAQUE PARA O CAPITÃO ✨ */
+#team-info-members-list li.captain-member {
+    background: linear-gradient(90deg, rgba(255, 215, 0, 0.15), rgba(255, 215, 0, 0) 70%);
+    border-left: 4px solid #FFD700; /* Dourado */
+    color: #FFD700;
+    font-weight: 700;
+}
+
+/* Ícone de coroa para o capitão */
+#team-info-members-list li.captain-member::before {
+    content: '👑';
+    margin-right: 12px;
+    vertical-align: middle;
+    display: inline-block;
+    filter: drop-shadow(0 0 5px #FFD700); /* Brilho na coroa */
+}
+/* ✨ ESTILO DE DESTAQUE PARA O KILLER ✨ */
+#team-info-members-list li.killer-member {
+    background: linear-gradient(90deg, rgba(255, 77, 77, 0.2), rgba(255, 77, 77, 0) 70%);
+    border-left: 4px solid var(--cor-principal); /* Vermelho */
+    color: var(--cor-principal);
+    font-weight: 700;
+    text-shadow: 0 0 8px rgba(255, 77, 77, 0.7);
+}
+
+/* Ícone de faca para o Killer */
+#team-info-members-list li.killer-member::before {
+    content: '🔪';
+    margin-right: 12px;
+    vertical-align: middle;
+    display: inline-block;
+    filter: drop-shadow(0 0 5px var(--cor-principal)); /* Brilho vermelho */
+}
+
+/* Garante que o ícone do Killer apareça mesmo se o jogador for Capitão */
+#team-info-members-list li.captain-member.killer-member::before {
+    content: '👑 🔪'; /* Mostra ambos os ícones */
+}
+/* --- FIM: ESTILOS DO POP-UP DE MEMBROS --- */
     </style>
 </head>
 <body>
@@ -1775,6 +1849,80 @@ window.onYouTubeIframeAPIReady = function() {
     // Se isLiveNow for false, nada acontece, e a imagem offline continua visível por padrão.
 };
     document.addEventListener('DOMContentLoaded', function() {
+        // --- INÍCIO: LÓGICA DO POP-UP DE MEMBROS DA EQUIPE ---
+
+// Referências aos elementos do pop-up
+const teamInfoOverlay = document.getElementById('team-info-overlay');
+const teamInfoPopup = document.getElementById('team-info-popup');
+const closeTeamInfoBtn = document.getElementById('close-team-info-btn');
+const teamInfoName = document.getElementById('team-info-name');
+const teamInfoMembersList = document.getElementById('team-info-members-list');
+
+// O placar é dinâmico, então usamos delegação de evento
+const placarListaEquipes = document.getElementById('teams-leaderboard');
+
+placarListaEquipes.addEventListener('click', (e) => {
+    if (e.target.classList.contains('name')) {
+        const teamId = e.target.dataset.teamId;
+        if (teamId) {
+            teamsRef.child(teamId).once('value', (snapshot) => {
+                const teamData = snapshot.val();
+                
+                if (teamData && teamData.members) {
+                    teamInfoName.textContent = teamData.name;
+                    teamInfoMembersList.innerHTML = '';
+
+                    const killerName = teamData.members.killer;
+                    const captainName = teamData.members.capitao;
+                    
+                    // Cria uma lista com todos os nomes de jogadores, sem repetição
+                    const todosOsMembros = new Set();
+                    if (captainName) todosOsMembros.add(captainName);
+                    if (killerName) todosOsMembros.add(killerName); // Garante que o killer esteja na lista
+                    for (let i = 1; i <= 4; i++) {
+                        const memberName = teamData.members[`membro${i}`];
+                        if (memberName) todosOsMembros.add(memberName);
+                    }
+
+                    // Agora, cria o elemento <li> para cada membro da lista
+                    todosOsMembros.forEach(nomeDoMembro => {
+                        const li = document.createElement('li');
+                        li.textContent = nomeDoMembro;
+
+                        // Aplica o estilo de Capitão se o nome corresponder
+                        if (nomeDoMembro === captainName) {
+                            li.classList.add('captain-member');
+                        }
+                        // Aplica o estilo de Killer se o nome corresponder
+                        if (nomeDoMembro === killerName) {
+                            li.classList.add('killer-member');
+                        }
+                        teamInfoMembersList.appendChild(li);
+                    });
+                    
+                    teamInfoOverlay.classList.add('active');
+                } else {
+                    alert('Informações dos membros não encontradas para esta equipe.');
+                }
+            });
+        }
+    }
+});
+
+// Funções para fechar o pop-up
+function closeTeamInfoPopup() {
+    teamInfoOverlay.classList.remove('active');
+}
+
+closeTeamInfoBtn.addEventListener('click', closeTeamInfoPopup);
+teamInfoOverlay.addEventListener('click', (e) => {
+    // Fecha o pop-up se o clique for no fundo escuro
+    if (e.target === teamInfoOverlay) {
+        closeTeamInfoPopup();
+    }
+});
+
+// --- FIM: LÓGICA DO POP-UP ---
 // --- INÍCIO: LÓGICA FINAL DO BANNER (BASEADA NA LÓGICA DO PLACAR) ---
 
 // Seleciona os elementos do banner na página
@@ -2585,7 +2733,7 @@ function updateLeaderboard(snapshot, listElement, timestampEl) {
         } else {
             sortedEntries.forEach((entry, index) => {
                 const li = document.createElement('li');
-                li.innerHTML = `<span>${index + 1}. <span class="name">${entry.name}</span></span><span class="score">${entry.score} pts</span>`;
+                li.innerHTML = `<span data-team-id="${entry.id}" class="name">${index + 1}. ${entry.name}</span><span class="score">${entry.score} pts</span>`;
                 listElement.appendChild(li);
             });
         }
@@ -2673,6 +2821,13 @@ fullscreenBtn.addEventListener('click', () => {
         </nav>
     </div>
 </footer>
+    <div id="team-info-overlay" class="popup-overlay align-top">
+    <div id="team-info-popup" class="scoreboard-popup"> <button id="close-team-info-btn" class="close-btn">×</button>
+        <h2 id="team-info-name">Nome da Equipe</h2>
+        <ul id="team-info-members-list">
+            </ul>
+    </div>
+</div>
     <script>
 document.addEventListener('DOMContentLoaded', function() {
     const grimorioKillers = document.getElementById('grimorio-killers');
