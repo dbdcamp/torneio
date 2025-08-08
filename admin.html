@@ -403,6 +403,31 @@
                 <label for="equipe-score">Recompensas Iniciais</label>
                 <input type="number" id="equipe-score" value="0" disabled>
             </div>
+            <h3>Membros da Equipe</h3>
+<div class="form-group">
+    <label for="equipe-capitao">Nome do Capitão</label>
+    <input type="text" id="equipe-capitao" placeholder="Nome do líder da equipe" disabled>
+</div>
+            <div class="form-group">
+    <label for="equipe-killer">O Assassino</label>
+    <input type="text" id="equipe-killer" placeholder="O nome daquele que caça" disabled>
+</div>
+<div class="form-group">
+    <label for="equipe-membro-1">Membro 2</label>
+    <input type="text" id="equipe-membro-1" placeholder="Nome do segundo membro" disabled>
+</div>
+<div class="form-group">
+    <label for="equipe-membro-2">Membro 3</label>
+    <input type="text" id="equipe-membro-2" placeholder="Nome do terceiro membro" disabled>
+</div>
+<div class="form-group">
+    <label for="equipe-membro-3">Membro 4</label>
+    <input type="text" id="equipe-membro-3" placeholder="Nome do quarto membro" disabled>
+</div>
+<div class="form-group">
+    <label for="equipe-membro-4">Membro 5</label>
+    <input type="text" id="equipe-membro-4" placeholder="Nome do quinto membro" disabled>
+</div>
             <button id="add-equipe-btn" disabled>Conectar aos Servidores</button>
             
             <hr>
@@ -429,61 +454,10 @@ const firebaseConfig = {
     const database = firebase.database();
 
     document.addEventListener('DOMContentLoaded', function() {
-        // No início do seu script, junto com as outras referências do DOM:
-const oraculoToggle = document.getElementById('oraculo-toggle');
-const limparRespostasBtn = document.getElementById('limpar-respostas-btn');
-const respostasOraculoList = document.getElementById('respostas-oraculo-list');
-
-// Junto com as outras referências do Firebase:
-const oraculoRef = database.ref('oraculo');
-
-// ===================================================================
-// ✨ LÓGICA DO ORÁCULO ✨
-// ===================================================================
-
-// Ouve o estado atual do toggle para manter o botão sincronizado
-oraculoRef.child('ativo').on('value', (snapshot) => {
-    oraculoToggle.checked = !!snapshot.val();
-});
-
-// Ouve as respostas enviadas pelos usuários e as exibe na lista
-oraculoRef.child('respostas').on('value', (snapshot) => {
-    respostasOraculoList.innerHTML = '';
-    const data = snapshot.val();
-    if (data) {
-        Object.keys(data).forEach(username => {
-            const resposta = data[username];
-            const li = document.createElement('li');
-            li.innerHTML = `
-                <span class="info"><strong>${resposta.username}</strong></span>
-                <span>Sobreviventes: <strong>${resposta.sobreviventes || '?'}</strong></span>
-                <span>5 Geradores: <strong>${resposta.geradores || '?'}</strong></span>
-                <span>MVP: <strong>${resposta.maisPontos || '?'}</strong></span>
-            `;
-            respostasOraculoList.appendChild(li);
-        });
-    } else {
-        respostasOraculoList.innerHTML = '<li>Nenhum palpite recebido ainda.</li>';
-    }
-});
-
-// Ação para o toggle de ativar/desativar o oráculo
-oraculoToggle.addEventListener('change', () => {
-    if (oraculoToggle.disabled) return;
-    oraculoRef.child('ativo').set(oraculoToggle.checked);
-});
-
-// Ação do botão para limpar as respostas
-limparRespostasBtn.addEventListener('click', () => {
-    if (limparRespostasBtn.disabled) return;
-    if (confirm('Tem certeza que deseja apagar TODOS os palpites recebidos? Esta ação não pode ser desfeita.')) {
-        oraculoRef.child('respostas').remove();
-        showButtonFeedback(limparRespostasBtn, 'Palpites Apagados!', 'Limpar Palpites Anteriores');
-    }
-});
         // --- SENHAS DE ACESSO ---
         const ADMIN_PASSWORD = "@Mateus2024";
         const MODERATOR_PASSWORD = "mod2025"; // Senha para moderadores
+        let currentAccessLevel = 'none';
 
         // --- Referências do DOM ---
         const passwordInput = document.getElementById('password');
@@ -520,16 +494,24 @@ function showButtonFeedback(buttonElement, successText, originalText) {
     }, 2000); // 2000ms = 2 segundos
 }
 
-        // --- LÓGICA DE CONTROLE DE PERMISSÕES ---
-        function setControlPermissions(level) {
-            document.querySelectorAll('[data-permission] button, [data-permission] input').forEach(el => el.disabled = true);
-            if (level === 'moderator' || level === 'admin') {
-                document.querySelectorAll('[data-permission="moderator"] button, [data-permission="moderator"] input').forEach(el => el.disabled = false);
-            }
-            if (level === 'admin') {
-                document.querySelectorAll('[data-permission="admin"] button, [data-permission="admin"] input').forEach(el => el.disabled = false);
-            }
+        // --- LÓGICA DE CONTROLE DE PERMISSÕES (VERSÃO FINAL CORRIGIDA) ---
+function setControlPermissions(level) {
+    // Primeiro, desabilita TUDO que tem permissão
+    document.querySelectorAll('[data-permission] button, [data-permission] input').forEach(el => {
+        // A única exceção é o próprio campo da senha, que nunca deve ser desabilitado.
+        if (el.id !== 'password') {
+            el.disabled = true;
         }
+    });
+
+    // Agora, habilita as seções corretas com base no nível de acesso
+    if (level === 'moderator' || level === 'admin') {
+        document.querySelectorAll('[data-permission="moderator"] button, [data-permission="moderator"] input').forEach(el => el.disabled = false);
+    }
+    if (level === 'admin') {
+        document.querySelectorAll('[data-permission="admin"] button, [data-permission="admin"] input').forEach(el => el.disabled = false);
+    }
+}
         
         // --- LÓGICA DE AUTENTICAÇÃO ---
         passwordInput.addEventListener('input', () => {
@@ -546,7 +528,7 @@ function showButtonFeedback(buttonElement, successText, originalText) {
                 statusElement.textContent = "Acesso de Moderador Concedido.";
                 statusElement.style.color = "#4a90e2";
             }
-            
+            currentAccessLevel = accessLevel;
             setControlPermissions(accessLevel);
         });
 
@@ -560,9 +542,9 @@ function showButtonFeedback(buttonElement, successText, originalText) {
                     const li = document.createElement('li');
                     li.innerHTML = `<span class="info">${username}</span><div class="actions"><button class="promote-btn" data-username="${username}">Promover a Mod</button><button class="btn-delete ban-btn" data-username="${username}" data-deviceid="${data[username].deviceId}">Banir</button></div>`;
                     participantesList.appendChild(li);
+                    setControlPermissions(currentAccessLevel);
                 });
             } else { participantesList.innerHTML = '<li>Nenhum participante online.</li>'; }
-            passwordInput.dispatchEvent(new Event('input'));
         });
 
         bannedDevicesRef.on('value', (snapshot) => {
@@ -573,9 +555,9 @@ function showButtonFeedback(buttonElement, successText, originalText) {
                     const li = document.createElement('li');
                     li.innerHTML = `<span class="info">${data[deviceId].originalUsername}</span><div class="actions"><button class="unban-btn" data-deviceid-unban="${deviceId}">Desbanir</button></div>`;
                     banidosList.appendChild(li);
+                    setControlPermissions(currentAccessLevel);
                 });
             } else { banidosList.innerHTML = '<li>Nenhum dispositivo banido.</li>'; }
-            passwordInput.dispatchEvent(new Event('input'));
         });
 
         moderatorsRef.on('value', (snapshot) => {
@@ -586,9 +568,9 @@ function showButtonFeedback(buttonElement, successText, originalText) {
                     const li = document.createElement('li');
                     li.innerHTML = `<span class="info">${username}</span><div class="actions"><button class="demote-btn" data-username="${username}">Rebaixar</button></div>`;
                     moderadoresList.appendChild(li);
+                    setControlPermissions(currentAccessLevel);
                 });
             } else { moderadoresList.innerHTML = '<li>Nenhum moderador definido.</li>'; }
-            passwordInput.dispatchEvent(new Event('input'));
         });
         
         teamsRef.on('value', (snapshot) => {
@@ -599,9 +581,9 @@ function showButtonFeedback(buttonElement, successText, originalText) {
                      const li = document.createElement('li');
                      li.innerHTML = `<span class="info">${data[key].name}</span><div class="actions"><input type="number" value="${data[key].score}" class="score-input" data-key="${key}"><button class="update-btn" data-key="${key}">Atualizar</button><button class="btn-delete delete-btn" data-key="${key}" data-name="${data[key].name}">Excluir</button></div>`;
                      equipesList.appendChild(li);
+                     setControlPermissions(currentAccessLevel);
                  });
              }
-             passwordInput.dispatchEvent(new Event('input'));
         });
 
         // --- AÇÕES DOS BOTÕES ---
@@ -679,18 +661,49 @@ function showButtonFeedback(buttonElement, successText, originalText) {
         showButtonFeedback(saveCountdownBtn, 'Data Salva!', 'Salvar Data da Contagem');
     }
 });
-        addEquipeBtn.addEventListener('click', () => { 
-    if(addEquipeBtn.disabled) return; 
-    const nameInput = document.getElementById('equipe-name'); 
-    const scoreInput = document.getElementById('equipe-score'); 
-    if(nameInput.value.trim()) { 
-        teamsRef.push({ name: nameInput.value.trim(), score: parseInt(scoreInput.value, 10) }); 
-        nameInput.value = ''; 
-        scoreInput.value = '0'; 
-        showButtonFeedback(addEquipeBtn, 'Equipe Adicionada!', 'Conectar aos Servidores');
-    } 
-});
+        // ✨ CÓDIGO CORRIGIDO DO BOTÃO DE ADICIONAR EQUIPE ✨
+addEquipeBtn.addEventListener('click', () => {
+    if(addEquipeBtn.disabled) return;
 
+    const nameInput = document.getElementById('equipe-name');
+    const scoreInput = document.getElementById('equipe-score');
+    const capitaoInput = document.getElementById('equipe-capitao');
+    const killerInput = document.getElementById('equipe-killer'); // Nova referência
+    const membro1Input = document.getElementById('equipe-membro-1');
+    const membro2Input = document.getElementById('equipe-membro-2');
+    const membro3Input = document.getElementById('equipe-membro-3');
+    const membro4Input = document.getElementById('equipe-membro-4');
+
+    if(nameInput.value.trim() && capitaoInput.value.trim() && killerInput.value.trim()) {
+        const novaEquipe = {
+            name: nameInput.value.trim(),
+            score: parseInt(scoreInput.value, 10),
+            members: {
+                capitao: capitaoInput.value.trim(),
+                killer: killerInput.value.trim(), // Salva o nome do killer
+                membro1: membro1Input.value.trim(),
+                membro2: membro2Input.value.trim(),
+                membro3: membro3Input.value.trim(),
+                membro4: membro4Input.value.trim()
+            }
+        };
+        teamsRef.push(novaEquipe);
+
+        // Limpa todos os campos
+        nameInput.value = '';
+        scoreInput.value = '0';
+        capitaoInput.value = '';
+        killerInput.value = ''; // Limpa o campo do killer
+        membro1Input.value = '';
+        membro2Input.value = '';
+        membro3Input.value = '';
+        membro4Input.value = '';
+
+        showButtonFeedback(addEquipeBtn, 'Equipe Adicionada!', 'Conectar aos Servidores');
+    } else {
+        alert('Por favor, preencha pelo menos o Nome da Equipe, o Capitão e o Assassino.');
+    }
+});
         // Inicia com tudo desabilitado
         setControlPermissions('none');
     });
