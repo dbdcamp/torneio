@@ -320,7 +320,32 @@
             opacity: 0.5;
             cursor: not-allowed;
         }
+/* =================================================================== */
+/* ✨ CÓDIGO PARA OCULTAR/MOSTRAR PAINÉIS ✨ */
+/* =================================================================== */
 
+/* Por padrão, esconde todas as seções que exigem permissão */
+.panel-section[data-permission] {
+  display: none; 
+}
+
+/* Classe que usaremos via JavaScript para tornar uma seção visível */
+.panel-section.visivel {
+  display: block; /* Ou 'flex', dependendo do layout. 'block' funciona bem aqui. */
+  animation: surgir 0.6s ease-out forwards; /* Animação suave para aparecer */
+}
+
+/* Animação opcional para a aparição ficar mais elegante */
+@keyframes surgir {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
     </style>
 </head>
 <body>
@@ -511,24 +536,47 @@ function setControlPermissions(level) {
     }
 }
         
-        // --- LÓGICA DE AUTENTICAÇÃO ---
-        passwordInput.addEventListener('input', () => {
-            const enteredPassword = passwordInput.value;
-            let accessLevel = 'none';
-            statusElement.textContent = "";
+        // --- LÓGICA DE AUTENTICAÇÃO (VERSÃO ATUALIZADA) ---
+passwordInput.addEventListener('input', () => {
+    const enteredPassword = passwordInput.value;
+    let accessLevel = 'none';
+    statusElement.textContent = "";
 
-            if (enteredPassword === ADMIN_PASSWORD) {
-                accessLevel = 'admin';
-                statusElement.textContent = "Acesso de Administrador Concedido.";
-                statusElement.style.color = "var(--cor-sucesso)";
-            } else if (enteredPassword === MODERATOR_PASSWORD) {
-                accessLevel = 'moderator';
-                statusElement.textContent = "Acesso de Moderador Concedido.";
-                statusElement.style.color = "#4a90e2";
-            }
-            currentAccessLevel = accessLevel;
-            setControlPermissions(accessLevel);
+    // Seleciona todos os painéis que podem ser ocultados
+    const allPanels = document.querySelectorAll('.panel-section[data-permission]');
+
+    // 1. PRIMEIRO, ESCONDE TODOS OS PAINÉIS
+    // Isso garante que se a senha for apagada ou errada, tudo se esconda de novo.
+    allPanels.forEach(panel => {
+        panel.classList.remove('visivel');
+    });
+
+    // 2. VERIFICA A SENHA
+    if (enteredPassword === ADMIN_PASSWORD) {
+        accessLevel = 'admin';
+        statusElement.textContent = "Acesso de Administrador Concedido.";
+        statusElement.style.color = "var(--cor-sucesso)";
+
+        // Mostra os painéis de admin E de moderador
+        document.querySelectorAll('[data-permission="admin"], [data-permission="moderator"]').forEach(panel => {
+            panel.classList.add('visivel');
         });
+
+    } else if (enteredPassword === MODERATOR_PASSWORD) {
+        accessLevel = 'moderator';
+        statusElement.textContent = "Acesso de Moderador Concedido.";
+        statusElement.style.color = "#4a90e2";
+
+        // Mostra APENAS os painéis de moderador
+        document.querySelectorAll('[data-permission="moderator"]').forEach(panel => {
+            panel.classList.add('visivel');
+        });
+    }
+
+    // 3. ATUALIZA AS PERMISSÕES DOS CAMPOS (como já fazia antes)
+    currentAccessLevel = accessLevel;
+    setControlPermissions(accessLevel);
+});
 
         // --- RENDERIZAÇÃO DAS LISTAS DINÂMICAS ---
         
