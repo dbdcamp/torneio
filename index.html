@@ -1860,6 +1860,7 @@ const chatStatusRef = database.ref('config/chatEnabled');
 
 chatStatusRef.on('value', (snapshot) => {
     const isChatActive = snapshot.val() === true;
+    isChatCurrentlyEnabled = isChatActive;
     const enterChatBtn = document.getElementById('enter-chat-btn');
     const chatMessageInput = document.getElementById('chat-message');
     const messageGroup = document.getElementById('message-group');
@@ -2058,6 +2059,7 @@ moderatorsRef.on('value', (snapshot) => {
 // Variáveis de estado
 let chatParticipants = new Set();
 let currentUser = '';
+let isChatCurrentlyEnabled = true; // Começa como ativado por padrão
 let privateRecipient = null;
 const userColors = {};
 
@@ -2538,7 +2540,7 @@ chatMessages.addEventListener('click', (e) => {
     // 1. O remetente da msg é o usuário atual?
     // 2. A mensagem tem um timestamp válido?
     // 3. O tempo decorrido é menor que 15 minutos?
-    if (senderId === deviceId && timestamp && (Date.now() - timestamp < TIME_LIMIT_MS)) {
+    if (isChatCurrentlyEnabled && senderId === deviceId && timestamp && (Date.now() - timestamp < TIME_LIMIT_MS)) {
         createMessageOptionsMenu(e.pageX, e.pageY, messageId, messageText);
     }
 });
