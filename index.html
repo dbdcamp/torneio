@@ -1277,190 +1277,194 @@ footer {
         /* =================================================== */
 /* --- INÍCIO: ESTILOS PARA DISPOSITIVOS MÓVEIS --- */
 /* =================================================== */
+/* ================================================================= */
+/* --- INÍCIO: ESTILOS PARA DISPOSITIVOS MÓVEIS (VERSÃO CORRIGIDA) --- */
+/* ================================================================= */
+
+/* Regras para telas de até 800px de largura */
 @media (max-width: 800px) {
-    /* ========================================= */
-/* ✨ CORREÇÃO PARA LARGURA DO CHAT NO MOBILE ✨ */
-/* ========================================= */
-
-/* Encontre a sua seção de @media (max-width: 800px) ou similar e cole isto dentro */
-
-#regras.section-container {
-    /* Remove os espaçamentos laterais apenas nesta seção */
-    padding-left: 0px;
-    padding-right: 0px;
-    
-    /* Opcional: remove as bordas laterais para um visual mais limpo */
-    border-left: none;
-    border-right: none;
-}
-    #transmissao {
-    padding-left: 0;
-    padding-right: 0;
-    border-left: none;  /* Remove bordas laterais se houver */
-    border-right: none;
-}
-    #transmissao .section-title,
-#transmissao #stream-switcher {
-    padding-left: 15px;
-    padding-right: 15px;
-}
-    /* Diminui o tamanho da fonte dos números */
-.time-value {
-    font-size: 1.4rem; /* Valor original era 2.5rem. Ajuste como preferir. */
-}
-
-/* Diminui o texto abaixo dos números para manter a proporção */
-.time-label {
-    font-size: 0.5rem; /* Valor original era 0.7rem. */
-}
-
-/* Diminui o espaço entre os blocos de tempo */
-#timer {
-    gap: 7px; /* Valor original era 15px. */
-}
-
-    /* --- GERAL E CONTEÚDO PRINCIPAL --- */
-    main {
-        padding: 20px 15px; /* Menos espaço nas laterais */
-    }
-
-@media (max-width: 800px) {
-    /* Exibe novamente os elementos que estavam com "display: none" */
-    #countdown-container,
-    #visitor-counter {
-        display: flex; /* ou 'block', dependendo do elemento */
-    }
-    @media (max-width: 800px) {
-        #countdown-container {
-        display: none;
-    }
-    /* --- CABEÇALHO --- */
-    header {
-        flex-direction: column; /* Itens um embaixo do outro */
-        gap: 15px;              /* Espaço entre eles */
-    }
-
-    /* --- RODAPÉ --- */
-    .footer-content {
-        grid-template-columns: 1fr; /* Muda o grid para apenas uma coluna */
-        justify-items: center;      /* Centraliza tudo */
-        gap: 15px;
-    }
-@media (max-width: 800px) {
-    header,
-    footer {
-        position: static; /* Remove a posição fixa/colada */
-    }
-
-    /* Adicione uma margem no topo do rodapé para não colar no conteúdo */
-    footer {
-        margin-top: 30px; 
-    }
-    @media (max-width: 800px) {
-    /* Reduz o espaçamento geral */
+    /* Ajustes Gerais */
     main {
         padding: 20px 15px; 
     }
     .section-container {
         padding: 20px;
     }
+    header,
+    footer {
+        position: static;
+    }
+    footer {
+        margin-top: 30px; 
+    }
 
-    /* Diminui o tamanho das fontes principais */
+    /* Cabeçalho */
+    header {
+        flex-direction: column;
+        gap: 15px;
+    }
     .logo h1 {
         font-size: 2rem;
     }
+    
+    /* Contador de visitantes e Contagem regressiva */
+    #countdown-container,
+    #visitor-counter {
+        display: flex;
+    }
+    #countdown-container {
+        display: none; /* Mantendo escondido em mobile como no código original */
+    }
+
+    /* Rodapé */
+    .footer-content {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        gap: 15px;
+    }
+
+    /* Seções específicas */
+    #regras.section-container {
+        padding-left: 0;
+        padding-right: 0;
+        border-left: none;
+        border-right: none;
+    }
+    #transmissao {
+        padding-left: 0;
+        padding-right: 0;
+        border-left: none;
+        border-right: none;
+    }
+    #transmissao .section-title,
+    #transmissao #stream-switcher {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    /* Títulos e Contagem Regressiva */
     .section-title {
         font-size: 2.2rem;
     }
-        /* Dentro da sua media query de 800px ou uma nova para telas menores */
-@media (max-width: 768px) {
-    .grimorio-flutuante {
-        bottom: 155px; /* Posição mais sensata para mobile */
-        left: 15px;
-        /* Pode também diminuir o tamanho da imagem e da fonte aqui */
+    .time-value {
+        font-size: 1.4rem;
+    }
+    .time-label {
+        font-size: 0.5rem;
+    }
+    #timer {
+        gap: 7px;
+    }
+
+    /* Botão de Tela Cheia */
+    #custom-fullscreen-btn {
+        display: block; 
     }
 }
 
-/* Crie uma nova media query para telas muito pequenas, se necessário */
+/* Regras para telas de até 768px de largura */
+@media (max-width: 768px) {
+    #countdown-container {
+        display: none !important;
+    }
+    .grimorio-flutuante {
+        bottom: 155px;
+        left: 15px;
+    }
+    /* Estilo de moderador (já estava aqui) */
+    .moderator-message {
+        background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0) 70%);
+        border-left: 4px solid #FFD700;
+        padding-left: 15px;
+        border-radius: 4px;
+    }
+    .moderator-message .name {
+        color: #FFD700;
+        text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+    }
+    .moderator-message .name::before {
+        content: '🛡️';
+        margin-right: 6px;
+    }
+}
+
+/* Regras para telas de até 480px de largura */
 @media (max-width: 480px) {
-    #chat-form .form-group {
-        flex-direction: column; /* Empilha o input e o botão do chat */
-        gap: 10px;
-    }
-
+    /* Seções e Títulos */
     .section-container {
-        padding: 20px; /* Menos espaçamento interno nos containers */
+        padding: 20px;
     }
-
     .section-title {
-        font-size: 2.2rem; /* Título um pouco menor */
+        font-size: 2rem;
         margin-bottom: 20px;
     }
+    .logo h1 {
+        font-size: 1.8rem;
+    }
+    .scoreboard-popup h2,
+    .feedback-popup h2 {
+        font-size: 2rem;
+    }
 
-    /* --- CABEÇALHO --- */
+    /* Cabeçalho */
     header {
-        flex-direction: column; /* Empilha os itens do cabeçalho */
+        flex-direction: column;
         gap: 15px;
         padding: 15px;
-        position: static; /* Remove o 'sticky' para não ocupar espaço fixo */
     }
-    
     #visitor-counter {
-        margin-top: 0; /* Remove a margem superior */
-        transform: translateX(0); /* Reseta o posicionamento */
-        order: 3; /* Coloca o contador no final */
+        margin-top: 0;
+        transform: translateX(0);
+        order: 3;
     }
-
-    .logo h1 {
-        font-size: 2rem; /* Título principal menor */
-    }
-
     .nav-buttons {
         width: 100%;
         justify-content: center;
     }
 
-    /* --- BOTÕES DE TROCA DE TRANSMISSÃO --- */
-    #stream-switcher {
-        flex-direction: column; /* Empilha os botões */
-        align-items: stretch; /* Faz os botões ocuparem toda a largura */
+    /* Formulários e Botões */
+    #chat-form .form-group {
+        flex-direction: column;
         gap: 10px;
     }
-
-    /* --- PLACAR E FEEDBACK (POP-UPS) --- */
-.scoreboard-popup,
-.feedback-popup {
-    padding: 25px 15px;          /* Diminui um pouco mais o espaço nas laterais */
-    width: 95%;                  /* Garante que não fique colado nas bordas */
-    box-sizing: border-box;      /* IMPORTANTE: Faz com que o padding seja incluído na largura total, e não somado a ela. */
-}
-    
-    .scoreboard-popup h2,
-    .feedback-popup h2 {
-        font-size: 2.3rem; /* Títulos dos pop-ups menores */
+    #chat-form button {
+        width: 100%;
+    }
+    #stream-switcher {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    .feedback-popup .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    .feedback-popup .form-row .form-group {
+        margin-bottom: 20px;
     }
 
-    .score-display {
-        gap: 20px;
+    /* Pop-ups e Placar */
+    .scoreboard-popup,
+    .feedback-popup {
+        padding: 25px 15px;
+        width: 95%;
+        box-sizing: border-box;
     }
-    
     .leaderboard-list {
-        min-height: 250px; /* Altura menor no mobile */
+        min-height: 250px;
     }
-
     .scoreboard-fab {
         right: -5px;
         bottom: -90px;
         padding: 8px 15px;
         font-size: 0.9rem;
     }
-
     .scoreboard-fab img {
         width: 40px;
         height: 40px;
     }
 
-    /* --- REGRAS --- */
+    /* Regras */
     #regras li {
         padding: 15px;
         font-size: 0.9rem;
@@ -1469,174 +1473,107 @@ footer {
         margin-right: 10px;
     }
 
-    /* --- RODAPÉ --- */
-    footer {
-        position: static; /* Remove o 'fixed' para que o rodapé fique no final do conteúdo */
-        margin-top: 30px;
-    }
-    
+    /* Rodapé */
     .footer-content {
-        /* A regra que você já tem para flex-direction: column em 850px vai funcionar aqui */
-        grid-template-columns: 1fr; /* Muda o grid para uma única coluna */
-        justify-items: center; /* Centraliza tudo */
+        grid-template-columns: 1fr;
+        justify-items: center;
         gap: 15px;
     }
     .footer-logo {
-        grid-row: 2; /* Move o logo para o meio */
+        grid-row: 2;
     }
     .footer-copyright {
-        order: 0; /* Ordem padrão */
-        grid-row: 1; /* Move o copyright para cima */
+        order: 0;
+        grid-row: 1;
     }
     .footer-links {
-        justify-self: center; /* Centraliza os links */
-        grid-row: 3; /* Move os links para baixo */
+        justify-self: center;
+        grid-row: 3;
     }
 }
 
-/* Ajustes finos para telas bem pequenas */
-@media (max-width: 480px) {
-    .logo h1 {
-        font-size: 1.8rem;
-    }
-    .section-title {
-        font-size: 2rem;
-    }
-    .scoreboard-popup h2,
-    .feedback-popup h2 {
-        font-size: 2rem;
-    }
-    
-    /* Empilha o formulário do chat */
-    #chat-form .form-group {
-        flex-direction: column;
-        gap: 10px;
-    }
-    #chat-form button {
-        width: 100%;
-    }
-    
-    #live-section {
-        max-width: 100%; /* Permite que o vídeo ocupe todo o espaço disponível */
-    }
 
-    /* Ajusta o formulário de feedback que já tinha media query */
-    .feedback-popup .form-row {
-        flex-direction: column;
-        gap: 0;
-    }
-    .feedback-popup .form-row .form-group {
-        margin-bottom: 20px;
-    }
-/* --- ESTILO PARA O BOTÃO DE TELA CHEIA CUSTOMIZADO --- */
+/* --- INÍCIO: ESTILOS DO BOTÃO DE REGRAS (VERSÃO FINAL) --- */
 
-#custom-fullscreen-btn {
-    position: absolute; /* Para sobrepor o vídeo */
-    top: 10px;
-    right: 10px;
-    z-index: 25; /* Garante que fique acima do vídeo */
-    
-    background-color: rgba(0, 0, 0, 0.6);
-    border: none;
-    border-radius: 5px;
-    padding: 8px;
-    cursor: pointer;
-    
-    /* POR PADRÃO, O BOTÃO FICA ESCONDIDO NO PC */
-    display: none; 
-    transition: background-color 0.2s;
-}
-
-#custom-fullscreen-btn:hover {
-    background-color: rgba(255, 0, 0, 0.7);
-}
-
-/* Estilo do ícone SVG dentro do botão */
-#custom-fullscreen-btn svg {
-    width: 20px;
-    height: 20px;
-    fill: #ffffff;
-    display: block;
-}
-
-/* A MÁGICA PARA APARECER SÓ NO MOBILE */
-@media (max-width: 800px) {
-    #custom-fullscreen-btn {
-        /* Apenas em telas menores, o botão passa a ser visível */
-        display: block; 
-    }
-/* --- ESTILO PARA A ANIMAÇÃO DE CARREGAMENTO DO VÍDEO --- */
-
-#video-loader {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 15; /* Abaixo do indicador de "AO VIVO" e botão, mas acima da imagem */
-    
-    background-color: rgba(10, 10, 10, 0.7);
-    backdrop-filter: blur(3px); /* Efeito de vidro para desfocar a imagem de fundo */
-
-    /* Centraliza o conteúdo da animação */
+/* 1. O botão volta a ter o estilo de container que você gostava */
+.dropdown-toggle {
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-#video-loader .loader-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     gap: 15px;
+    width: 100%;
+    max-width: 90%;
+    margin: 0 auto; /* Centraliza o botão */
+    
+    font-family: 'Creepster', cursive;
+    font-size: 2.2rem;
+    color: var(--cor-principal);
+    text-shadow: 0 0 5px black;
+    
+    background-color: rgba(10, 10, 10, 0.7);
+    border: 2px solid var(--cor-borda-forte);
+    border-radius: 8px;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    /* Adiciona uma margem inferior para quando a lista estiver fechada */
+    margin-bottom: 30px;
 }
 
-/* O spinner (círculo que gira) */
-#video-loader .loader-spinner {
-    width: 50px;
-    height: 50px;
-    border: 5px solid rgba(255, 255, 255, 0.3); /* Círculo cinza claro */
-    border-top-color: var(--cor-principal); /* Parte de cima vermelha, que vai girar */
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+.dropdown-toggle:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 20px rgba(255, 77, 77, 0.4);
+    border-color: var(--cor-principal);
+    color: #fff;
+    text-shadow: 0 0 10px #fff;
 }
 
-/* O texto */
-#video-loader span {
-    color: var(--cor-texto);
-    font-weight: bold;
-    font-size: 1.1rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
+.dropdown-icon {
+    font-size: 1.5rem;
+    transition: transform 0.4s ease;
 }
 
-/* A animação de rotação do spinner */
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
+.dropdown-icon.rotated {
+    transform: rotate(180deg);
+}
+
+/* 2. A LISTA de regras agora tem seu PRÓPRIO fundo */
+.rules-list {
+    /* Estilos do container aplicados diretamente na lista */
+    background-color: var(--cor-fundo-container);
+    border: 2px solid var(--cor-borda);
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+
+    /* Animação para aparecer e desaparecer */
+    overflow: hidden;
+    max-height: 5000px;
+    transition: max-height 0.7s ease-in-out, opacity 0.5s ease, margin-top 0.7s ease;
+    opacity: 1;
+    margin-top: -20px; /* Puxa a lista para perto do botão */
+}
+
+/* 3. Esconde a lista de forma suave */
+.rules-list.hidden {
+    max-height: 0;
+    opacity: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-width: 0;
+    margin-top: 0;
+}
+
+/* 4. Ajustes para PC */
+@media (min-width: 769px) {
+    .dropdown-toggle {
+        max-width: 700px;
+        font-size: 2.8rem;
     }
 }
-    /* ✨ NOVO: Esconde a contagem em telas pequenas ✨ */
-@media (max-width: 768px) {
-    #countdown-container {
-        display: none !important;
-    }
-    /* ✨ ESTILO PARA MODERADORES ✨ */
-.moderator-message {
-    background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0) 70%);
-    border-left: 4px solid #FFD700;
-    padding-left: 15px;
-    border-radius: 4px;
-}
-.moderator-message .name {
-    color: #FFD700;
-    text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
-}
-.moderator-message .name::before {
-    content: '🛡️';
-    margin-right: 6px;
-}
-}
+
+/* --- FIM: ESTILOS DO BOTÃO DE REGRAS --- */
     </style>
 </head>
 <body>
@@ -1684,83 +1621,85 @@ footer {
             <button id="open-feedback-btn" class="btn">Feedback</button>
         </nav>
     </header>
-    <main>
-        <section class="section-container" id="transmissao">
-            <h2 class="section-title">Acompanhe Ao Vivo</h2>
-            <div id="live-section">
-                <div class="video-container">
-                    <div id="player-wrapper"></div>
-                    <div id="offline-overlay">
-                         <img id="offline-image" src="https://i.imgur.com/OezIOeL.jpeg" alt="Transmissão Offline">
+     <main>
+    <section class="section-container" id="transmissao">
+        <h2 class="section-title">Acompanhe Ao Vivo</h2>
+        <div id="live-section">
+            <div class="video-container">
+                <div id="player-wrapper"></div>
+                <div id="offline-overlay">
+                    <img id="offline-image" src="https://i.imgur.com/OezIOeL.jpeg" alt="Transmissão Offline">
+                </div>
+                <div id="video-loader" class="hidden">
+                    <div class="loader-content">
+                        <div class="loader-spinner"></div>
+                        <span>CARREGANDO A CAÇADA...</span>
                     </div>
-                    <div id="video-loader" class="hidden">
-    <div class="loader-content">
-        <div class="loader-spinner"></div>
-        <span>CARREGANDO A CAÇADA...</span>
-    </div>
-</div>
-                    <div id="live-indicator-wrapper" class="hidden"><div class="live-indicator">AO VIVO</div></div>
-                    <button id="custom-fullscreen-btn" class="hidden" title="Tela Cheia">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M5 5h5v2H7v3H5V5m9 0h5v5h-2V7h-3V5m3 9h2v5h-5v-2h3v-3m-7 3v-2H5v5h5v-3H8z"/>
-        </svg>
-    </button>
                 </div>
-              <div id="stream-switcher">
-    <button class="stream-btn active" data-stream="stream1">Transmissão Principal</button>
-    <button class="stream-btn" data-stream="stream2">Transmissão 2</button>
-    <button class="stream-btn" data-stream="stream3">Transmissão 3</button>
-</div>
+                <div id="live-indicator-wrapper" class="hidden"><div class="live-indicator">AO VIVO</div></div>
+                <button id="custom-fullscreen-btn" class="hidden" title="Tela Cheia">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M5 5h5v2H7v3H5V5m9 0h5v5h-2V7h-3V5m3 9h2v5h-5v-2h3v-3m-7 3v-2H5v5h5v-3H8z"/>
+                    </svg>
+                </button>
             </div>
-            
-            <div id="dbd-unmute-popup">
-                <p>Deseja ativar o som?</p>
-                <div class="popup-buttons">
-                    <button id="unmute-yes-btn" class="popup-btn">Sim</button>
-                    <button id="unmute-no-btn" class="popup-btn">Não</button>
-                </div>
+            <div id="stream-switcher">
+                <button class="stream-btn active" data-stream="stream1">Transmissão Principal</button>
+                <button class="stream-btn" data-stream="stream2">Transmissão 2</button>
+                <button class="stream-btn" data-stream="stream3">Transmissão 3</button>
             </div>
-
-            <div id="scoreboard-fab" class="scoreboard-fab">
-                <img src="https://i.postimg.cc/YCSyWS5y/Gemini-Generated-Image-vpc766vpc766vpc7-Photoroom.png" alt="Ícone de Troféu"/>
-            </div>
-        </section>
-        <section id="regras" class="section-container">
-            <section class="section-container">
-    <h2 class="section-title">Chat da Entidade</h2>
-    <div id="chat-messages">
-         <div id="chat-overlay"></div> <div id="chat-placeholder">
-        <div class="placeholder-icon">💬</div>
-        <h4>Bem-vindo ao Chat da Entidade</h4>
-        <p>Use <code>/nome SEUNOME</code> para mudar o nome de usuário. Ex: /nome Chris.</p>
-        <p>Clique no nome de um usuário para enviar uma DM.</p>
-        <p>Digite <code>@</code> para mencionar alguém.</p>
-        <p>Clique em uma mensagem para editá-la ou excluí-la.</p>
-    </div>
-    </div>
-                <div id="private-message-indicator" class="hidden">
-    <span id="pm-info"></span>
-    <button id="exit-pm-btn">Voltar ao Chat Público</button>
-</div>
-    <form id="chat-form">
-        <div class="form-group" id="name-group">
-            <input type="text" id="chat-name" placeholder="Digite seu nome para entrar..." required maxlength="15">
-            <button type="button" id="enter-chat-btn">Entrar no Chat</button>
         </div>
-        <div class="form-group hidden" id="message-group">
-    <div id="emoji-picker" class="hidden"></div>
+        <div id="dbd-unmute-popup">
+            <p>Deseja ativar o som?</p>
+            <div class="popup-buttons">
+                <button id="unmute-yes-btn" class="popup-btn">Sim</button>
+                <button id="unmute-no-btn" class="popup-btn">Não</button>
+            </div>
+        </div>
+        <div id="scoreboard-fab" class="scoreboard-fab">
+            <img src="https://i.postimg.cc/YCSyWS5y/Gemini-Generated-Image-vpc766vpc766vpc7-Photoroom.png" alt="Ícone de Troféu"/>
+        </div>
+    </section>
 
-    <input type="text" id="chat-message" placeholder="Digite sua mensagem..." required disabled maxlength="400">
-    
-    <button type="button" id="emoji-toggle-btn" title="Inserir Emoji" disabled>😊</button>
-    
-    <button type="submit" disabled>Enviar</button>
-    
-    <div id="mention-suggestions" class="suggestions-box hidden"></div>
-</div>
-    </form>
-</section>
-            <h2 class="section-title">Regras do Torneio</h2>
+    <section class="section-container" id="chat-container">
+        <h2 class="section-title">Chat da Entidade</h2>
+        <div id="chat-messages">
+            <div id="chat-overlay"></div>
+            <div id="chat-placeholder">
+                <div class="placeholder-icon">💬</div>
+                <h4>Bem-vindo ao Chat da Entidade</h4>
+                <p>Use <code>/nome SEUNOME</code> para mudar o nome de usuário. Ex: /nome Chris.</p>
+                <p>Clique no nome de um usuário para enviar uma DM.</p>
+                <p>Digite <code>@</code> para mencionar alguém.</p>
+                <p>Clique em uma mensagem para editá-la ou excluí-la.</p>
+            </div>
+        </div>
+        <div id="private-message-indicator" class="hidden">
+            <span id="pm-info"></span>
+            <button id="exit-pm-btn">Voltar ao Chat Público</button>
+        </div>
+        <form id="chat-form">
+            <div class="form-group" id="name-group">
+                <input type="text" id="chat-name" placeholder="Digite seu nome para entrar..." required maxlength="15">
+                <button type="button" id="enter-chat-btn">Entrar no Chat</button>
+            </div>
+            <div class="form-group hidden" id="message-group">
+                <div id="emoji-picker" class="hidden"></div>
+                <input type="text" id="chat-message" placeholder="Digite sua mensagem..." required disabled maxlength="400">
+                <button type="button" id="emoji-toggle-btn" title="Inserir Emoji" disabled>😊</button>
+                <button type="submit" disabled>Enviar</button>
+                <div id="mention-suggestions" class="suggestions-box hidden"></div>
+            </div>
+        </form>
+    </section>
+
+    <section id="regras">
+        <button class="dropdown-toggle" id="rules-toggle-btn">
+            <span>Regras do Torneio</span>
+            <span class="dropdown-icon">▼</span>
+        </button>
+        
+        <div id="rules-content" class="rules-list hidden">
             <ul>
                 <li>1. Cada esquadrão será formado por cinco almas: quatro destinadas à Sobrevivência e uma encarregada da Caçada.</li>
                 <li>2. A Entidade não espera. A tolerância para atrasos é de 5 minutos, e o descumprimento implicará em derrota automática (W.O.).</li>
@@ -1778,10 +1717,20 @@ footer {
                 <li>14. As leis da realidade, mesmo neste reino, não devem ser quebradas. É estritamente proibido o uso de qualquer bug, glitch ou exploit conhecido que conceda uma vantagem injusta. A descoberta de tal ato levará à desclassificação imediata.</li>
                 <li>15. Em caso de almas perdidas na névoa por desconexão de um jogador (Somente se não houver começado uma perseguição qualquer), a partida deverá ser reiniciada. Se já houver perseguição em andamento, a partida continua normalmente, e a equipe desfalcada deverá lutar com as almas que restaram.</li>
                 <li>16. A desobediência à entidade tem um preço. A equipe ou Assassino infrator perderá o favor da Entidade, sofrendo com a subtração parcial ou total dos pontos e até mesmo com a desclassificação.</li>
-                
             </ul>
-        </section>
-    </main>
+        </div>
+    </section>
+         <div id="grimorio-container">
+    <a href="niveis.html" id="grimorio-killers" class="grimorio-item grimorio-visible">
+        <img src="https://i.imgur.com/KhwS5jZ.gif" alt="Grimório dos Killers">
+        <span>Grimório dos Killers</span>
+    </a>
+    <a href="recompensas.html" id="grimorio-recompensas" class="grimorio-item grimorio-hidden">
+        <img src="https://i.imgur.com/p53OZAS.gif" alt="Livro das Recompensas">
+        <span>Livro dos Rewards</span>
+    </a>
+</div>
+</main>
 
    <div id="scoreboard-overlay" class="popup-overlay align-top">
     <div class="scoreboard-popup">
@@ -2812,16 +2761,6 @@ fullscreenBtn.addEventListener('click', () => {
     }
 });
 </script>
-        <div id="grimorio-container">
-    <a href="niveis.html" id="grimorio-killers" class="grimorio-item grimorio-visible">
-        <img src="https://i.imgur.com/KhwS5jZ.gif" alt="Grimório dos Killers">
-        <span>Grimório dos Killers</span>
-    </a>
-    <a href="recompensas.html" id="grimorio-recompensas" class="grimorio-item grimorio-hidden">
-        <img src="https://i.imgur.com/p53OZAS.gif" alt="Livro das Recompensas">
-        <span>Livro dos Rewards</span>
-    </a>
-</div>
     <div id="registration-closed-popup" class="popup-overlay align-top">
     <div class="feedback-popup">
         <button class="close-btn">×</button>
@@ -2988,6 +2927,20 @@ const signupBtn = document.getElementById('signup-btn');
         }
     });
     // --- FIM: LÓGICA DA CONTAGEM REGRESSIVA DINÂMICA ---
+        // --- Lógica para o menu suspenso das Regras (VERSÃO CORRIGIDA) ---
+const rulesToggleBtn = document.getElementById('rules-toggle-btn');
+const rulesContent = document.getElementById('rules-content');
+const dropdownIcon = rulesToggleBtn.querySelector('.dropdown-icon');
+
+// Verifica se os elementos existem antes de adicionar o evento
+if (rulesToggleBtn && rulesContent && dropdownIcon) {
+    rulesToggleBtn.addEventListener('click', () => {
+        // Alterna a classe 'hidden' no conteúdo das regras
+        rulesContent.classList.toggle('hidden');
+        // Alterna a classe 'rotated' no ícone
+        dropdownIcon.classList.toggle('rotated');
+    });
+}
     </script>
     </body>
 </html>
