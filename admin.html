@@ -408,7 +408,15 @@
                     <label for="registration-toggle" class="switch-label"></label>
                 </div>
             </div>
-
+<hr>
+<h3>Controle do Chat</h3>
+<div class="form-group switch-container">
+    <label for="chat-toggle">Status do Chat (Ativado / Desativado)</label>
+    <div>
+        <input type="checkbox" id="chat-toggle" class="switch-checkbox" disabled>
+        <label for="chat-toggle" class="switch-label"></label>
+    </div>
+</div>
             <hr>
 
             <h3>Contagem Regressiva</h3>
@@ -489,7 +497,7 @@ const firebaseConfig = {
         const participantesList = document.getElementById('participantes-list');
         const banidosList = document.getElementById('banidos-list');
         const moderadoresList = document.getElementById('moderadores-list');
-        
+        const chatToggle = document.getElementById('chat-toggle');
         // --- Referências do Firebase ---
         const teamsRef = database.ref('teams');
         const configRef = database.ref('config');
@@ -497,6 +505,7 @@ const firebaseConfig = {
         const participantesRef = database.ref('participants');
         const bannedDevicesRef = database.ref('dispositivosBanidos');
         const moderatorsRef = database.ref('moderators');
+        const chatStatusRef = database.ref('config/chatEnabled');
         // ===================================================================
 // ✨ FUNÇÃO DE FEEDBACK VISUAL PARA BOTÕES ✨
 // ===================================================================
@@ -516,6 +525,21 @@ function showButtonFeedback(buttonElement, successText, originalText) {
         buttonElement.textContent = buttonElement.dataset.originalText;
     }, 2000); // 2000ms = 2 segundos
 }
+    // ▼▼▼ COLE ESTE BLOCO NOVO AQUI ▼▼▼
+
+// --- LÓGICA DO INTERRUPTOR DO CHAT ---
+// Ouve as mudanças no Firebase para manter o interruptor atualizado
+chatStatusRef.on('value', (snapshot) => {
+    chatToggle.checked = snapshot.val() === true;
+});
+
+// Salva a mudança no Firebase quando o administrador clica no interruptor
+chatToggle.addEventListener('change', () => {
+    if(chatToggle.disabled) return; // Não faz nada se os controles estiverem bloqueados
+    chatStatusRef.set(chatToggle.checked);
+});
+
+// ▲▲▲ FIM DO BLOCO NOVO ▲▲▲
 
         // --- LÓGICA DE CONTROLE DE PERMISSÕES (VERSÃO FINAL CORRIGIDA) ---
 function setControlPermissions(level) {
