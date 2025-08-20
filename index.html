@@ -1853,6 +1853,48 @@ const teamInfoMembersList = document.getElementById('team-info-members-list');
 
 // O placar é dinâmico, então usamos delegação de evento
 const placarListaEquipes = document.getElementById('teams-leaderboard');
+        // ▼▼▼ COLE ESTE NOVO BLOCO DE CÓDIGO ▼▼▼
+
+// --- VIGIA DO STATUS DO CHAT EM TEMPO REAL ---
+const chatStatusRef = database.ref('config/chatEnabled');
+
+chatStatusRef.on('value', (snapshot) => {
+    const isChatActive = snapshot.val() === true;
+    const enterChatBtn = document.getElementById('enter-chat-btn');
+    const chatMessageInput = document.getElementById('chat-message');
+    const messageGroup = document.getElementById('message-group');
+    const submitBtn = messageGroup.querySelector('button[type="submit"]');
+    const emojiBtn = document.getElementById('emoji-toggle-btn');
+
+    if (isChatActive) {
+        // O chat foi ATIVADO
+        enterChatBtn.disabled = false;
+        enterChatBtn.textContent = 'Entrar no Chat';
+
+        // Se o usuário já estiver logado, reativa os controles dele
+        if (currentUser) {
+            chatMessageInput.disabled = false;
+            chatMessageInput.placeholder = 'Digite sua mensagem...';
+            submitBtn.disabled = false;
+            emojiBtn.disabled = false;
+        }
+    } else {
+        // O chat foi DESATIVADO
+        enterChatBtn.disabled = true;
+        enterChatBtn.textContent = 'Chat Desativado';
+
+        // Se o usuário estiver logado, desativa os controles dele em tempo real
+        if (currentUser) {
+            chatMessageInput.disabled = true;
+            chatMessageInput.placeholder = 'O chat foi desativado pelo administrador.';
+            submitBtn.disabled = true;
+            emojiBtn.disabled = true;
+            displaySystemMessage('O chat foi desativado pelo administrador.');
+        }
+    }
+});
+
+// ▲▲▲ FIM DO NOVO BLOCO ▲▲▲
 
 placarListaEquipes.addEventListener('click', (e) => {
     if (e.target.classList.contains('name')) {
@@ -2052,48 +2094,35 @@ function contemPalavraImpropria(texto) {
 // ✨ SUBSTITUA PELO BLOCO CORRIGIDO ABAIXO ✨
 
 function activateChat(name) {
-    // 1. VERIFICA NO FIREBASE SE O CHAT PODE SER ATIVADO
-    database.ref('config/chatEnabled').once('value', (snapshot) => {
+    // A verificação do Firebase foi removida daqui, pois o "vigia" já cuida disso.
 
-        // 2. SE O CHAT ESTIVER DESATIVADO NO ADMIN...
-        if (snapshot.val() !== true) {
-            alert("O chat da Entidade está temporariamente desativado. Volte mais tarde.");
-            localStorage.removeItem('dbdChatName'); // Limpa o nome para não tentar logar de novo
-            return; // Para a execução da função aqui.
-        }
+    currentUser = name;
+    const chatNameInput = document.getElementById('chat-name');
+    const nameGroup = document.getElementById('name-group');
+    const messageGroup = document.getElementById('message-group');
+    const chatMessageInput = document.getElementById('chat-message');
+    const chatSubmitButton = messageGroup.querySelector('button[type="submit"]');
+    const chatPlaceholder = document.getElementById('chat-placeholder');
 
-        // 3. SE O CHAT ESTIVER ATIVADO, O CÓDIGO ABAIXO EXECUTA NORMALMENTE
-        currentUser = name;
+    chatNameInput.value = name;
+    nameGroup.classList.add('hidden');
 
-        // Definições de elementos que a função precisa
-        const chatNameInput = document.getElementById('chat-name');
-        const nameGroup = document.getElementById('name-group');
-        const messageGroup = document.getElementById('message-group');
-        const chatMessageInput = document.getElementById('chat-message');
-        const chatSubmitButton = messageGroup.querySelector('button[type="submit"]');
-        const chatPlaceholder = document.getElementById('chat-placeholder');
+    if (chatPlaceholder) {
+        chatPlaceholder.classList.add('hidden');
+        chatMessages.classList.remove('placeholder-active');
+    }
 
-        // Continua com a lógica para entrar no chat
-        chatNameInput.value = name;
-        nameGroup.classList.add('hidden');
+    messageGroup.classList.remove('hidden');
+    chatMessageInput.disabled = false;
+    if(chatSubmitButton) chatSubmitButton.disabled = false;
+    document.getElementById('emoji-toggle-btn').disabled = false;
+    chatMessageInput.focus();
 
-        if (chatPlaceholder) {
-            chatPlaceholder.classList.add('hidden');
-            chatMessages.classList.remove('placeholder-active');
-        }
+    const participantRef = participantsRef.child(name);
+    participantRef.set({ deviceId: deviceId, online: true });
+    participantRef.onDisconnect().remove();
 
-        messageGroup.classList.remove('hidden');
-        chatMessageInput.disabled = false;
-        if(chatSubmitButton) chatSubmitButton.disabled = false;
-        document.getElementById('emoji-toggle-btn').disabled = false;
-        chatMessageInput.focus();
-
-        const participantRef = participantsRef.child(name);
-        participantRef.set({ deviceId: deviceId, online: true });
-        participantRef.onDisconnect().remove();
-
-        listenForPrivateMessages(currentUser);
-    });
+    listenForPrivateMessages(currentUser);
 }
 
 // Lógica de Entrada no Chat (COM VERIFICAÇÃO DE BAN)
