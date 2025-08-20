@@ -2052,28 +2052,48 @@ function contemPalavraImpropria(texto) {
 // ✨ SUBSTITUA PELO BLOCO CORRIGIDO ABAIXO ✨
 
 function activateChat(name) {
-    currentUser = name;
-    chatNameInput.value = name;
-    nameGroup.classList.add('hidden');
+    // 1. VERIFICA NO FIREBASE SE O CHAT PODE SER ATIVADO
+    database.ref('config/chatEnabled').once('value', (snapshot) => {
 
-    const chatPlaceholder = document.getElementById('chat-placeholder');
-    if (chatPlaceholder) {
-        chatPlaceholder.classList.add('hidden');
-        chatMessages.classList.remove('placeholder-active');
-    }
+        // 2. SE O CHAT ESTIVER DESATIVADO NO ADMIN...
+        if (snapshot.val() !== true) {
+            alert("O chat da Entidade está temporariamente desativado. Volte mais tarde.");
+            localStorage.removeItem('dbdChatName'); // Limpa o nome para não tentar logar de novo
+            return; // Para a execução da função aqui.
+        }
 
-    messageGroup.classList.remove('hidden');
-    chatMessageInput.disabled = false;
-    chatSubmitButton.disabled = false;
-    document.getElementById('emoji-toggle-btn').disabled = false;
-    chatMessageInput.focus();
+        // 3. SE O CHAT ESTIVER ATIVADO, O CÓDIGO ABAIXO EXECUTA NORMALMENTE
+        currentUser = name;
 
-    // ALTERADO: Agora salvamos o ID do dispositivo junto com o nome
-    const participantRef = participantsRef.child(name);
-    participantRef.set({ deviceId: deviceId, online: true });
-    participantRef.onDisconnect().remove();
+        // Definições de elementos que a função precisa
+        const chatNameInput = document.getElementById('chat-name');
+        const nameGroup = document.getElementById('name-group');
+        const messageGroup = document.getElementById('message-group');
+        const chatMessageInput = document.getElementById('chat-message');
+        const chatSubmitButton = messageGroup.querySelector('button[type="submit"]');
+        const chatPlaceholder = document.getElementById('chat-placeholder');
 
-    listenForPrivateMessages(currentUser);
+        // Continua com a lógica para entrar no chat
+        chatNameInput.value = name;
+        nameGroup.classList.add('hidden');
+
+        if (chatPlaceholder) {
+            chatPlaceholder.classList.add('hidden');
+            chatMessages.classList.remove('placeholder-active');
+        }
+
+        messageGroup.classList.remove('hidden');
+        chatMessageInput.disabled = false;
+        if(chatSubmitButton) chatSubmitButton.disabled = false;
+        document.getElementById('emoji-toggle-btn').disabled = false;
+        chatMessageInput.focus();
+
+        const participantRef = participantsRef.child(name);
+        participantRef.set({ deviceId: deviceId, online: true });
+        participantRef.onDisconnect().remove();
+
+        listenForPrivateMessages(currentUser);
+    });
 }
 
 // Lógica de Entrada no Chat (COM VERIFICAÇÃO DE BAN)
