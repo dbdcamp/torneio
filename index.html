@@ -1894,26 +1894,20 @@ const placarListaEquipes = document.getElementById('teams-leaderboard');
         // ▼▼▼ COLE ESTE NOVO BLOCO DE CÓDIGO ▼▼▼
 
 // --- VIGIA DO STATUS DO CHAT EM TEMPO REAL ---
-const chatStatusRef = database.ref('config/chatEnabled');
-
-chatStatusRef.on('value', (snapshot) => {
-    const isChatActive = snapshot.val() === true;
-    isChatCurrentlyEnabled = isChatActive; // Atualiza nossa variável de controle global
+function updateChatUI() {
+    // Esta função agora centraliza toda a lógica de habilitar/desabilitar o chat
+    const isChatActive = isChatCurrentlyEnabled; // Usa a variável global que já temos
     const enterChatBtn = document.getElementById('enter-chat-btn');
     const chatMessageInput = document.getElementById('chat-message');
     const messageGroup = document.getElementById('message-group');
     const submitBtn = messageGroup.querySelector('button[type="submit"]');
     const emojiBtn = document.getElementById('emoji-toggle-btn');
 
-    // Verificação Chave: O usuário atual é o admin?
-    // Usamos toLowerCase() para garantir a correspondência ("Admin" === "admin")
     const isCurrentUserAdmin = currentUser && adminUsername && currentUser.toLowerCase() === adminUsername.toLowerCase();
 
     if (isChatActive) {
-        // --- O CHAT FOI ATIVADO PARA TODOS ---
         enterChatBtn.disabled = false;
         enterChatBtn.textContent = 'Entrar no Chat';
-
         if (currentUser) {
             chatMessageInput.disabled = false;
             chatMessageInput.placeholder = 'Digite sua mensagem...';
@@ -1921,36 +1915,36 @@ chatStatusRef.on('value', (snapshot) => {
             emojiBtn.disabled = false;
         }
     } else {
-        // --- O CHAT FOI DESATIVADO ---
         enterChatBtn.disabled = true;
         enterChatBtn.textContent = 'Chat Desativado';
-
         if (currentUser) {
             if (isCurrentUserAdmin) {
-                // Se o chat foi desativado, MAS o usuário é o admin...
                 chatMessageInput.disabled = false;
                 submitBtn.disabled = false;
                 emojiBtn.disabled = false;
-                // Mensagem especial para o admin
-                chatMessageInput.placeholder = 'Chat desativado para usuários. Você ainda pode enviar mensagens.'; 
-                displaySystemMessage('O chat foi desativado, mas seus controles de admin permanecem ativos.');
+                chatMessageInput.placeholder = 'Chat desativado para usuários. Você ainda pode enviar mensagens.';
+                // Não vamos mais exibir a mensagem do sistema aqui para evitar repetição
             } else {
-                // Se for um usuário comum...
                 chatMessageInput.disabled = true;
                 submitBtn.disabled = true;
                 emojiBtn.disabled = true;
                 chatMessageInput.placeholder = 'O chat foi desativado pelo administrador.';
-                displaySystemMessage('O chat foi desativado pelo administrador.');
             }
         }
     }
+}
+// ✨ PASSO 2: ADICIONE ESTE NOVO LISTENER SIMPLIFICADO
+const chatStatusRef = database.ref('config/chatEnabled');
+chatStatusRef.on('value', (snapshot) => {
+    isChatCurrentlyEnabled = snapshot.val() === true;
+    updateChatUI(); // Apenas chama a função central
 });
-
 // ▲▲▲ FIM DO NOVO BLOCO ▲▲▲
         // ▼▼▼ COLE O NOVO BLOCO DE CÓDIGO AQUI ▼▼▼
 // Vigia que busca o nome do admin em tempo real
 database.ref('config/administratorName').on('value', (snapshot) => {
     adminUsername = snapshot.val() || '';
+    updateChatUI();
 });
 // ▲▲▲ FIM DO NOVO BLOCO ▲▲▲
 
