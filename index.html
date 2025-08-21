@@ -1593,6 +1593,44 @@ footer {
         padding: 25px 15px; /* Diminui o espaçamento lateral */
     }
 }
+        /* =================================================================== */
+/* ✨ ESTILO PARA MENSAGENS DE ADMINISTRADOR ✨ */
+/* =================================================================== */
+
+@keyframes admin-glow-animation {
+    0%   { border-color: #ff4d4d; box-shadow: 0 0 15px #ff4d4d; }
+    33%  { border-color: #ffffff; box-shadow: 0 0 20px #ffffff; }
+    66%  { border-color: #ffc800; box-shadow: 0 0 25px #ffc800; }
+    100% { border-color: #ff4d4d; box-shadow: 0 0 15px #ff4d4d; }
+}
+
+.admin-message {
+    background: linear-gradient(90deg, rgba(139, 0, 0, 0.3), rgba(10, 10, 10, 0.1) 80%);
+    border: 2px solid;
+    border-radius: 6px;
+    padding: 10px 15px;
+    animation: admin-glow-animation 4s linear infinite;
+}
+
+.admin-message .name {
+    font-weight: 900;
+    font-size: 1.1em;
+    color: #fff !important; /* Força a cor branca */
+    text-shadow: 0 0 5px #ff4d4d, 0 0 10px #ff4d4d;
+}
+
+.admin-message .name::before {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+    vertical-align: -6px;
+    background-image: url('https://i.imgur.com/lbqMtu9.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
     </style>
 </head>
 <body>
@@ -1896,6 +1934,12 @@ chatStatusRef.on('value', (snapshot) => {
 });
 
 // ▲▲▲ FIM DO NOVO BLOCO ▲▲▲
+        // ▼▼▼ COLE O NOVO BLOCO DE CÓDIGO AQUI ▼▼▼
+// Vigia que busca o nome do admin em tempo real
+database.ref('config/administratorName').on('value', (snapshot) => {
+    adminUsername = snapshot.val() || '';
+});
+// ▲▲▲ FIM DO NOVO BLOCO ▲▲▲
 
 placarListaEquipes.addEventListener('click', (e) => {
     if (e.target.classList.contains('name')) {
@@ -2060,6 +2104,7 @@ moderatorsRef.on('value', (snapshot) => {
 let chatParticipants = new Set();
 let currentUser = '';
 let isChatCurrentlyEnabled = true; // Começa como ativado por padrão
+let adminUsername = '';
 let privateRecipient = null;
 const userColors = {};
 
@@ -2303,19 +2348,12 @@ publicMessagesRef.limitToLast(100).on('child_changed', (snapshot) => {
 });
 
 // 🔧 ALTERADO: Função para exibir a mensagem pública
-function displayPublicMessage(msg, messageKey) { // Recebe a chave da mensagem
+function displayPublicMessage(msg, messageKey) {
     const messageElement = document.createElement('div');
     messageElement.classList.add('chat-message');
-
-    // ✨ NOVO: Adiciona atributos de dados para identificar a mensagem
     messageElement.dataset.messageId = messageKey;
     if(msg.timestamp) messageElement.dataset.timestamp = msg.timestamp;
     if(msg.senderDeviceId) messageElement.dataset.senderDeviceId = msg.senderDeviceId;
-
-    // Adiciona a classe de moderador
-    if (moderatorList[msg.name]) {
-        messageElement.classList.add('moderator-message');
-    }
 
     if (msg.watchingStream) {
         const streamIndicator = document.createElement('span');
@@ -2324,29 +2362,45 @@ function displayPublicMessage(msg, messageKey) { // Recebe a chave da mensagem
         messageElement.appendChild(streamIndicator);
     }
 
-    if (!userColors[msg.name]) userColors[msg.name] = getRandomColor();
     const nameSpan = document.createElement('span');
     nameSpan.className = 'name';
-    nameSpan.textContent = msg.name + ':';
-    nameSpan.style.color = userColors[msg.name];
     nameSpan.dataset.username = msg.name;
+
+    // ===== LÓGICA DE HIERARQUIA CORRIGIDA E MELHORADA =====
+
+    // ❗ MUDANÇA AQUI: Comparamos os nomes em minúsculas
+    if (adminUsername && msg.name.toLowerCase() === adminUsername.toLowerCase()) {
+        messageElement.classList.add('admin-message');
+        nameSpan.textContent = 'ADMINISTRADOR:';
+
+    } else if (moderatorList[msg.name]) {
+        messageElement.classList.add('moderator-message');
+        nameSpan.textContent = msg.name + ':';
+        nameSpan.style.color = '#FFD700';
+
+    } else {
+        if (!userColors[msg.name]) userColors[msg.name] = getRandomColor();
+        nameSpan.textContent = msg.name + ':';
+        nameSpan.style.color = userColors[msg.name]; 
+    }
+    
+    // ===== FIM DA LÓGICA =====
+
     messageElement.appendChild(nameSpan);
 
     const messageSpan = document.createElement('span');
     messageSpan.className = 'text';
 
-    // ✨ NOVO: Verifica se a mensagem foi "apagada"
     if (msg.isDeleted) {
         messageSpan.textContent = msg.message;
         messageSpan.style.color = '#888';
         messageSpan.style.fontStyle = 'italic';
-        messageElement.style.pointerEvents = 'none'; // Impede cliques em mensagens apagadas
+        messageElement.style.pointerEvents = 'none';
     } else {
         messageSpan.innerHTML = escapeHTML(msg.message).replace(/@([\wÀ-ú]+)/g, '<span class="mention">@$1</span>');
     }
     messageElement.appendChild(messageSpan);
 
-    // ✨ NOVO: Adiciona o indicador "(editado)" se necessário
     if (msg.isEdited) {
         const indicator = document.createElement('span');
         indicator.className = 'edited-indicator';
