@@ -494,6 +494,7 @@ const firebaseConfig = {
     const database = firebase.database();
 
     document.addEventListener('DOMContentLoaded', function() {
+        let currentAdminUsername = '';
         // --- SENHAS DE ACESSO ---
         const ADMIN_PASSWORD = "@Mateus2024";
         const MODERATOR_PASSWORD = "mod2025"; // Senha para moderadores
@@ -537,6 +538,23 @@ function showButtonFeedback(buttonElement, successText, originalText) {
         buttonElement.textContent = buttonElement.dataset.originalText;
     }, 2000); // 2000ms = 2 segundos
 }
+        // ✨ PASSO 1: COLE ESTA NOVA FUNÇÃO AQUI
+function protectAdminUserInUI() {
+    if (currentAdminUsername) {
+        // Encontra os botões específicos do admin na lista de participantes
+        const adminBanBtn = participantesList.querySelector(`button.ban-btn[data-username="${currentAdminUsername}"]`);
+        const adminPromoteBtn = participantesList.querySelector(`button.promote-btn[data-username="${currentAdminUsername}"]`);
+
+        if (adminBanBtn) {
+            adminBanBtn.disabled = true;
+            adminBanBtn.title = "Não é possível banir o admin";
+        }
+        if (adminPromoteBtn) {
+            adminPromoteBtn.disabled = true;
+            adminPromoteBtn.title = "Não é possível alterar o admin";
+        }
+    }
+}
     // ▼▼▼ COLE ESTE BLOCO NOVO AQUI ▼▼▼
 
 // --- LÓGICA DO INTERRUPTOR DO CHAT ---
@@ -570,6 +588,9 @@ function setControlPermissions(level) {
     if (level === 'admin') {
         document.querySelectorAll('[data-permission="admin"] button, [data-permission="admin"] input').forEach(el => el.disabled = false);
     }
+
+    // A LINHA ADICIONADA GARANTE QUE A PROTEÇÃO SEJA APLICADA POR ÚLTIMO
+    protectAdminUserInUI();
 }
         
         // --- LÓGICA DE AUTENTICAÇÃO (VERSÃO ATUALIZADA) ---
@@ -617,17 +638,30 @@ passwordInput.addEventListener('input', () => {
         // --- RENDERIZAÇÃO DAS LISTAS DINÂMICAS ---
         
         participantesRef.on('value', (snapshot) => {
-            participantesList.innerHTML = '';
-            const data = snapshot.val();
-            if (data) {
-                Object.keys(data).forEach((username) => {
-                    const li = document.createElement('li');
-                    li.innerHTML = `<span class="info">${username}</span><div class="actions"><button class="promote-btn" data-username="${username}">Promover a Mod</button><button class="btn-delete ban-btn" data-username="${username}" data-deviceid="${data[username].deviceId}">Banir</button></div>`;
-                    participantesList.appendChild(li);
-                    setControlPermissions(currentAccessLevel);
-                });
-            } else { participantesList.innerHTML = '<li>Nenhum participante online.</li>'; }
+    participantesList.innerHTML = '';
+    const data = snapshot.val();
+    if (data) {
+        Object.keys(data).forEach((username) => {
+            const li = document.createElement('li');
+            const isAdmin = currentAdminUsername && username.toLowerCase() === currentAdminUsername.toLowerCase();
+            const deviceId = data[username].deviceId;
+
+            li.innerHTML = `
+                <span class="info">${username} ${isAdmin ? '👑' : ''}</span>
+                <div class="actions">
+                    <button class="promote-btn" data-username="${username}">Promover a Mod</button>
+                    <button class="btn-delete ban-btn" data-username="${username}" data-deviceid="${deviceId}">Banir</button>
+                </div>
+            `;
+            participantesList.appendChild(li);
         });
+    } else { 
+        participantesList.innerHTML = '<li>Nenhum participante online.</li>'; 
+    }
+    
+    // A chamada de permissões agora acontece aqui fora, de forma organizada
+    setControlPermissions(currentAccessLevel);
+});
 
         bannedDevicesRef.on('value', (snapshot) => {
             banidosList.innerHTML = '';
@@ -737,6 +771,7 @@ saveAdminBtn.addEventListener('click', () => {
 // Carrega o nome do admin atual para mostrar no input
 adminNameRef.on('value', (snapshot) => {
     const currentAdmin = snapshot.val();
+    currentAdminUsername = currentAdmin || '';
     if (currentAdmin) {
         adminNameInput.placeholder = `Admin atual: ${currentAdmin}`;
     }
