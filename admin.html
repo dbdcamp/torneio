@@ -418,6 +418,15 @@
     </div>
 </div>
             <hr>
+<h3>Definir Administrador do Chat</h3>
+<form id="admin-control-form">
+    <div class="form-group">
+        <label for="admin-name-input">Nome de Usuário do Administrador</label>
+        <input type="text" id="admin-name-input" placeholder="Digite o nome exato do usuário" disabled>
+    </div>
+    <button type="button" id="save-admin-btn" disabled>Definir como Admin</button>
+</form>
+            <hr>
 
             <h3>Contagem Regressiva</h3>
             <div class="form-group">
@@ -498,6 +507,8 @@ const firebaseConfig = {
         const banidosList = document.getElementById('banidos-list');
         const moderadoresList = document.getElementById('moderadores-list');
         const chatToggle = document.getElementById('chat-toggle');
+        const adminNameInput = document.getElementById('admin-name-input'); // NOVO
+    const saveAdminBtn = document.getElementById('save-admin-btn');     // NOVO
         // --- Referências do Firebase ---
         const teamsRef = database.ref('teams');
         const configRef = database.ref('config');
@@ -506,6 +517,7 @@ const firebaseConfig = {
         const bannedDevicesRef = database.ref('dispositivosBanidos');
         const moderatorsRef = database.ref('moderators');
         const chatStatusRef = database.ref('config/chatEnabled');
+        const adminNameRef = database.ref('config/administratorName'); // NOVO
         // ===================================================================
 // ✨ FUNÇÃO DE FEEDBACK VISUAL PARA BOTÕES ✨
 // ===================================================================
@@ -669,9 +681,9 @@ passwordInput.addEventListener('input', () => {
             } else if (e.target.classList.contains('promote-btn')) {
                 if (confirm(`Promover "${username}" a moderador?`)) {
                     moderatorsRef.child(username).set(true);
-                }
-            }
-        });
+        }
+    }
+});
 
         banidosList.addEventListener('click', (e) => {
             if (e.target.classList.contains('unban-btn') && !e.target.disabled) {
@@ -709,6 +721,26 @@ passwordInput.addEventListener('input', () => {
         const registrationToggle = document.getElementById('registration-toggle');
         const saveCountdownBtn = document.getElementById('save-countdown-btn');
         const addEquipeBtn = document.getElementById('add-equipe-btn');
+        // NOVO: AÇÃO PARA O BOTÃO DE SALVAR ADMIN
+saveAdminBtn.addEventListener('click', () => {
+    if (saveAdminBtn.disabled) return; // Não faz nada se estiver desabilitado
+
+    const newAdminName = adminNameInput.value.trim();
+    if (newAdminName) {
+        adminNameRef.set(newAdminName); // Salva o nome no Firebase
+        showButtonFeedback(saveAdminBtn, 'Admin Definido!', 'Definir como Admin');
+    } else {
+        alert('Por favor, digite um nome de usuário para o administrador.');
+    }
+});
+
+// Carrega o nome do admin atual para mostrar no input
+adminNameRef.on('value', (snapshot) => {
+    const currentAdmin = snapshot.val();
+    if (currentAdmin) {
+        adminNameInput.placeholder = `Admin atual: ${currentAdmin}`;
+    }
+});
         
         bannerForm.addEventListener('submit', (e) => { 
     e.preventDefault(); 
