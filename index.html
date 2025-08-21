@@ -1898,19 +1898,22 @@ const chatStatusRef = database.ref('config/chatEnabled');
 
 chatStatusRef.on('value', (snapshot) => {
     const isChatActive = snapshot.val() === true;
-    isChatCurrentlyEnabled = isChatActive;
+    isChatCurrentlyEnabled = isChatActive; // Atualiza nossa variável de controle global
     const enterChatBtn = document.getElementById('enter-chat-btn');
     const chatMessageInput = document.getElementById('chat-message');
     const messageGroup = document.getElementById('message-group');
     const submitBtn = messageGroup.querySelector('button[type="submit"]');
     const emojiBtn = document.getElementById('emoji-toggle-btn');
 
+    // Verificação Chave: O usuário atual é o admin?
+    // Usamos toLowerCase() para garantir a correspondência ("Admin" === "admin")
+    const isCurrentUserAdmin = currentUser && adminUsername && currentUser.toLowerCase() === adminUsername.toLowerCase();
+
     if (isChatActive) {
-        // O chat foi ATIVADO
+        // --- O CHAT FOI ATIVADO PARA TODOS ---
         enterChatBtn.disabled = false;
         enterChatBtn.textContent = 'Entrar no Chat';
 
-        // Se o usuário já estiver logado, reativa os controles dele
         if (currentUser) {
             chatMessageInput.disabled = false;
             chatMessageInput.placeholder = 'Digite sua mensagem...';
@@ -1918,17 +1921,27 @@ chatStatusRef.on('value', (snapshot) => {
             emojiBtn.disabled = false;
         }
     } else {
-        // O chat foi DESATIVADO
+        // --- O CHAT FOI DESATIVADO ---
         enterChatBtn.disabled = true;
         enterChatBtn.textContent = 'Chat Desativado';
 
-        // Se o usuário estiver logado, desativa os controles dele em tempo real
         if (currentUser) {
-            chatMessageInput.disabled = true;
-            chatMessageInput.placeholder = 'O chat foi desativado pelo administrador.';
-            submitBtn.disabled = true;
-            emojiBtn.disabled = true;
-            displaySystemMessage('O chat foi desativado pelo administrador.');
+            if (isCurrentUserAdmin) {
+                // Se o chat foi desativado, MAS o usuário é o admin...
+                chatMessageInput.disabled = false;
+                submitBtn.disabled = false;
+                emojiBtn.disabled = false;
+                // Mensagem especial para o admin
+                chatMessageInput.placeholder = 'Chat desativado para usuários. Você ainda pode enviar mensagens.'; 
+                displaySystemMessage('O chat foi desativado, mas seus controles de admin permanecem ativos.');
+            } else {
+                // Se for um usuário comum...
+                chatMessageInput.disabled = true;
+                submitBtn.disabled = true;
+                emojiBtn.disabled = true;
+                chatMessageInput.placeholder = 'O chat foi desativado pelo administrador.';
+                displaySystemMessage('O chat foi desativado pelo administrador.');
+            }
         }
     }
 });
@@ -2237,6 +2250,11 @@ participantsRef.on('child_removed', snapshot => chatParticipants.delete(snapshot
 // Lógica de Envio de Mensagem (com tratamento de comandos)
 chatForm.addEventListener('submit', (e) => {
     e.preventDefault();
+    const isCurrentUserAdmin = currentUser && adminUsername && currentUser.toLowerCase() === adminUsername.toLowerCase();
+    if (!isChatCurrentlyEnabled && !isCurrentUserAdmin) {
+        alert('O chat está desativado no momento e você não pode enviar mensagens.');
+        return; // Impede o envio da mensagem
+    }
     const message = chatMessageInput.value.trim();
     if (!currentUser || !message) return;
 
