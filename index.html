@@ -834,30 +834,30 @@ footer {
 /* ✨ FIM DA VERSÃO FINAL ✨ */
 /* ===================================================================== */
         /* --- INÍCIO: ESTILOS DO CONTADOR DE VISITANTES --- */
+/* --- INÍCIO: ESTILOS DO CONTADOR DE VISITANTES --- */
 #visitor-counter {
     display: flex;
     align-items: center;
+    justify-content: center; /* Centraliza horizontalmente */
     gap: 8px;
     color: #aaa;
-    margin-top: 65px; /* Alinha com o logo */
+    margin-bottom: 25px;   /* Cria um espaço abaixo, antes do vídeo */
     font-size: 0.9rem;
     text-shadow: 0 0 5px black;
-    transform: translateX(-185px);
 }
 #visitor-counter .icon {
     font-size: 1.2rem;
-    animation: pulse-red-text 3s infinite; /* Usa a animação cintilante */
+    animation: pulse-red-text 3s infinite;
 }
 #visitor-counter #visitor-count {
     font-weight: bold;
     color: var(--cor-principal);
     font-size: 1.1rem;
 }
-/* Esconde em telas pequenas para não quebrar o layout */
+/* Ajuste para o header que não tem mais o contador no mobile */
 @media (max-width: 768px) {
-    #visitor-counter {
-        display: none;
-    }
+    /* A regra antiga que escondia o contador pode ser removida se você quiser que ele apareça no mobile */
+    /* #visitor-counter { display: none; } */
 }
 /* --- FIM DOS ESTILOS --- */
         .logo {
@@ -1739,6 +1739,324 @@ footer {
     background-repeat: no-repeat;
     background-position: center;
 }
+        /* --- ESTILOS DA NOVA NAVEGAÇÃO --- */
+
+/* Ajustes no Header para comportar o novo menu */
+header {
+    display: flex;             /* MUDOU DE 'grid' PARA 'flex' */
+    justify-content: space-between; /* MANDA CADA ITEM PARA UMA PONTA */
+    align-items: center;       /* ALINHA VERTICALMENTE */
+    padding: 15px 5%;
+    position: sticky;
+    top: 0;
+    z-index: 2000;
+    background-color: rgba(10, 10, 10, 0.8);
+    border-bottom: 2px solid var(--cor-borda);
+    backdrop-filter: blur(10px);
+}
+
+.logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* A linha 'justify-self' foi removida pois não se aplica ao flexbox aqui */
+}
+
+/* 2. Mantém os contadores perfeitamente no centro */
+#header-center-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+}
+
+/* 3. Coloca a navegação no final da terceira coluna */
+.main-nav {
+    justify-self: end;
+}
+
+.main-nav ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.main-nav a, .main-nav .nav-button {
+    color: var(--cor-texto);
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+}
+
+.main-nav a:hover, .main-nav .nav-button:hover {
+    color: #fff;
+    background-color: var(--cor-principal);
+}
+
+.main-nav .btn {
+    background-color: var(--cor-borda-forte);
+    padding: 10px 20px;
+}
+.main-nav .btn:hover {
+    background-color: var(--cor-principal);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 0, 0, 0.4);
+}
+
+/* Botão Sanduíche (Hamburguer) */
+.menu-toggle {
+    display: none; /* Escondido no desktop */
+    flex-direction: column;
+    justify-content: space-around;
+    width: 30px;
+    height: 25px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 3001;
+}
+
+.menu-toggle span {
+    width: 100%;
+    height: 3px;
+    background-color: var(--cor-texto);
+    border-radius: 2px;
+    transition: all 0.3s ease-in-out;
+}
+
+.menu-toggle.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.menu-toggle.open span:nth-child(2) { opacity: 0; }
+.menu-toggle.open span:nth-child(3) { transform: rotate(-45deg) translate(7px, -7px); }
+
+/* --- Estilos do Menu Mobile --- */
+@media (max-width: 900px) {
+    /* No mobile, o header vira 2 colunas: logo e botão sanduíche */
+    header {
+        grid-template-columns: 1fr 1fr;
+    }
+    #header-center-content {
+        display: none; /* Esconde os contadores para simplificar */
+    }
+    .menu-toggle {
+        display: flex;
+        justify-self: end; /* Alinha o botão sanduíche à direita */
+    }
+    .main-nav {
+        display: block;
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 250px;
+        height: 100vh;
+        background-color: rgba(10, 10, 10, 0.98);
+        backdrop-filter: blur(10px);
+        border-left: 2px solid var(--cor-borda-forte);
+        transform: translateX(100%);
+        transition: transform 0.3s ease-in-out;
+        z-index: 3000;
+        padding-top: 100px;
+    }
+    .main-nav.open {
+        transform: translateX(0);
+    }
+    .main-nav ul {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        gap: 20px;
+    }
+    .main-nav a, .main-nav .nav-button {
+        font-size: 1.2rem;
+    }
+}
+        /* ========================================================= */
+/* ✨ ESTILOS SOFISTICADOS PARA O POP-UP DE REGRAS ✨ */
+/* ========================================================= */
+
+/* O Fundo Desfocado (Overlay) */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fundo escuro */
+    backdrop-filter: blur(8px); /* O efeito de desfoque principal */
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 4000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+.popup-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* A Caixa de Vidro Principal (Pop-up) */
+.rules-popup {
+    width: 90%;
+    max-width: 800px; /* Um pouco mais largo para as regras */
+    max-height: 85vh; /* Ocupa até 85% da altura da tela */
+
+    /* O EFEITO DE VIDRO ESCURO */
+    background: rgba(15, 15, 15, 0.7); /* Cor de fundo escura e semitransparente */
+    border: 1px solid rgba(255, 77, 77, 0.3); /* Borda vermelha sutil */
+    border-radius: 12px;
+
+    /* Brilho e Sombra para dar profundidade */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5), 
+                0 0 25px var(--cor-principal); /* Brilho vermelho ao redor */
+
+    /* Organização interna */
+    display: flex;
+    flex-direction: column; /* Organiza o cabeçalho e o conteúdo um sobre o outro */
+
+    /* Animação de entrada */
+    transform: scale(0.95);
+    transition: transform 0.4s ease;
+    position: relative; /* Necessário para o botão de fechar */
+}
+
+.popup-overlay.active .rules-popup {
+    transform: scale(1);
+}
+
+/* Cabeçalho do Pop-up */
+.popup-header {
+    text-align: center;
+    padding: 25px 30px;
+    border-bottom: 1px solid var(--cor-borda);
+    flex-shrink: 0; /* Impede que o cabeçalho encolha */
+}
+
+.popup-header .header-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid var(--cor-principal);
+    margin-bottom: 10px;
+}
+
+.popup-header h2 {
+    font-family: 'Creepster', cursive;
+    color: var(--cor-principal);
+    font-size: 2.8rem;
+    margin: 0;
+    text-shadow: 0 0 10px var(--cor-principal);
+}
+
+.popup-header p {
+    margin: 5px 0 0 0;
+    color: #ccc;
+    font-style: italic;
+}
+
+/* Área de Conteúdo Rolável */
+.popup-scrollable-content {
+    padding: 10px 30px 30px 30px;
+    overflow-y: auto; /* Adiciona barra de rolagem se o conteúdo for grande */
+}
+
+/* Estilo da Lista de Regras */
+#rules-popup-content ul {
+    list-style: none;
+    padding: 0;
+    counter-reset: rules-counter; /* Inicia um contador */
+}
+
+#rules-popup-content li {
+    font-family: 'Roboto', sans-serif;
+    color: var(--cor-texto);
+    font-size: 1rem;
+    line-height: 1.6;
+    padding: 15px;
+    padding-left: 55px; /* Espaço para o número */
+    margin-bottom: 10px;
+    position: relative;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-left: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+#rules-popup-content li:hover {
+    background-color: rgba(0, 0, 0, 0.4);
+    border-left-color: var(--cor-principal);
+    transform: translateX(5px);
+}
+
+/* Estilo dos Números das Regras */
+#rules-popup-content li::before {
+    counter-increment: rules-counter; /* Incrementa o contador a cada 'li' */
+    content: counter(rules-counter); /* Mostra o número do contador */
+
+    position: absolute;
+    left: 15px;
+    top: 15px;
+
+    font-family: 'Creepster', cursive;
+    font-size: 1.8rem;
+    color: var(--cor-principal);
+    text-shadow: 0 0 5px black;
+    line-height: 1;
+}
+
+/* Botão de Fechar 'X' */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 35px;
+    height: 35px;
+    background-color: rgba(0, 0, 0, 0.3);
+    color: #aaa;
+    border: 1px solid var(--cor-borda);
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+    background-color: var(--cor-principal);
+    color: white;
+    transform: rotate(90deg);
+    border-color: var(--cor-borda-forte);
+}
+
+/* Barra de Rolagem Personalizada */
+.popup-scrollable-content::-webkit-scrollbar {
+    width: 8px;
+}
+.popup-scrollable-content::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+}
+.popup-scrollable-content::-webkit-scrollbar-thumb {
+    background-color: var(--cor-borda-forte);
+    border-radius: 10px;
+}
+.popup-scrollable-content::-webkit-scrollbar-thumb:hover {
+    background-color: var(--cor-principal);
+}
     </style>
 </head>
 <body>
@@ -1752,40 +2070,48 @@ footer {
         </div>
         <button id="close-banner-btn" title="Fechar Aviso">×</button>
     </div>
-    <header>
-        <div class="logo"><h1>Torneio da Entidade</h1></div>
+   <header>
+    <div class="logo">
+        <h1>Torneio da Entidade</h1>
         <div id="visitor-counter">
-    <span class="icon">👁️</span>
-    <span id="visitor-count">1</span>
-    <span class="text"></span>
-</div>
-        <div id="countdown-container">
-    <p class="countdown-title">A Caçada Começa Em...</p>
-    <div id="timer">
-        <div class="time-block">
-            <span id="days" class="time-value">00</span>
-            <span class="time-label">Dias</span>
-        </div>
-        <div class="time-block">
-            <span id="hours" class="time-value">00</span>
-            <span class="time-label">Horas</span>
-        </div>
-        <div class="time-block">
-            <span id="minutes" class="time-value">00</span>
-            <span class="time-label">Minutos</span>
-        </div>
-        <div class="time-block">
-            <span id="seconds" class="time-value">00</span>
-            <span class="time-label">Segundos</span>
+            <span class="icon">👁️</span>
+            <span id="visitor-count">1</span>
+            <span class="text"></span>
         </div>
     </div>
-    <div id="live-message" class="hidden">A CAÇADA COMEÇOU!</div>
-</div>
-        <nav class="nav-buttons">
-            <a href="inscricao.html" class="btn" id="signup-btn">Inscrever-se</a>
-            <button id="open-feedback-btn" class="btn">Feedback</button>
-        </nav>
-    </header>
+
+    <div id="countdown-container">
+        <p class="countdown-title">A Caçada Começa Em...</p>
+        <div id="timer">
+            <div class="time-block">
+                <span id="days" class="time-value">00</span>
+                <span class="time-label">Dias</span>
+            </div>
+            <div class="time-block">
+                <span id="hours" class="time-value">00</span>
+                <span class="time-label">Horas</span>
+            </div>
+            <div class="time-block">
+                <span id="minutes" class="time-value">00</span>
+                <span class="time-label">Minutos</span>
+            </div>
+            <div class="time-block">
+                <span id="seconds" class="time-value">00</span>
+                <span class="time-label">Segundos</span>
+            </div>
+        </div>
+        <div id="live-message" class="hidden">A CAÇADA COMEÇOU!</div>
+    </div>
+    <nav class="main-nav">
+        <ul>
+            <li><button id="open-rules-btn" class="nav-button">Regras</button></li>
+            <li><a href="niveis.html">Grimório</a></li>
+            <li><a href="recompensas.html">Rewards</a></li>
+            <li><button id="open-feedback-btn" class="nav-button">Feedback</button></li>
+            <li><a href="inscricao.html" class="btn" id="signup-btn">Inscrever-se</a></li>
+        </ul>
+    </nav>
+</header>
      <main>
     <section class="section-container" id="transmissao">
         <h2 class="section-title">Acompanhe Ao Vivo</h2>
@@ -1859,10 +2185,6 @@ footer {
     </section>
 
     <section id="regras">
-        <button class="dropdown-toggle" id="rules-toggle-btn">
-            <span>Regras do Torneio</span>
-            <span class="dropdown-icon">▼</span>
-        </button>
         
         <div id="rules-content" class="rules-list hidden">
             <ul>
@@ -1885,16 +2207,7 @@ footer {
             </ul>
         </div>
     </section>
-         <div id="grimorio-container">
-    <a href="niveis.html" id="grimorio-killers" class="grimorio-item grimorio-visible">
-        <img src="https://i.imgur.com/KhwS5jZ.gif" alt="Grimório dos Killers">
-        <span>Grimório dos Killers</span>
-    </a>
-    <a href="recompensas.html" id="grimorio-recompensas" class="grimorio-item grimorio-hidden">
-        <img src="https://i.imgur.com/p53OZAS.gif" alt="Livro das Recompensas">
-        <span>Livro dos Rewards</span>
-    </a>
-</div>
+         
 </main>
 <footer>
     <div class="footer-content">
@@ -1911,7 +2224,13 @@ footer {
         </nav>
     </div>
 </footer>
-
+<div id="rules-popup-overlay" class="popup-overlay align-top">
+    <div class="rules-popup scoreboard-popup"> <button id="close-rules-btn" class="close-btn">×</button>
+        <h2>Regras do Torneio</h2>
+        <div id="rules-popup-content" class="score-display">
+            </div>
+    </div>
+</div>
 <div id="scoreboard-overlay" class="popup-overlay align-top">
     <div class="scoreboard-popup">
         <button id="close-scoreboard-btn" class="close-btn">×</button>
@@ -3097,6 +3416,36 @@ fullscreenBtn.addEventListener('click', () => {
     }
 });
         });
+    // --- LÓGICA DO POP-UP DE REGRAS (VERSÃO SIMPLES) ---
+const openRulesBtn = document.getElementById('open-rules-btn');
+const rulesPopupOverlay = document.getElementById('rules-popup-overlay');
+const closeRulesBtn = document.getElementById('close-rules-btn');
+const rulesPopupContent = document.getElementById('rules-popup-content');
+const originalRulesList = document.querySelector('#rules-content ul');
+
+// Copia as regras para dentro do pop-up (só faz isso uma vez)
+if (originalRulesList) {
+    rulesPopupContent.innerHTML = ''; // Limpa antes de adicionar
+    rulesPopupContent.appendChild(originalRulesList.cloneNode(true));
+}
+
+// ABRIR o pop-up
+openRulesBtn.addEventListener('click', () => {
+    rulesPopupOverlay.classList.add('active');
+});
+
+// FECHAR o pop-up no botão 'X'
+closeRulesBtn.addEventListener('click', () => {
+    rulesPopupOverlay.classList.remove('active');
+});
+
+// FECHAR o pop-up ao clicar fora
+rulesPopupOverlay.addEventListener('click', (e) => {
+    if (e.target === rulesPopupOverlay) {
+        rulesPopupOverlay.classList.remove('active');
+    }
+});
+// --- FIM DA NOVA LÓGICA ---
         document.addEventListener('DOMContentLoaded', function() {
     const openFeedbackBtnHeader = document.getElementById('open-feedback-btn');
     const openFeedbackBtnFooter = document.getElementById('open-feedback-btn-footer');
@@ -3258,20 +3607,7 @@ const signupBtn = document.getElementById('signup-btn');
         }
     });
     // --- FIM: LÓGICA DA CONTAGEM REGRESSIVA DINÂMICA ---
-        // --- Lógica para o menu suspenso das Regras (VERSÃO CORRIGIDA) ---
-const rulesToggleBtn = document.getElementById('rules-toggle-btn');
-const rulesContent = document.getElementById('rules-content');
-const dropdownIcon = rulesToggleBtn.querySelector('.dropdown-icon');
-
-// Verifica se os elementos existem antes de adicionar o evento
-if (rulesToggleBtn && rulesContent && dropdownIcon) {
-    rulesToggleBtn.addEventListener('click', () => {
-        // Alterna a classe 'hidden' no conteúdo das regras
-        rulesContent.classList.toggle('hidden');
-        // Alterna a classe 'rotated' no ícone
-        dropdownIcon.classList.toggle('rotated');
-    });
-}
+    
     </script>
     </body>
 </html>
