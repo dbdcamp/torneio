@@ -53,6 +53,11 @@
     margin-left: 8px;
 }
 /* ✨ FIM: ESTILOS DO MENU DE OPÇÕES ✨ */
+        /* AJUSTE DE TAMANHO FORÇADO PARA O ÍCONE DE CHAVEAMENTO */
+#chaveamento-card h3 img {
+    height: 80px !important; /* A MUDANÇA ESTÁ AQUI! */
+    width: auto !important;  /* E aqui também, para garantir */
+}
         /* ESTILOS PARA O CAMPEÃO E PARTIDAS ESPELHADAS */
 #champion-container {
     text-align: center;
@@ -411,67 +416,74 @@
     position: relative;
     transform: scale(0.9); 
     transition: transform 0.4s ease;
-    margin-top: 15vh; /* ✨ ADICIONE ESTA LINHA ✨ */
-}
-        /* ESTILO PARA A LISTA DE CONFRONTOS */
-.scoreboard-popup {
-    background-color: #110e0e; 
-    border: 1px solid var(--cor-borda);
-    box-shadow: 0 0 40px rgba(0,0,0,0.8); 
-    border-radius: 10px; 
-    padding: 30px 40px;
-    width: 90%; 
-    max-width: 800px; 
-    position: relative;
-    transform: scale(0.9); 
-    transition: transform 0.4s ease;
-    margin-top: 10vh; /* Reduz a margem para dar mais espaço */
-    
-    /* --- ✨ NOVIDADES AQUI ✨ --- */
-    max-height: 80vh; /* 1. NUNCA passará de 80% da altura da tela */
-    display: flex;       /* 2. Ativa o layout flexível para controlar o espaço interno */
-    flex-direction: column; /* 3. Organiza os itens (título, cards) em uma coluna */
+    margin-top: 10vh;
+    max-height: 80vh; 
+    display: flex;       
+    flex-direction: column; 
 }
 
-/* A área que contém os cards de Equipes e Chaveamento */
+/* A área que contém os cards */
 .score-display { 
     display: grid; 
     grid-template-columns: 1fr 1fr; 
     gap: 30px;
-    
-    /* --- ✨ NOVIDADES AQUI ✨ --- */
-    flex-grow: 1;         /* 4. Faz esta área ocupar todo o espaço vertical que sobrar */
-    overflow-y: auto;     /* 5. A MÁGICA: Adiciona rolagem SÓ quando o conteúdo for grande */
-    padding-right: 15px;  /* 6. Um espacinho para a barra de rolagem não colar no texto */
+    flex-grow: 1;        
+    overflow-y: auto;    
+    padding-right: 15px; 
 }
 
-/* O placar das equipes */
+/* Barra de rolagem personalizada */
+.score-display::-webkit-scrollbar { width: 8px; }
+.score-display::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); border-radius: 10px; }
+.score-display::-webkit-scrollbar-thumb { background-color: var(--cor-borda-forte); border-radius: 10px; border: 2px solid #110e0e; }
+.score-display::-webkit-scrollbar-thumb:hover { background-color: var(--cor-principal); }
+
+/* Lista de equipes */
 #teams-leaderboard {
-    list-style: none; 
-    padding: 0; 
+    min-height: 0; /* Garante que a altura seja flexível */
+}
+
+/* Rodapé */
+footer {
+    position: static; /* Garante que o rodapé fique no final do conteúdo */
+    width: 100%;
+    background-color: rgba(15, 15, 15, 0.2);
+    backdrop-filter: blur(15px);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 10px 5%; 
+    box-sizing: border-box;
+    margin-top: 40px;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+    gap: 20px;
+}
+
+.footer-logo img {
+    height: 40px;
+    width: auto;
+    vertical-align: middle;
+}
+
+.footer-copyright {
+    color: #ccc;
+    font-size: 0.9rem;
     margin: 0;
-    min-height: 0; /* ANTES: Tinha 400px. Agora a altura é flexível */
+    text-align: center;
 }
 
-/* --- ✨ ESTILO SOFISTICADO DA BARRA DE ROLAGEM ✨ --- */
-.score-display::-webkit-scrollbar {
-  width: 8px; /* Largura da barra */
+.footer-links {
+    display: flex;
+    gap: 20px;
+    justify-self: end;
 }
 
-.score-display::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.3); /* Fundo da barra (trilho) */
-  border-radius: 10px;
-}
-
-.score-display::-webkit-scrollbar-thumb {
-  background-color: var(--cor-borda-forte); /* Cor da barra de rolagem */
-  border-radius: 10px;
-  border: 2px solid #110e0e; /* Borda da cor do fundo do pop-up */
-}
-
-.score-display::-webkit-scrollbar-thumb:hover {
-  background-color: var(--cor-principal); /* Cor ao passar o mouse */
-}
         .feedback-popup .close-btn {
             position: absolute; top: 15px; right: 20px;
             background: none; border: none; font-size: 2rem;
@@ -638,7 +650,7 @@
             display: flex; align-items: center; justify-content: center;
             gap: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--cor-borda);
         }
-        .score-card h3 img { height: 60px; }
+        .score-card h3 img { height: 70px; }
         .leaderboard-list { list-style: none; padding: 0; margin: 0; min-height: 288px; }
         .leaderboard-list li { display: flex; justify-content: space-between; padding: 8px 5px; border-radius: 3px; font-size: 1.1rem; }
         .leaderboard-list li:nth-child(odd) { background-color: rgba(255,255,255,0.05); }
@@ -1310,62 +1322,6 @@
     }
 }
 /* --- FIM DOS NOVOS ESTILOS --- */
-        footer {
-    position: static;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background-color: rgba(255, 255, 255, 0.1); /* Cor de fundo quase transparente */
-    backdrop-filter: blur(15px); /* Efeito de vidro */
-    border-top: 1px solid rgba(255, 255, 255, 0.2); /* Borda sutil */
-    padding: 15px 5%; /* Espaçamento interno */
-    z-index: 100; /* Garante que fique acima de outros elementos */
-    color: #ddd; /* Cor do texto */
-    font-size: 0.8rem;
-             box-sizing: border-box; /* Isso resolve o problema da largura */
-            margin-top: 40px;
-}
-
-.footer-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1400px; /* Mantém a largura consistente com o main */
-    margin: 0 auto;
-}
-
-.footer-links a, .footer-links button {
-    color: #ccc;
-    text-decoration: none;
-    margin-left: 15px;
-    transition: color 0.3s ease;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 0.9rem;
-}
-
-.footer-links a:hover, .footer-links button:hover {
-    color: var(--cor-principal);
-}
-
-.footer-links button {
-    padding: 0; /* Remove padding padrão do botão */
-}
-
-/* Estilo para telas menores */
-@media (max-width: 768px) {
-    .footer-content {
-        flex-direction: column;
-        text-align: center;
-    }
-    .footer-links {
-        margin-top: 10px;
-    }
-    .footer-links a, .footer-links button {
-        margin: 0 10px;
-    }
-}
         /* SUBSTITUA TODO O CSS DO SEU RODAPÉ POR ESTE BLOCO */
 
 footer {
@@ -1968,7 +1924,7 @@ footer {
                 <ol id="teams-leaderboard" class="leaderboard-list"></ol>
             </div>
             <div class="score-card">
-    <h3><img src="https://i.imgur.com/83ClgCU.png" alt="Ícone de Confronto"> Chaveamento do Torneio</h3>
+    <h3><img src="https://i.imgur.com/pvVRmnb.png" alt="Ícone de Confronto"> Chaveamento do Torneio</h3>
 
     <div id="champion-container" class="hidden">
         <h4 class="champion-title">👑 GRANDE CAMPEÃO 👑</h4>
