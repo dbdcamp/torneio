@@ -317,7 +317,19 @@
         #rules-popup-content li:hover { background-color: rgba(0, 0, 0, 0.4); border-left-color: var(--cor-principal); transform: translateX(5px); }
         #rules-popup-content li::before { counter-increment: rules-counter; content: counter(rules-counter); position: absolute; left: 15px; top: 15px; font-family: 'Creepster', cursive; font-size: 1.8rem; color: var(--cor-principal); text-shadow: 0 0 5px black; line-height: 1; }
         #rules-popup-content li strong { color: var(--cor-principal); font-weight: normal; }
-        
+        /* Correção para layout do popup de regras em tela cheia */
+#rules-popup-content {
+    display: block;
+    padding-right: 0;
+    overflow-y: auto;   /* Adiciona a rolagem vertical SÓ SE NECESSÁRIO */
+    overflow-x: hidden; /* Proíbe e esconde a rolagem horizontal SEMPRE */
+}
+        /* Efeito de Vidro para o Popup de Regras (SOMENTE PC) */
+.rules-popup {
+    background-color: rgba(15, 15, 15, 0.6); /* Fundo escuro com 60% de opacidade */
+    backdrop-filter: blur(10px); /* O desfoque mágico do que está atrás! */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Borda sutil para simular o vidro */
+}
         /* --- FOOTER --- */
         footer { position: fixed; bottom: 0; left: 0; width: 100%; background-color: rgba(15, 15, 15, 0.2); backdrop-filter: blur(15px); border-top: 1px solid rgba(255, 255, 255, 0.2); padding: 10px 5%; z-index: 100; box-sizing: border-box; }
         .footer-content { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; max-width: 1400px; margin: 0 auto; width: 100%; gap: 20px; }
@@ -387,6 +399,14 @@ header.menu-aberto .menu-mobile-btn span:nth-child(3) {
             }
 
             /* --- Header e Navegação --- */
+            /* DENTRO de @media (max-width: 850px) */
+
+/* Restaura a aparência original do popup de regras no mobile */
+.rules-popup {
+    background-color: #110e0e;      /* Cor de fundo sólida original */
+    backdrop-filter: none;          /* Remove o efeito de desfoque */
+    border: 1px solid var(--cor-borda); /* Borda original */
+}
             .scoreboard-fab {
     /* PAINEL DE CONTROLE FINO (SOMENTE MOBILE) */
     bottom: 770px;  /* Distância de baixo para cima */
