@@ -1911,78 +1911,74 @@ footer {
         </nav>
     </div>
 </footer>
-   <div id="scoreboard-overlay" class="popup-overlay align-top">
+
+<div id="scoreboard-overlay" class="popup-overlay align-top">
     <div class="scoreboard-popup">
         <button id="close-scoreboard-btn" class="close-btn">×</button>
         <h2>Placar do Torneio</h2>
-        
         <p id="last-updated-timestamp"></p>
-
         <div class="score-display">
             <div class="score-card">
                 <h3><img src="https://i.postimg.cc/YCSyWS5y/Gemini-Generated-Image-vpc766vpc766vpc7-Photoroom.png" alt="Ícone Troféu"> Placar das Equipes</h3>
                 <ol id="teams-leaderboard" class="leaderboard-list"></ol>
             </div>
             <div class="score-card">
-    <h3><img src="https://i.imgur.com/pvVRmnb.png" alt="Ícone de Confronto"> Chaveamento do Torneio</h3>
-
-    <div id="champion-container" class="hidden">
-        <h4 class="champion-title">👑 GRANDE CAMPEÃO 👑</h4>
-        <p id="champion-name"></p>
+                <h3><img src="https://i.imgur.com/pvVRmnb.png" alt="Ícone de Confronto"> Chaveamento do Torneio</h3>
+                <div id="champion-container" class="hidden">
+                    <h4 class="champion-title">👑 GRANDE CAMPEÃO 👑</h4>
+                    <p id="champion-name"></p>
+                </div>
+                <div id="grupos-container" class="fase-container hidden">
+                    <h4 class="fase-titulo">⚔️ Fase de Grupos ⚔️</h4>
+                    <div id="grupos-lista"></div>
+                </div>
+                <div id="semis-container" class="fase-container hidden">
+                    <h4 class="fase-titulo">💥 Semifinais 💥</h4>
+                    <div id="semis-lista"></div>
+                </div>
+                <div id="final-container" class="fase-container hidden">
+                    <h4 class="fase-titulo">🏆 Grande Final 🏆</h4>
+                    <div id="final-lista"></div>
+                </div>
+                <p id="sem-confrontos-msg">Nenhum sorteio foi realizado ainda.</p>
+            </div>
+        </div>
     </div>
-
-    <div id="grupos-container" class="fase-container hidden">
-        <h4 class="fase-titulo">⚔️ Fase de Grupos ⚔️</h4>
-        <div id="grupos-lista"></div>
-    </div>
-
-    <div id="semis-container" class="fase-container hidden">
-        <h4 class="fase-titulo">💥 Semifinais 💥</h4>
-        <div id="semis-lista"></div>
-    </div>
-
-    <div id="final-container" class="fase-container hidden">
-        <h4 class="fase-titulo">🏆 Grande Final 🏆</h4>
-        <div id="final-lista"></div>
-    </div>
-
-    <p id="sem-confrontos-msg">Nenhum sorteio foi realizado ainda.</p>
 </div>
+
+<div id="feedback-popup-overlay" class="popup-overlay align-top">
+    <div class="feedback-popup">
+        <button id="close-feedback-btn" class="close-btn">×</button>
+        <div id="feedback-form-content">
+            <h2>Sua Opinião Importa</h2>
+            <form id="feedback-form" action="https://formspree.io/f/xpwrwpzo" method="POST">
+                <div class="form-row">
+                    <div class="form-group"><label for="feedback-name">Seu Nome</label><input type="text" id="feedback-name" name="name" required></div>
+                    <div class="form-group"><label for="feedback-email">Seu Email</label><input type="email" id="feedback-email" name="email" required></div>
+                </div>
+                <div class="form-group"><label for="feedback-message">Sua Mensagem</label><textarea id="feedback-message" name="message" required></textarea></div>
+                <button type="submit" class="submit-feedback">Enviar Feedback</button>
+            </form>
         </div>
-    
-    <div id="feedback-popup-overlay" class="popup-overlay align-top">
-        <div class="feedback-popup">
-            <button id="close-feedback-btn" class="close-btn">×</button>
-            <div id="feedback-form-content">
-                <h2>Sua Opinião Importa</h2>
-                <form id="feedback-form" action="https://formspree.io/f/xpwrwpzo" method="POST">
-                    <div class="form-row">
-                        <div class="form-group"><label for="feedback-name">Seu Nome</label><input type="text" id="feedback-name" name="name" required></div>
-                        <div class="form-group"><label for="feedback-email">Seu Email</label><input type="email" id="feedback-email" name="email" required></div>
-                    </div>
-                    <div class="form-group"><label for="feedback-message">Sua Mensagem</label><textarea id="feedback-message" name="message" required></textarea></div>
-                    <button type="submit" class="submit-feedback">Enviar Feedback</button>
-                </form>
-            </div>
-            <div id="feedback-success-content" class="feedback-success hidden">
-                <div class="icon">✔</div><h3>Enviado!</h3><p>Obrigado pelo seu feedback.</p>
-            </div>
+        <div id="feedback-success-content" class="feedback-success hidden">
+            <div class="icon">✔</div><h3>Enviado!</h3><p>Obrigado pelo seu feedback.</p>
         </div>
     </div>
+</div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-    <script src="https://www.youtube.com/iframe_api"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+<script src="https://www.youtube.com/iframe_api"></script>
     
-    <script>
+<script>
     // --- COLE AQUI A CONFIGURAÇÃO DO FIREBASE ---
     const firebaseConfig = {
-  apiKey: "AIzaSyAyyhIT7nE7gGngadaAuBwhqlw8FER4Ogo",
-  authDomain: "torneiodbd.firebaseapp.com",
-  projectId: "torneiodbd",
-  storageBucket: "torneiodbd.firebasestorage.app",
-  messagingSenderId: "253724939016",
-  appId: "1:253724939016:web:030515bc99b6c0d3ab52bd"
+        apiKey: "AIzaSyAyyhIT7nE7gGngadaAuBwhqlw8FER4Ogo",
+        authDomain: "torneiodbd.firebaseapp.com",
+        projectId: "torneiodbd",
+        storageBucket: "torneiodbd.firebasestorage.app",
+        messagingSenderId: "253724939016",
+        appId: "1:253724939016:web:030515bc99b6c0d3ab52bd"
     };
     // --- FIM DA CONFIGURAÇÃO ---
 
@@ -2498,8 +2494,8 @@ publicMessagesRef.limitToLast(100).on('child_changed', (snapshot) => {
         // Se a mensagem foi "apagada" (texto substituído)
         if (msg.isDeleted) {
              textSpan.style.color = '#888';
-             textSpan.style.fontStyle = 'italic';
-             messageElement.style.pointerEvents = 'none'; // Impede novos cliques
+              textSpan.style.fontStyle = 'italic';
+              messageElement.style.pointerEvents = 'none'; // Impede novos cliques
         }
     }
 });
