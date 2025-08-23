@@ -1789,96 +1789,62 @@ header {
     text-decoration: none;
     font-weight: bold;
     font-size: 1rem;
-    padding: 5px 10px;
-    border-radius: 4px;
-    transition: all 0.3s ease;
+    padding: 10px 5px; /* Ajuste no padding para dar mais espaço */
     background: none;
     border: none;
     cursor: pointer;
     font-family: 'Roboto', sans-serif;
+    position: relative; /* Essencial para a linha animada */
+    transition: color 0.3s ease, text-shadow 0.3s ease; /* Transição suave para a cor e brilho */
 }
 
+/* A linha animada que aparece sob o texto */
+.main-nav a::after, .main-nav .nav-button::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: var(--cor-principal);
+    left: 0;
+    bottom: 0;
+    transform: scaleX(0); /* Começa invisível (largura zero) */
+    transform-origin: center; /* A animação cresce a partir do centro */
+    transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1); /* Transição suave */
+}
+
+/* Efeito ao passar o mouse nos links normais */
 .main-nav a:hover, .main-nav .nav-button:hover {
     color: #fff;
-    background-color: var(--cor-principal);
+    text-shadow: 0 0 10px var(--cor-principal); /* Efeito de brilho (glow) no texto */
 }
 
+/* Faz a linha aparecer ao passar o mouse */
+.main-nav a:hover::after, .main-nav .nav-button:hover::after {
+    transform: scaleX(1); /* Expande a linha para 100% da largura */
+}
+
+/* Estilo específico para o botão "Inscrever-se" */
 .main-nav .btn {
     background-color: var(--cor-borda-forte);
     padding: 10px 20px;
+    border-radius: 5px;
+    border: 2px solid transparent; /* Borda inicial transparente */
+    transition: all 0.3s ease;
 }
+
+/* Efeito aprimorado para o botão "Inscrever-se" */
 .main-nav .btn:hover {
     background-color: var(--cor-principal);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(255, 0, 0, 0.4);
+    transform: translateY(-3px) scale(1.05); /* Efeito de elevação e crescimento */
+    box-shadow: 0 0 25px rgba(255, 77, 77, 0.7); /* Brilho mais intenso */
+    border-color: rgba(255, 255, 255, 0.5); /* Borda sutil que acende */
+    color: #fff; /* Garante que o texto fique branco */
+    text-shadow: none; /* Remove o brilho do texto para focar no botão */
 }
 
-/* Botão Sanduíche (Hamburguer) */
-.menu-toggle {
-    display: none; /* Escondido no desktop */
-    flex-direction: column;
-    justify-content: space-around;
-    width: 30px;
-    height: 25px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    z-index: 3001;
-}
-
-.menu-toggle span {
-    width: 100%;
-    height: 3px;
-    background-color: var(--cor-texto);
-    border-radius: 2px;
-    transition: all 0.3s ease-in-out;
-}
-
-.menu-toggle.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
-.menu-toggle.open span:nth-child(2) { opacity: 0; }
-.menu-toggle.open span:nth-child(3) { transform: rotate(-45deg) translate(7px, -7px); }
-
-/* --- Estilos do Menu Mobile --- */
-@media (max-width: 900px) {
-    /* No mobile, o header vira 2 colunas: logo e botão sanduíche */
-    header {
-        grid-template-columns: 1fr 1fr;
-    }
-    #header-center-content {
-        display: none; /* Esconde os contadores para simplificar */
-    }
-    .menu-toggle {
-        display: flex;
-        justify-self: end; /* Alinha o botão sanduíche à direita */
-    }
-    .main-nav {
-        display: block;
-        position: fixed;
-        top: 0;
-        right: 0;
-        width: 250px;
-        height: 100vh;
-        background-color: rgba(10, 10, 10, 0.98);
-        backdrop-filter: blur(10px);
-        border-left: 2px solid var(--cor-borda-forte);
-        transform: translateX(100%);
-        transition: transform 0.3s ease-in-out;
-        z-index: 3000;
-        padding-top: 100px;
-    }
-    .main-nav.open {
-        transform: translateX(0);
-    }
-    .main-nav ul {
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
-        gap: 20px;
-    }
-    .main-nav a, .main-nav .nav-button {
-        font-size: 1.2rem;
-    }
+/* Remove a linha animada do botão principal, pois ele já tem outros efeitos */
+.main-nav .btn::after {
+    display: none;
 }
         /* ========================================================= */
 /* ✨ ESTILOS SOFISTICADOS PARA O POP-UP DE REGRAS ✨ */
