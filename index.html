@@ -10,252 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
     <style>
-        /* ✨ INÍCIO: ESTILOS PARA O MENU DE OPÇÕES DA MENSAGEM ✨ */
-.message-options-menu {
-    position: absolute;
-    z-index: 1001; /* Acima das mensagens, mas abaixo de popups maiores */
-    background-color: #2c2c2c;
-    border: 1px solid var(--cor-borda);
-    border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-    padding: 5px;
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-}
-
-.options-menu-item {
-    padding: 8px 15px;
-    color: var(--cor-texto);
-    cursor: pointer;
-    font-size: 0.9rem;
-    border-radius: 4px;
-    transition: background-color 0.2s;
-}
-
-.options-menu-item:hover {
-    background-color: var(--cor-borda-forte);
-}
-
-.options-menu-item.delete { /* Cor especial para a opção de apagar */
-    color: #ff5c5c;
-}
-
-.options-menu-item.delete:hover {
-    background-color: #ff4d4d;
-    color: #fff;
-}
-
-.chat-message .edited-indicator {
-    font-size: 0.75rem;
-    color: #999;
-    font-style: italic;
-    margin-left: 8px;
-}
-/* ✨ FIM: ESTILOS DO MENU DE OPÇÕES ✨ */
-        /* AJUSTE DE TAMANHO FORÇADO PARA O ÍCONE DE CHAVEAMENTO */
-#chaveamento-card h3 img {
-    height: 80px !important; /* A MUDANÇA ESTÁ AQUI! */
-    width: auto !important;  /* E aqui também, para garantir */
-}
-        /* ESTILOS PARA O CAMPEÃO E PARTIDAS ESPELHADAS */
-#champion-container {
-    text-align: center;
-    padding: 15px;
-    background: linear-gradient(160deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.05) 100%);
-    border: 2px solid #FFD700;
-    border-radius: 8px;
-    margin-bottom: 25px;
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3), inset 0 0 10px rgba(255, 215, 0, 0.2);
-}
-.champion-title {
-    font-family: 'Creepster', cursive;
-    color: #FFD700;
-    margin: 0;
-    font-size: 1.8rem;
-    text-shadow: 0 0 10px #000;
-}
-#champion-name {
-    font-family: 'Roboto', sans-serif;
-    font-size: 2rem;
-    font-weight: 700;
-    color: #fff;
-    text-shadow: 0 0 15px #FFD700, 0 0 5px #000;
-    margin: 8px 0 0 0;
-}
-
-/* Container de cada fase (Grupos, Semis, Final) */
-.fase-container {
-    margin-top: 25px;
-    border-top: 2px solid var(--cor-borda);
-    padding-top: 20px;
-}
-.fase-titulo {
-    font-family: 'Creepster', cursive;
-    text-align: center;
-    color: var(--cor-principal);
-    font-size: 1.6rem;
-    margin: 0 0 15px 0;
-    text-shadow: 0 0 8px var(--cor-principal);
-}
-
-/* Bloco de um único confronto (Ex: Time A vs Time B) */
-.confronto-bloco {
-    background-color: rgba(0,0,0,0.3);
-    border-radius: 6px;
-    margin-bottom: 15px;
-    border: 1px solid var(--cor-borda);
-    overflow: hidden; /* Garante que os cantos fiquem arredondados */
-    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-}
-.confronto-bloco-titulo {
-    text-align: center;
-    font-weight: bold;
-    font-size: 1.1rem;
-    padding: 10px;
-    background-color: rgba(0,0,0,0.4);
-    color: #ddd;
-    border-bottom: 1px solid var(--cor-borda);
-}
-
-/* Cada partida individual dentro de um confronto */
-.match-pair-placar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    font-size: 0.9rem;
-    border-bottom: 1px dashed rgba(255,255,255,0.1);
-}
-.match-pair-placar:last-child {
-    border-bottom: none;
-}
-
-/* Lado de cada time na partida */
-.team-side-placar {
-    width: 45%;
-    text-align: center;
-}
-.team-name-placar {
-    font-weight: bold;
-    font-size: 1rem;
-    color: #fff;
-}
-.team-role-placar {
-    color: #aaa;
-    font-style: italic;
-    font-size: 0.8rem;
-}
-.vs-separator {
-    color: var(--cor-principal);
-    font-weight: bold;
-}
-        /* ✨ INÍCIO: ESTILOS DO BANNER DE CAMPEONATO ✨ */
-#campeonato-banner {
-    position: sticky; /* Fica fixo no topo ao rolar a página */
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: rgba(10, 10, 10, 0.95);
-    backdrop-filter: blur(8px);
-    border-bottom: 2px solid var(--cor-principal);
-    padding: 15px 5%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 9999; /* Garante que fique acima de todos os outros elementos */
-    box-sizing: border-box;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
-    transform: translateY(0);
-    opacity: 1;
-}
-
-/* Animação de entrada */
-@keyframes slideInDown {
-    from {
-        transform: translateY(-100%);
-    }
-    to {
-        transform: translateY(0);
-    }
-}
-#campeonato-banner {
-    animation: slideInDown 0.6s ease-out;
-}
-
-
-/* Classe para esconder o banner suavemente */
-#campeonato-banner.hidden {
-    transform: translateY(-150%);
-    opacity: 0;
-    pointer-events: none; /* Impede cliques no banner escondido */
-}
-
-.banner-conteudo {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.banner-icone {
-    font-size: 2.5rem;
-    line-height: 1;
-}
-
-.banner-texto h3 {
-    font-family: 'Creepster', cursive;
-    color: var(--cor-principal);
-    font-size: 1.8rem;
-    margin: 0 0 5px 0;
-    letter-spacing: 1px;
-}
-
-.banner-texto p {
-    margin: 0;
-    font-size: 1rem;
-    color: var(--cor-texto);
-}
-
-.banner-texto p strong {
-    color: #fff; /* Destaca a data/hora */
-}
-
-#close-banner-btn {
-    background: none;
-    border: none;
-    font-size: 2.5rem;
-    color: #888;
-    cursor: pointer;
-    transition: color 0.3s, transform 0.3s;
-    padding: 0 15px;
-}
-
-#close-banner-btn:hover {
-    color: var(--cor-principal);
-    transform: scale(1.1);
-}
-
-/* Ajuste para telas pequenas */
-@media (max-width: 768px) {
-    #campeonato-banner {
-        padding: 15px;
-        flex-direction: column;
-        gap: 10px;
-        text-align: center;
-    }
-    .banner-conteudo {
-        flex-direction: column;
-        gap: 10px;
-    }
-    #close-banner-btn {
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        font-size: 2rem;
-    }
-}
-/* ✨ FIM: ESTILOS DO BANNER ✨ */
         :root {
             --cor-principal: #ff4d4d;
             --cor-fundo-container: rgba(15, 15, 15, 0.9);
@@ -265,1764 +19,482 @@
             --cor-cinza-botao: #3a3a3a;
         }
         body {
-            margin: 0; padding: 0; font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
             color: var(--cor-texto);
             background-image: url('https://i.imgur.com/Vlh2Ik7.jpeg');
-            background-size: cover; background-position: center; background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             backdrop-filter: brightness(0.6);
         }
-        header {
-    background-color: rgba(10, 10, 10, 0.8); 
-    border-bottom: 2px solid var(--cor-borda);
-    padding: 15px 5%; 
-    position: sticky; 
-    top: 0; 
-    z-index: 2000;
-    display: flex; 
-    align-items: center;
-    backdrop-filter: blur(10px);
-    position: relative; /* ADICIONADO */
-}
-        .logo h1 { font-family: 'Creepster', cursive; font-size: 2.5rem; color: var(--cor-principal); margin: 0; }
-        .nav-buttons { 
-    display: flex; 
-    gap: 15px; 
-    margin-left: auto; /* ADICIONADO */
-}
-        .nav-buttons .btn {
-            font-weight: bold; text-decoration: none; color: var(--cor-texto);
-            background-color: var(--cor-borda-forte); padding: 10px 20px;
-            border-radius: 5px; transition: all 0.3s ease; text-transform: uppercase;
-            border: none; font-size: 0.9rem; cursor: pointer;
-        }
-        .nav-buttons .btn:hover { background-color: var(--cor-principal); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255, 0, 0, 0.4); }
-
-        main { padding: 40px 5%; max-width: 1400px; margin: 0 auto; }
-        .section-container {
-            background-color: var(--cor-fundo-container); padding: 30px; border-radius: 10px;
-            border: 2px solid var(--cor-borda); box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
-            margin-bottom: 30px; animation: fadeIn 1s ease-in-out;
-            position: relative; 
+        main {
+            padding: 40px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .section-title { font-family: 'Creepster', cursive; font-size: 3rem; color: var(--cor-principal); text-align: center; margin-top: 0; margin-bottom: 30px; }
-        
-        #live-section { max-width: 960px; margin: 0 auto; }
-        .video-container {
-            position: relative; width: 100%; padding-top: 56.25%; 
-            background-color: #000; border-radius: 5px; border: 1px solid var(--cor-borda);
+
+        /* --- BANNER DE CAMPEONATO --- */
+        #campeonato-banner {
+            position: sticky;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 2px solid var(--cor-principal);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 9999;
+            box-sizing: border-box;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+            transform: translateY(0);
+            opacity: 1;
+            animation: slideInDown 0.6s ease-out;
         }
+        @keyframes slideInDown { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+        #campeonato-banner.hidden {
+            transform: translateY(-150%);
+            opacity: 0;
+            pointer-events: none;
+        }
+        .banner-conteudo { display: flex; align-items: center; gap: 20px; }
+        .banner-icone { font-size: 2.5rem; line-height: 1; }
+        .banner-texto h3 { font-family: 'Creepster', cursive; color: var(--cor-principal); font-size: 1.8rem; margin: 0 0 5px 0; letter-spacing: 1px; }
+        .banner-texto p { margin: 0; font-size: 1rem; color: var(--cor-texto); }
+        .banner-texto p strong { color: #fff; }
+        #close-banner-btn { background: none; border: none; font-size: 2.5rem; color: #888; cursor: pointer; transition: color 0.3s, transform 0.3s; padding: 0 15px; }
+        #close-banner-btn:hover { color: var(--cor-principal); transform: scale(1.1); }
+
+        /* --- HEADER --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            position: sticky;
+            top: 0;
+            z-index: 2000;
+            background-color: rgba(10, 10, 10, 0.8);
+            border-bottom: 2px solid var(--cor-borda);
+            backdrop-filter: blur(10px);
+        }
+        .logo { display: flex; flex-direction: column; align-items: center; }
+        .logo h1 { font-family: 'Creepster', cursive; font-size: 2.5rem; color: var(--cor-principal); margin: 0; }
+        #visitor-counter { display: flex; align-items: center; justify-content: center; gap: 8px; color: #aaa; font-size: 0.9rem; text-shadow: 0 0 5px black; }
+        #visitor-counter .icon { font-size: 1.2rem; }
+        #visitor-counter #visitor-count { font-weight: bold; color: var(--cor-principal); font-size: 1.1rem; }
+        #countdown-container { text-align: center; display: flex; flex-direction: column; justify-content: center; min-width: 300px; }
+        .countdown-title { margin: 0 0 5px 0; font-size: 1rem; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; color: #ccc; }
+        #timer { display: flex; justify-content: center; gap: 15px; }
+        .time-block { display: flex; flex-direction: column; align-items: center; }
+        .time-value { font-family: 'Creepster', cursive; font-size: 2.5rem; color: var(--cor-principal); line-height: 1; animation: pulse-red-text 2s infinite; }
+        .time-label { font-size: 0.7rem; text-transform: uppercase; color: #aaa; }
+        #live-message { font-family: 'Creepster', cursive; font-size: 2rem; color: var(--cor-principal); animation: pulse-red-text 1.5s infinite; }
+        @keyframes pulse-red-text { 50% { text-shadow: 0 0 15px var(--cor-principal); } }
+
+        /* --- NAVEGAÇÃO PRINCIPAL --- */
+        .main-nav ul { margin: 0; padding: 0; list-style: none; display: flex; align-items: center; gap: 25px; }
+        .main-nav a, .main-nav .nav-button { color: var(--cor-texto); text-decoration: none; font-weight: bold; font-size: 1rem; padding: 10px 5px; background: none; border: none; cursor: pointer; font-family: 'Roboto', sans-serif; position: relative; transition: color 0.3s ease, text-shadow 0.3s ease; }
+        .main-nav a::after, .main-nav .nav-button::after { content: ''; position: absolute; width: 100%; height: 2px; background: var(--cor-principal); left: 0; bottom: 0; transform: scaleX(0); transform-origin: center; transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1); }
+        .main-nav a:hover, .main-nav .nav-button:hover { color: #fff; text-shadow: 0 0 10px var(--cor-principal); }
+        .main-nav a:hover::after, .main-nav .nav-button:hover::after { transform: scaleX(1); }
+        .main-nav .btn { background-color: var(--cor-borda-forte); padding: 10px 20px; border-radius: 5px; border: 2px solid transparent; transition: all 0.3s ease; }
+        .main-nav .btn:hover { background-color: var(--cor-principal); transform: translateY(-3px) scale(1.05); box-shadow: 0 0 25px rgba(255, 77, 77, 0.7); border-color: rgba(255, 255, 255, 0.5); color: #fff; text-shadow: none; }
+        .main-nav .btn::after { display: none; }
+
+        /* --- CONTEÚDO PRINCIPAL E SEÇÕES --- */
+        .section-container { background-color: var(--cor-fundo-container); padding: 30px; border-radius: 10px; border: 2px solid var(--cor-borda); box-shadow: 0 0 25px rgba(0, 0, 0, 0.5); margin-bottom: 30px; animation: fadeIn 1s ease-in-out; position: relative; }
+        .section-title { font-family: 'Creepster', cursive; font-size: 3rem; color: var(--cor-principal); text-align: center; margin-top: 0; margin-bottom: 30px; }
+        .hidden { display: none !important; }
+
+        /* --- SEÇÃO TRANSMISSÃO --- */
+        #live-section { max-width: 960px; margin: 0 auto; }
+        .video-container { position: relative; width: 100%; padding-top: 56.25%; background-color: #000; border-radius: 5px; border: 1px solid var(--cor-borda); }
         .video-container > div, .video-container > iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         #player-wrapper iframe { width: 100%; height: 100%; border: none; }
         #offline-image { width: 100%; height: 100%; object-fit: cover; }
-        .live-indicator {
-            position: absolute; top: 15px; left: 15px; background-color: var(--cor-principal);
-            color: white; padding: 5px 10px; border-radius: 5px; font-weight: bold; z-index: 20;
-            animation: pulse 1.5s infinite;
-        }
+        .live-indicator { position: absolute; top: 15px; left: 15px; background-color: var(--cor-principal); color: white; padding: 5px 10px; border-radius: 5px; font-weight: bold; z-index: 20; animation: pulse 1.5s infinite; }
         @keyframes pulse { 50% { box-shadow: 0 0 20px rgba(255, 77, 77, 1); } }
-        .hidden { display: none !important; }
-#regras ul {
-    font-family: 'Special Elite', monospace; /* Nova fonte */
-    font-size: 1.1rem;
-    line-height: 1.6;
-    color: #ccc; /* Cor um pouco mais apagada, como tinta antiga */
-}
-
-/* Destaca números ou palavras-chave */
-#regras li strong {
-    color: var(--cor-principal);
-    font-weight: normal; /* A fonte já é marcante, não precisa de negrito extra */
-}
-        #regras ul { list-style: none; padding: 0; }
-        #regras li { background-color: rgba(0, 0, 0, 0.2); padding: 15px 20px; margin-bottom: 10px; border-left: 4px solid var(--cor-borda-forte); }
-        #regras li::before {
-    content: ''; /* Remove o emoji */
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    background-color: var(--cor-principal);
-    border-radius: 2px;
-    margin-right: 15px;
-    transform: rotate(45deg); /* Cria um losango, como um gerador */
-    filter: drop-shadow(0 0 4px var(--cor-principal));
-}
-
-        #dbd-unmute-popup {
-            position: absolute; bottom: 30px; left: 50%;
-            transform: translateX(-50%) translateY(200%); 
-            background-color: var(--cor-fundo-container); padding: 20px;
-            border-radius: 10px; border: 1px solid var(--cor-borda-forte);
-            box-shadow: 0 0 25px rgba(0,0,0,0.7); z-index: 2000;
-            text-align: center; transition: transform 0.4s ease-out, opacity 0.4s ease-out;
-            width: auto; max-width: 90%; opacity: 0; pointer-events: none;
-        }
+        #dbd-unmute-popup { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(200%); background-color: var(--cor-fundo-container); padding: 20px; border-radius: 10px; border: 1px solid var(--cor-borda-forte); box-shadow: 0 0 25px rgba(0,0,0,0.7); z-index: 2000; text-align: center; transition: transform 0.4s ease-out, opacity 0.4s ease-out; width: auto; max-width: 90%; opacity: 0; pointer-events: none; }
         #dbd-unmute-popup.show { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: auto; }
         #dbd-unmute-popup p { margin: 0 0 15px 0; font-size: 1.1rem; color: var(--cor-texto); }
         .popup-buttons { display: flex; gap: 10px; justify-content: center; }
-        .popup-btn {
-            border: none; padding: 10px 25px; border-radius: 5px;
-            font-weight: bold; font-size: 1rem; cursor: pointer; transition: all 0.2s ease;
-        }
+        .popup-btn { border: none; padding: 10px 25px; border-radius: 5px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: all 0.2s ease; }
         .popup-btn:hover { transform: translateY(-2px); }
         #unmute-yes-btn { background-color: var(--cor-borda-forte); color: white; }
         #unmute-yes-btn:hover { background-color: var(--cor-principal); }
         #unmute-no-btn { background-color: var(--cor-cinza-botao); color: var(--cor-texto); }
         #unmute-no-btn:hover { background-color: #555; }
+        #stream-switcher { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
+        .stream-btn { font-weight: bold; text-decoration: none; color: var(--cor-texto); background-color: var(--cor-cinza-botao); padding: 10px 20px; border-radius: 5px; transition: all 0.3s ease; text-transform: uppercase; border: 1px solid var(--cor-borda); font-size: 0.9rem; cursor: pointer; }
+        .stream-btn:hover { background-color: #555; transform: translateY(-2px); }
+        .stream-btn.active { background-color: var(--cor-principal); box-shadow: 0 4px 15px rgba(255, 0, 0, 0.4); border-color: var(--cor-principal); }
         
-        .popup-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.85); z-index: 3000;
-            display: flex; justify-content: center; align-items: center;
-            opacity: 0; pointer-events: none;
-            transition: opacity 0.4s ease; backdrop-filter: blur(5px);
-        }
+        /* --- CHAT --- */
+        #chat-messages { height: 350px; overflow-y: auto; border: 1px solid #333; padding: 15px; border-radius: 5px; margin-bottom: 15px; display: flex; flex-direction: column; background-image: linear-gradient(rgba(15, 15, 15, 0.85), rgba(15, 15, 15, 0.85)), url('https://i.imgur.com/ElV8c5i.png'); background-position: center; background-repeat: no-repeat; background-size: contain; position: relative; }
+        #chat-messages::-webkit-scrollbar { width: 8px; }
+        #chat-messages::-webkit-scrollbar-track { background: #1a1a1a; }
+        #chat-messages::-webkit-scrollbar-thumb { background: var(--cor-borda-forte); border-radius: 4px; }
+        .chat-message { line-height: 1.4; margin-bottom: 15px; word-wrap: break-word; position: relative; z-index: 5;}
+        .chat-message .name { font-weight: bold; line-height: 1.2; margin-right: 8px; cursor: pointer; transition: text-shadow 0.2s; }
+        .chat-message .name:hover { text-shadow: 0 0 5px var(--cor-texto); }
+        .watching-indicator { display: block; font-size: 0.7rem; color: #888; font-style: italic; line-height: 1; margin-bottom: 4px; font-weight: normal; }
+        .chat-message .text { font-size: 0.95rem; display: inline; }
+        .chat-message .mention { background-color: var(--cor-principal); color: white; padding: 2px 5px; border-radius: 4px; font-weight: bold; }
+        .chat-message .edited-indicator { font-size: 0.75rem; color: #999; font-style: italic; margin-left: 8px; }
+        .chat-system-message { color: #a0a0a0; font-style: italic; text-align: center; margin: 8px 0; font-size: 0.9em; }
+        #chat-form .form-group { display: flex; gap: 15px; }
+        #chat-form input { flex-grow: 1; padding: 12px; border-radius: 5px; border: 1px solid #555; background-color: #1a1a1a; color: #f0f0f0; font-size: 1rem; box-sizing: border-box; }
+        #chat-form button { padding: 10px 20px; border: none; border-radius: 5px; background-color: var(--cor-borda-forte); color: white; font-weight: bold; cursor: pointer; transition: background-color 0.3s; font-size: 1rem; }
+        #chat-form button:hover { background-color: var(--cor-principal); }
+        #chat-form input:focus { border-color: var(--cor-principal); box-shadow: 0 0 10px rgba(255, 77, 77, 0.5); }
+        
+        /* --- PLACEHOLDER E OVERLAY DO CHAT --- */
+        #chat-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('https://i.imgur.com/2UivLtF.png'); background-size: cover; background-position: center; z-index: 8; opacity: 0; pointer-events: none; transition: opacity 0.4s ease-in-out; }
+        #chat-placeholder { position: absolute; width: 80%; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 10; text-align: center; pointer-events: none; transition: opacity 0.3s ease; }
+        #chat-messages.placeholder-active #chat-overlay { opacity: 0.95; }
+        #chat-messages.placeholder-active { overflow-y: hidden !important; }
+        #chat-placeholder .placeholder-icon { font-size: 3rem; margin-bottom: 10px; opacity: 0.6; text-shadow: 0 0 8px rgba(255, 77, 77, 0.5); }
+        #chat-placeholder h4 { margin: 0 0 15px 0; font-family: 'Creepster', cursive; font-size: 2rem; font-weight: normal; color: rgba(255, 255, 255, 0.9); text-shadow: 0 0 12px var(--cor-principal); }
+        #chat-placeholder p { margin: 8px 0; font-size: 0.95rem; color: rgba(255, 255, 255, 0.8); text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8); }
+        #chat-placeholder code { background-color: rgba(0,0,0,0.6); padding: 3px 6px; border-radius: 4px; font-family: monospace; color: #ffc107; font-weight: bold; }
+
+        /* --- ESTILOS DE MENSAGENS ESPECIAIS (MOD, ADMIN, PRIVADA) --- */
+        .moderator-message { background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0) 70%); border-left: 4px solid #FFD700; padding-left: 15px !important; }
+        .moderator-message .name { color: #FFD700; font-weight: bold; text-shadow: 0 0 8px rgba(255, 215, 0, 0.8), 0 0 3px black; }
+        .moderator-message .name::before { content: ''; display: inline-block; width: 60px; height: 60px; margin-right: 8px; vertical-align: middle; background-image: url('https://i.imgur.com/2L3vqPA.png'); background-size: contain; background-repeat: no-repeat; background-position: center; }
+        @keyframes admin-glow-animation { 0% { border-color: #ff4d4d; box-shadow: 0 0 15px #ff4d4d; } 33% { border-color: #ffffff; box-shadow: 0 0 20px #ffffff; } 66% { border-color: #ffc800; box-shadow: 0 0 25px #ffc800; } 100% { border-color: #ff4d4d; box-shadow: 0 0 15px #ff4d4d; } }
+        .admin-message { background: linear-gradient(90deg, rgba(139, 0, 0, 0.3), rgba(10, 10, 10, 0.1) 80%); border: 2px solid; border-radius: 6px; padding: 10px 15px; animation: admin-glow-animation 4s linear infinite; }
+        .admin-message .name { font-weight: 900; font-size: 0.9em; color: #fff !important; text-shadow: 0 0 5px #ff4d4d, 0 0 10px #ff4d4d; }
+        .admin-message .name::before { content: ''; display: inline-block; width: 50px; height: 50px; margin-right: 10px; vertical-align: -20px; background-image: url('https://i.imgur.com/j5tjs8P.png'); background-size: contain; background-repeat: no-repeat; background-position: center; }
+        #private-message-indicator { background-color: rgba(139, 0, 0, 0.3); border: 1px solid var(--cor-borda-forte); padding: 8px 12px; border-radius: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; animation: fadeIn 0.3s ease; }
+        #private-message-indicator span { font-style: italic; }
+        #private-message-indicator button { background: var(--cor-principal); color: white; border: none; border-radius: 4px; padding: 4px 8px; font-size: 0.8rem; cursor: pointer; transition: background-color 0.2s; }
+        #private-message-indicator button:hover { background-color: #ff2d2d; }
+        .private-message { background-color: rgba(112, 12, 12, 0.2); border-left: 3px solid #FFC107; padding: 10px; border-radius: 5px; }
+        .private-message .pm-header { font-size: 0.8em; font-style: italic; color: #FFC107; margin-bottom: 5px; }
+
+        /* --- MENUS, SUGESTÕES E EMOJIS DO CHAT --- */
+        #message-group { position: relative; }
+        .message-options-menu { position: absolute; z-index: 1001; background-color: #2c2c2c; border: 1px solid var(--cor-borda); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.6); padding: 5px; display: flex; flex-direction: column; gap: 3px; }
+        .options-menu-item { padding: 8px 15px; color: var(--cor-texto); cursor: pointer; font-size: 0.9rem; border-radius: 4px; transition: background-color 0.2s; }
+        .options-menu-item:hover { background-color: var(--cor-borda-forte); }
+        .options-menu-item.delete { color: #ff5c5c; }
+        .options-menu-item.delete:hover { background-color: #ff4d4d; color: #fff; }
+        .context-menu { position: absolute; background-color: #2a2a2a; border: 1px solid var(--cor-borda); border-radius: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index: 1000; padding: 5px; }
+        .context-menu-item { padding: 8px 15px; color: var(--cor-texto); cursor: pointer; font-size: 0.9rem; }
+        .context-menu-item:hover { background-color: var(--cor-borda-forte); }
+        .suggestions-box { position: absolute; bottom: 100%; left: 0; right: 0; background-color: #1f1f1f; border: 1px solid var(--cor-borda); border-bottom: none; border-radius: 5px 5px 0 0; max-height: 160px; overflow-y: auto; z-index: 10; box-shadow: 0 -5px 15px rgba(0,0,0,0.3); }
+        .suggestion-item { padding: 10px 15px; color: var(--cor-texto); cursor: pointer; border-bottom: 1px solid #333; font-size: 0.9rem; }
+        .suggestion-item:last-child { border-bottom: none; }
+        .suggestion-item:hover { background-color: var(--cor-borda-forte); }
+        #emoji-picker { position: absolute; bottom: 110%; right: 0; width: 300px; max-height: 200px; overflow-y: auto; background-color: #1f1f1f; border: 1px solid var(--cor-borda); border-radius: 8px; box-shadow: 0 -5px 20px rgba(0,0,0,0.4); padding: 10px; z-index: 15; display: grid; grid-template-columns: repeat(auto-fill, minmax(30px, 1fr)); gap: 5px; }
+        #emoji-picker::-webkit-scrollbar { width: 6px; }
+        #emoji-picker::-webkit-scrollbar-track { background: #2a2a2a; }
+        #emoji-picker::-webkit-scrollbar-thumb { background: var(--cor-borda-forte); border-radius: 3px; }
+        .emoji-item { padding: 5px; font-size: 1.5rem; text-align: center; cursor: pointer; border-radius: 5px; transition: background-color 0.2s; }
+        .emoji-item:hover { background-color: var(--cor-borda-forte); }
+        #emoji-toggle-btn { padding: 0 12px; background-color: #2a2a2a; border: 1px solid #555; border-radius: 5px; font-size: 1.2rem; cursor: pointer; transition: background-color 0.3s; }
+        #emoji-toggle-btn:hover { background-color: #444; }
+        #emoji-toggle-btn:disabled { cursor: not-allowed; opacity: 0.5; }
+
+        /* --- POP-UPS GERAIS --- */
+        .popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); z-index: 3000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; backdrop-filter: blur(5px); }
         .popup-overlay.active { opacity: 1; pointer-events: auto; }
-        .feedback-popup {
-            background-color: #110e0e; border: 1px solid var(--cor-borda);
-            box-shadow: 0 0 40px rgba(0,0,0,0.8); border-radius: 10px; padding: 30px 40px;
-            width: 90%; max-width: 500px; position: relative;
-            transform: scale(0.9); transition: transform 0.4s ease;
-        }
-        .popup-overlay.active .feedback-popup { transform: scale(1); }
-        /* Adicione esta nova classe para alinhar pop-ups no topo */
-.popup-overlay.align-top {
-    align-items: flex-start; /* Em vez de 'center', alinha no topo */
-}
-        /* Encontre a regra do popup de feedback e adicione a margem */
-.feedback-popup {
-    background-color: #110e0e; 
-    border: 1px solid var(--cor-borda);
-    box-shadow: 0 0 40px rgba(0,0,0,0.8); 
-    border-radius: 10px; 
-    padding: 30px 40px;
-    width: 90%; 
-    max-width: 500px; 
-    position: relative;
-    transform: scale(0.9); 
-    transition: transform 0.4s ease;
-    margin-top: 30vh; /* ✨ ADICIONE ESTA LINHA ✨ */
-}
-
-/* Encontre a regra do popup do placar e adicione a mesma margem */
-.scoreboard-popup {
-    background-color: #110e0e; 
-    border: 1px solid var(--cor-borda);
-    box-shadow: 0 0 40px rgba(0,0,0,0.8); 
-    border-radius: 10px; 
-    padding: 30px 40px;
-    width: 90%; 
-    max-width: 800px; 
-    position: relative;
-    transform: scale(0.9); 
-    transition: transform 0.4s ease;
-    margin-top: 10vh;
-    max-height: 80vh; 
-    display: flex;       
-    flex-direction: column; 
-}
-
-/* A área que contém os cards */
-.score-display { 
-    display: grid; 
-    grid-template-columns: 1fr 1fr; 
-    gap: 30px;
-    flex-grow: 1;        
-    overflow-y: auto;    
-    padding-right: 15px; 
-}
-
-/* Barra de rolagem personalizada */
-.score-display::-webkit-scrollbar { width: 8px; }
-.score-display::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); border-radius: 10px; }
-.score-display::-webkit-scrollbar-thumb { background-color: var(--cor-borda-forte); border-radius: 10px; border: 2px solid #110e0e; }
-.score-display::-webkit-scrollbar-thumb:hover { background-color: var(--cor-principal); }
-
-/* Lista de equipes */
-#teams-leaderboard {
-    min-height: 0; /* Garante que a altura seja flexível */
-}
-
-/* Rodapé */
-footer {
-    position: static; /* Garante que o rodapé fique no final do conteúdo */
-    width: 100%;
-    background-color: rgba(15, 15, 15, 0.2);
-    backdrop-filter: blur(15px);
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 10px 5%; 
-    box-sizing: border-box;
-    margin-top: 40px;
-}
-
-.footer-content {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    max-width: 1400px;
-    margin: 0 auto;
-    width: 100%;
-    gap: 20px;
-}
-
-.footer-logo img {
-    height: 40px;
-    width: auto;
-    vertical-align: middle;
-}
-
-.footer-copyright {
-    color: #ccc;
-    font-size: 0.9rem;
-    margin: 0;
-    text-align: center;
-}
-
-.footer-links {
-    display: flex;
-    gap: 20px;
-    justify-self: end;
-}
-
-        .feedback-popup .close-btn {
-            position: absolute; top: 15px; right: 20px;
-            background: none; border: none; font-size: 2rem;
-            color: #888; cursor: pointer; transition: color 0.3s;
-        }
-        .feedback-popup .close-btn:hover { color: var(--cor-principal); }
-        .feedback-popup h2 { font-family: 'Creepster', cursive; color: var(--cor-principal); font-size: 2.8rem; text-align: center; margin: 0 0 25px 0; }
+        .feedback-popup, .scoreboard-popup { background-color: #110e0e; border: 1px solid var(--cor-borda); box-shadow: 0 0 40px rgba(0,0,0,0.8); border-radius: 10px; padding: 30px 40px; width: 90%; max-width: 800px; position: relative; transform: scale(0.9); transition: transform 0.4s ease; }
+        .popup-overlay.active .feedback-popup, .popup-overlay.active .scoreboard-popup { transform: scale(1); }
+        .popup-overlay.align-top { align-items: flex-start; }
+        .feedback-popup, .scoreboard-popup { margin-top: 10vh; max-height: 80vh; display: flex; flex-direction: column; }
+        .close-btn { position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 2rem; color: #888; cursor: pointer; transition: color 0.3s, transform 0.3s; }
+        .close-btn:hover { color: var(--cor-principal); transform: rotate(90deg); }
+        .feedback-popup h2, .scoreboard-popup h2, .rules-popup h2 { font-family: 'Creepster', cursive; color: var(--cor-principal); font-size: 2.8rem; text-align: center; margin: 0 0 25px 0; }
+        
+        /* --- FEEDBACK POP-UP --- */
         .feedback-popup .form-row { display: flex; gap: 20px; margin-bottom: 20px; }
         .feedback-popup .form-group { flex: 1; margin-bottom: 20px; }
         .feedback-popup .form-row .form-group { margin-bottom: 0; }
-        @media (max-width: 520px) {
-            .feedback-popup .form-row { flex-direction: column; gap: 0; }
-            .feedback-popup .form-row .form-group { margin-bottom: 20px; }
-        }
         .feedback-popup .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #ccc; font-size: 0.8rem; text-transform: uppercase; }
-        .feedback-popup .form-group input, .feedback-popup .form-group textarea {
-            width: 100%; padding: 12px; background-color: rgba(0, 0, 0, 0.4); border: 1px solid #555;
-            border-radius: 5px; color: #fff; font-size: 1rem;
-            box-sizing: border-box; font-family: 'Roboto', sans-serif;
-        }
+        .feedback-popup .form-group input, .feedback-popup .form-group textarea { width: 100%; padding: 12px; background-color: rgba(0, 0, 0, 0.4); border: 1px solid #555; border-radius: 5px; color: #fff; font-size: 1rem; box-sizing: border-box; font-family: 'Roboto', sans-serif; }
         .feedback-popup .form-group textarea { resize: vertical; min-height: 120px; }
-        .submit-feedback {
-            width: 100%; border: none; background-color: var(--cor-borda-forte);
-            color: white; padding: 15px; border-radius: 5px;
-            font-size: 1.1rem; font-weight: bold; cursor: pointer;
-            transition: all 0.3s; margin-top: 10px;
-        }
+        .feedback-popup .form-group input:focus, .feedback-popup .form-group textarea:focus { border-color: var(--cor-principal); box-shadow: 0 0 10px rgba(255, 77, 77, 0.5); }
+        .submit-feedback { width: 100%; border: none; background-color: var(--cor-borda-forte); color: white; padding: 15px; border-radius: 5px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: all 0.3s; margin-top: 10px; }
         .submit-feedback:hover { background-color: var(--cor-principal); }
         .feedback-success { text-align: center; padding: 40px 20px; }
         .feedback-success .icon { font-size: 4rem; color: var(--cor-principal); animation: popIn 0.5s ease; }
         @keyframes popIn { from { transform: scale(0.5); opacity: 0; } }
         .feedback-success h3 { font-family: 'Creepster', cursive; font-size: 2.5rem; margin: 15px 0 10px 0; }
         
-        /* --- ESTILOS DO PLACAR (VERSÃO FINAL: VIDRO AVERMELHADO) --- */
-.scoreboard-fab {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1000;
-
-    /* Efeito de Vidro Tingido de Vermelho */
-    background: radial-gradient(circle, rgba(255, 77, 77, 0.15) 0%, rgba(139, 0, 0, 0.1) 100%); /* ✨ ALTERADO: Opacidade bem menor para um efeito mais sutil */
-    backdrop-filter: blur(12px); /* ✨ ALTERADO: Um pouco mais de desfoque */
-    border: 1px solid rgba(255, 255, 255, 0.25); /* ✨ ALTERADO: Borda mais fina e clara, como vidro */
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
-
-    /* Estilos do conteúdo */
-    border-radius: 50px;
-    padding: 10px 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    color: var(--cor-texto);
-    font-weight: bold;
-    font-size: 1rem;
-    
-    /* Transição Suave */
-    transition: all 0.3s ease;
-}
-
-.scoreboard-fab:hover {
-    transform: scale(1.05) translateY(-5px); /* Efeito de elevação */
-    background: radial-gradient(circle, rgba(255, 77, 77, 0.25) 0%, rgba(139, 0, 0, 0.2) 100%); /* ✨ ALTERADO: Ainda bem transparente no hover */
-    border: 1px solid var(--cor-principal); /* Borda acende com a cor do tema */
-    box-shadow: 0 0 25px rgba(255, 77, 77, 0.6); /* Brilho vermelho um pouco mais forte */
-}
-
-.scoreboard-fab img {
-    width: 50px;
-    height: 50px;
-}
-/* --- INÍCIO: ESTILOS DO POP-UP DE MEMBROS DA EQUIPE --- */
-
-/* Torna o nome da equipe no placar clicável e com efeito hover */
-.leaderboard-list .name {
-    cursor: pointer;
-    transition: color 0.3s ease, text-shadow 0.3s ease;
-}
-.leaderboard-list .name:hover {
-    color: var(--cor-principal);
-    text-shadow: 0 0 8px var(--cor-principal);
-}
-
-/* Estilo da lista de membros dentro do pop-up */
-#team-info-members-list {
-    list-style: none;
-    padding: 0;
-    margin-top: 30px;
-}
-
-#team-info-members-list li {
-    background-color: rgba(0, 0, 0, 0.2);
-    padding: 15px 20px;
-    margin-bottom: 10px;
-    border-radius: 6px;
-    border-left: 3px solid #666;
-    font-size: 1.2rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
-}
-
-#team-info-members-list li:hover {
-    transform: translateX(5px);
-    border-left-color: var(--cor-principal);
-}
-
-/* ✨ ESTILO DE DESTAQUE PARA O CAPITÃO ✨ */
-#team-info-members-list li.captain-member {
-    background: linear-gradient(90deg, rgba(255, 215, 0, 0.15), rgba(255, 215, 0, 0) 70%);
-    border-left: 4px solid #FFD700; /* Dourado */
-    color: #FFD700;
-    font-weight: 700;
-}
-
-/* Ícone de coroa para o capitão */
-#team-info-members-list li.captain-member::before {
-    content: '👑';
-    margin-right: 12px;
-    vertical-align: middle;
-    display: inline-block;
-    filter: drop-shadow(0 0 5px #FFD700); /* Brilho na coroa */
-}
-/* ✨ ESTILO DE DESTAQUE PARA O KILLER ✨ */
-#team-info-members-list li.killer-member {
-    background: linear-gradient(90deg, rgba(255, 77, 77, 0.2), rgba(255, 77, 77, 0) 70%);
-    border-left: 4px solid var(--cor-principal); /* Vermelho */
-    color: var(--cor-principal);
-    font-weight: 700;
-    text-shadow: 0 0 8px rgba(255, 77, 77, 0.7);
-}
-
-/* Ícone de faca para o Killer */
-#team-info-members-list li.killer-member::before {
-    content: '🔪';
-    margin-right: 12px;
-    vertical-align: middle;
-    display: inline-block;
-    filter: drop-shadow(0 0 5px var(--cor-principal)); /* Brilho vermelho */
-}
-
-/* Garante que o ícone do Killer apareça mesmo se o jogador for Capitão */
-#team-info-members-list li.captain-member.killer-member::before {
-    content: '👑 🔪'; /* Mostra ambos os ícones */
-}
-/* --- FIM: ESTILOS DO POP-UP DE MEMBROS --- */
-        .scoreboard-popup {
-            background-color: #110e0e; border: 1px solid var(--cor-borda);
-            box-shadow: 0 0 40px rgba(0,0,0,0.8); border-radius: 10px; padding: 30px 40px;
-            width: 90%; max-width: 800px; position: relative;
-            transform: scale(0.9); transition: transform 0.4s ease;
-        }
-        .popup-overlay.active .scoreboard-popup { transform: scale(1); }
-        .scoreboard-popup .close-btn {
-            position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 2rem;
-            color: #888; cursor: pointer; transition: color 0.3s;
-        }
-        .scoreboard-popup .close-btn:hover { color: var(--cor-principal); }
-        .scoreboard-popup h2 { font-family: 'Creepster', cursive; color: var(--cor-principal); font-size: 2.8rem; text-align: center; margin: 0 0 25px 0; }
-        .score-display { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        /* --- SCOREBOARD POP-UP --- */
+        .scoreboard-fab { position: fixed; bottom: 720px; right: 280px; z-index: 1000; background: radial-gradient(circle, rgba(255, 77, 77, 0.15) 0%, rgba(139, 0, 0, 0.1) 100%); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35); border-radius: 50px; padding: 10px 20px; display: flex; align-items: center; gap: 10px; cursor: pointer; color: var(--cor-texto); font-weight: bold; font-size: 1rem; transition: all 0.3s ease; }
+        .scoreboard-fab:hover { transform: scale(1.05) translateY(-5px); background: radial-gradient(circle, rgba(255, 77, 77, 0.25) 0%, rgba(139, 0, 0, 0.2) 100%); border: 1px solid var(--cor-principal); box-shadow: 0 0 25px rgba(255, 77, 77, 0.6); }
+        .scoreboard-fab img { width: 50px; height: 50px; }
+        #last-updated-timestamp { color: #4CAF50; font-size: 0.9rem; font-style: italic; text-align: center; margin-top: -15px; margin-bottom: 25px; }
+        .score-display { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; flex-grow: 1; overflow-y: auto; padding-right: 15px; }
+        .score-display::-webkit-scrollbar { width: 8px; }
+        .score-display::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); border-radius: 10px; }
+        .score-display::-webkit-scrollbar-thumb { background-color: var(--cor-borda-forte); border-radius: 10px; border: 2px solid #110e0e; }
+        .score-display::-webkit-scrollbar-thumb:hover { background-color: var(--cor-principal); }
         .score-card { background-color: rgba(0,0,0,0.4); padding: 20px; border-radius: 5px; }
-        .score-card h3 {
-            margin: 0 0 15px 0; font-size: 1.2rem; text-transform: uppercase;
-            display: flex; align-items: center; justify-content: center;
-            gap: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--cor-borda);
-        }
+        .score-card h3 { margin: 0 0 15px 0; font-size: 1.2rem; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--cor-borda); }
         .score-card h3 img { height: 70px; }
+        #chaveamento-card h3 img { height: 80px !important; width: auto !important; }
         .leaderboard-list { list-style: none; padding: 0; margin: 0; min-height: 288px; }
         .leaderboard-list li { display: flex; justify-content: space-between; padding: 8px 5px; border-radius: 3px; font-size: 1.1rem; }
         .leaderboard-list li:nth-child(odd) { background-color: rgba(255,255,255,0.05); }
-        .leaderboard-list .name { font-weight: bold; }
+        .leaderboard-list .name { font-weight: bold; cursor: pointer; transition: color 0.3s ease, text-shadow 0.3s ease; }
+        .leaderboard-list .name:hover { color: var(--cor-principal); text-shadow: 0 0 8px var(--cor-principal); }
         .leaderboard-list .score { color: var(--cor-principal); font-weight: bold; }
-        /* Estilo para a mensagem inteira de um moderador */
-.moderator-message {
-    background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0) 70%);
-    border-left: 4px solid #FFD700; /* Borda dourada */
-    padding-left: 15px !important; /* Adiciona um recuo para destacar */
-}
+        
+        /* --- CHAVEAMENTO --- */
+        #champion-container { text-align: center; padding: 15px; background: linear-gradient(160deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.05) 100%); border: 2px solid #FFD700; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 0 20px rgba(255, 215, 0, 0.3), inset 0 0 10px rgba(255, 215, 0, 0.2); }
+        .champion-title { font-family: 'Creepster', cursive; color: #FFD700; margin: 0; font-size: 1.8rem; text-shadow: 0 0 10px #000; }
+        #champion-name { font-family: 'Roboto', sans-serif; font-size: 2rem; font-weight: 700; color: #fff; text-shadow: 0 0 15px #FFD700, 0 0 5px #000; margin: 8px 0 0 0; }
+        .fase-container { margin-top: 25px; border-top: 2px solid var(--cor-borda); padding-top: 20px; }
+        .fase-titulo { font-family: 'Creepster', cursive; text-align: center; color: var(--cor-principal); font-size: 1.6rem; margin: 0 0 15px 0; text-shadow: 0 0 8px var(--cor-principal); }
+        .confronto-bloco { background-color: rgba(0,0,0,0.3); border-radius: 6px; margin-bottom: 15px; border: 1px solid var(--cor-borda); overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+        .confronto-bloco-titulo { text-align: center; font-weight: bold; font-size: 1.1rem; padding: 10px; background-color: rgba(0,0,0,0.4); color: #ddd; border-bottom: 1px solid var(--cor-borda); }
+        .match-pair-placar { display: flex; justify-content: space-between; align-items: center; padding: 10px; font-size: 0.9rem; border-bottom: 1px dashed rgba(255,255,255,0.1); }
+        .match-pair-placar:last-child { border-bottom: none; }
+        .team-side-placar { width: 45%; text-align: center; }
+        .team-name-placar { font-weight: bold; font-size: 1rem; color: #fff; }
+        .team-role-placar { color: #aaa; font-style: italic; font-size: 0.8rem; }
+        .vs-separator { color: var(--cor-principal); font-weight: bold; }
+        
+        /* --- POPUP MEMBROS DA EQUIPE --- */
+        #team-info-members-list { list-style: none; padding: 0; margin-top: 30px; }
+        #team-info-members-list li { background-color: rgba(0, 0, 0, 0.2); padding: 15px 20px; margin-bottom: 10px; border-radius: 6px; border-left: 3px solid #666; font-size: 1.2rem; font-weight: 500; transition: all 0.3s ease; }
+        #team-info-members-list li:hover { transform: translateX(5px); border-left-color: var(--cor-principal); }
+        #team-info-members-list li.captain-member { background: linear-gradient(90deg, rgba(255, 215, 0, 0.15), rgba(255, 215, 0, 0) 70%); border-left: 4px solid #FFD700; color: #FFD700; font-weight: 700; }
+        #team-info-members-list li.captain-member::before { content: '👑'; margin-right: 12px; vertical-align: middle; display: inline-block; filter: drop-shadow(0 0 5px #FFD700); }
+        #team-info-members-list li.killer-member { background: linear-gradient(90deg, rgba(255, 77, 77, 0.2), rgba(255, 77, 77, 0) 70%); border-left: 4px solid var(--cor-principal); color: var(--cor-principal); font-weight: 700; text-shadow: 0 0 8px rgba(255, 77, 77, 0.7); }
+        #team-info-members-list li.killer-member::before { content: '🔪'; margin-right: 12px; vertical-align: middle; display: inline-block; filter: drop-shadow(0 0 5px var(--cor-principal)); }
+        #team-info-members-list li.captain-member.killer-member::before { content: '👑 🔪'; }
 
-/* Estilo para o NOME do moderador */
-.moderator-message .name {
-    color: #FFD700; /* Cor dourada */
-    font-weight: bold;
-    text-shadow: 0 0 8px rgba(255, 215, 0, 0.8), 0 0 3px black; /* Efeito de brilho */
-}
+        /* --- SEÇÃO REGRAS (POPUP) --- */
+        .rules-popup { max-width: 800px; }
+        .popup-header { text-align: center; padding: 25px 30px; border-bottom: 1px solid var(--cor-borda); flex-shrink: 0; }
+        .popup-header h2 { text-shadow: 0 0 10px var(--cor-principal); }
+        .popup-scrollable-content { padding: 10px 30px 30px 30px; overflow-y: auto; }
+        .popup-scrollable-content::-webkit-scrollbar { width: 8px; }
+        .popup-scrollable-content::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 10px; }
+        .popup-scrollable-content::-webkit-scrollbar-thumb { background-color: var(--cor-borda-forte); border-radius: 10px; }
+        .popup-scrollable-content::-webkit-scrollbar-thumb:hover { background-color: var(--cor-principal); }
+        #rules-popup-content ul { list-style: none; padding: 0; counter-reset: rules-counter; }
+        #rules-popup-content li { font-family: 'Special Elite', monospace; color: #ccc; font-size: 1rem; line-height: 1.6; padding: 15px; padding-left: 55px; margin-bottom: 10px; position: relative; background-color: rgba(0, 0, 0, 0.2); border-left: 3px solid transparent; transition: all 0.3s ease; }
+        #rules-popup-content li:hover { background-color: rgba(0, 0, 0, 0.4); border-left-color: var(--cor-principal); transform: translateX(5px); }
+        #rules-popup-content li::before { counter-increment: rules-counter; content: counter(rules-counter); position: absolute; left: 15px; top: 15px; font-family: 'Creepster', cursive; font-size: 1.8rem; color: var(--cor-principal); text-shadow: 0 0 5px black; line-height: 1; }
+        #rules-popup-content li strong { color: var(--cor-principal); font-weight: normal; }
+        
+        /* --- FOOTER --- */
+        footer { position: fixed; bottom: 0; left: 0; width: 100%; background-color: rgba(15, 15, 15, 0.2); backdrop-filter: blur(15px); border-top: 1px solid rgba(255, 255, 255, 0.2); padding: 10px 5%; z-index: 100; box-sizing: border-box; }
+        .footer-content { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; max-width: 1400px; margin: 0 auto; width: 100%; gap: 20px; }
+        .footer-logo img { height: 40px; width: auto; vertical-align: middle; }
+        .footer-copyright { color: #ccc; font-size: 0.9rem; margin: 0; text-align: center; }
+        .footer-links { display: flex; gap: 20px; justify-self: end; }
+        .footer-links a, .footer-links button { color: #ccc; text-decoration: none; transition: color 0.3s ease; background: none; border: none; cursor: pointer; font-size: 0.9rem; padding: 0; font-family: 'Roboto', sans-serif; }
+        .footer-links a:hover, .footer-links button:hover { color: var(--cor-principal); }
 
-/* Adiciona um ícone de escudo antes do nome do moderador */
-.moderator-message .name::before {
-    content: ''; /* Apaga o emoji de escudo */
-    display: inline-block;
-    width: 60px;          /* Largura do seu selo (ajuste se quiser) */
-    height: 60px;         /* Altura do seu selo (ajuste se quiser) */
-    margin-right: 8px;    /* Espaço entre o selo e o nome */
-    vertical-align: middle; /* Alinha o selo com o texto */
-    background-image: url('https://i.imgur.com/2L3vqPA.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-        /* ===== NOVO LAYOUT DO CHAT (STATUS ACIMA, MENSAGEM AO LADO) ===== */
-.chat-message {
-    line-height: 1.4;
-    margin-bottom: 15px;
-    word-wrap: break-word;
-}
-
-.chat-message .name {
-    /* Estilo do Nome de usuário */
-    font-weight: bold;
-    line-height: 1.2;
-    margin-right: 8px; /* <-- Voltamos a ter uma margem à direita */
-}
-
-.watching-indicator {
-    /* Status discreto ACIMA do nome */
-    display: block;
-    font-size: 0.7rem;
-    color: #888; /* Um pouco mais claro que antes para ser legível */
-    font-style: italic;
-    line-height: 1;
-    margin-bottom: 4px; /* Espaço entre o status e a linha do nome/mensagem */
-    font-weight: normal;
-}
-
-.chat-message .text {
-    /* O texto da mensagem volta a fluir normalmente */
-    font-size: 0.95rem;
-    display: inline; /* <-- Garante que fique ao lado do nome */
-    padding-top: 0;
-}
-/* ================================================================= */
-/* ======================================================= */
-        @media (max-width: 768px) { .score-display { grid-template-columns: 1fr; } }
-        /* --- INÍCIO: ESTILOS DA CONTAGEM REGRESSIVA --- */
-#countdown-container {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-
-    /* Estilos antigos que mantivemos */
-    text-align: center;
-    padding: 0 20px;
-    display: flex;
+/* ========================================== */
+/* --- ESTILOS DO MENU MOBILE (NOVO) --- */
+/* ========================================== */
+.menu-mobile-btn {
+    display: none; /* Escondido por padrão no desktop */
     flex-direction: column;
-    justify-content: center;
-    min-width: 300px; 
-}
-.countdown-title {
-    margin: 0 0 5px 0;
-    font-size: 1rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: #ccc;
-}
-#timer {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-}
-.time-block {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-.time-value {
-    font-family: 'Creepster', cursive;
-    font-size: 2.5rem;
-    color: var(--cor-principal);
-    line-height: 1;
-    animation: pulse-red-text 2s infinite;
-}
-.time-label {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    color: #aaa;
-}
-#live-message {
-    font-family: 'Creepster', cursive;
-    font-size: 2rem;
-    color: var(--cor-principal);
-    animation: pulse-red-text 1.5s infinite;
-}
-@keyframes pulse-red-text {
-    50% { text-shadow: 0 0 15px var(--cor-principal); }
-}
-@media (max-width: 900px) {
-    #countdown-container { display: none; } /* Esconde em telas pequenas para não quebrar o layout */
-}
-/* --- FIM DOS ESTILOS --- */
-        /* ===================================================================== */
-/* ✨ INÍCIO: VERSÃO FINAL COM ELEMENTO DEDICADO ✨ */
-/* ===================================================================== */
-
-/* --- CONFIGURAÇÃO DA HIERARQUIA (EMPILHAMENTO) --- */
-
-#chat-messages {
-    position: relative;
-}
-.chat-message {
-    position: relative;
-    z-index: 5;
-}
-#chat-placeholder {
-    position: absolute;
-    width: 100%;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 10;
-}
-
-/* --- ESTILO DA NOSSA NOVA CAMADA/OVERLAY --- */
-
-#chat-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    
-    background-image: url('https://i.imgur.com/2UivLtF.png');
-    background-size: cover;
-    background-position: center;
-    
-    z-index: 8;
-    
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.4s ease-in-out;
-}
-
-/* --- O GATILHO QUE ATIVA TUDO --- */
-
-/* Quando o placeholder estiver ativo (classe no pai)... */
-#chat-messages.placeholder-active #chat-overlay {
-    /* ...o nosso div de overlay se torna visível! */
-    opacity: 0.95;
-}
-
-/* ✨ A CORREÇÃO DEFINITIVA ESTÁ AQUI ✨ */
-/* Bloqueia a rolagem do chat de forma forçada quando o placeholder está ativo */
-#chat-messages.placeholder-active {
-    overflow-y: hidden !important;
-}
-
-/* ===================================================================== */
-/* ✨ FIM DA VERSÃO FINAL ✨ */
-/* ===================================================================== */
-        /* --- INÍCIO: ESTILOS DO CONTADOR DE VISITANTES --- */
-/* --- INÍCIO: ESTILOS DO CONTADOR DE VISITANTES --- */
-#visitor-counter {
-    display: flex;
-    align-items: center;
-    justify-content: center; /* Centraliza horizontalmente */
-    gap: 8px;
-    color: #aaa;
-    margin-bottom: 25px;   /* Cria um espaço abaixo, antes do vídeo */
-    font-size: 0.9rem;
-    text-shadow: 0 0 5px black;
-}
-#visitor-counter .icon {
-    font-size: 1.2rem;
-    animation: pulse-red-text 3s infinite;
-}
-#visitor-counter #visitor-count {
-    font-weight: bold;
-    color: var(--cor-principal);
-    font-size: 1.1rem;
-}
-/* Ajuste para o header que não tem mais o contador no mobile */
-@media (max-width: 768px) {
-    /* A regra antiga que escondia o contador pode ser removida se você quiser que ele apareça no mobile */
-    /* #visitor-counter { display: none; } */
-}
-/* --- FIM DOS ESTILOS --- */
-        .logo {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        /* --- INÍCIO: ESTILOS DO CHAT AO VIVO --- */
-#chat-messages {
-    height: 350px;
-    overflow-y: auto;
-    border: 1px solid #333;
-    padding: 15px;
-    border-radius: 5px;
-    margin-bottom: 15px;
-    display: flex;
-    flex-direction: column;
-
-    /* --- ADIÇÕES PARA O FUNDO TEMÁTICO --- */
-    background-image: 
-        /* Camada de cor preta semi-transparente por cima */
-        linear-gradient(rgba(15, 15, 15, 0.85), rgba(15, 15, 15, 0.85)),
-        /* Sua imagem da Entidade por baixo */
-        url('https://i.imgur.com/ElV8c5i.png');
-    
-    background-position: center; /* Centraliza a imagem */
-    background-repeat: no-repeat; /* A imagem não se repete */
-    background-size: contain; /* Garante que a imagem caiba inteira na caixa */
-}
-        /* --- INÍCIO: ESTILOS DO PLACEHOLDER DO CHAT --- */
-
-/* Torna a caixa de mensagens um container para o placeholder */
-#chat-messages {
-    position: relative;
-}
-
-#chat-placeholder {
-    /* Posicionamento (sem alteração) */
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-
-    /* Aparência */
-    text-align: center;
-    width: 80%;
-    pointer-events: none; /* Impede que o texto seja clicável */
-    transition: opacity 0.3s ease;
-}
-
-/* Esconde o placeholder quando o chat está ativo */
-#chat-placeholder.hidden {
-    opacity: 0;
-}
-
-#chat-placeholder .placeholder-icon {
-    font-size: 3rem;
-    margin-bottom: 10px;
-    opacity: 0.6; /* 🔧 ALTERADO: Ícone um pouco mais visível */
-    /* ✨ NOVO: Adiciona um brilho sutil no ícone */
-    text-shadow: 0 0 8px rgba(255, 77, 77, 0.5); 
-}
-
-#chat-placeholder h4 {
-    margin: 0 0 15px 0;
-    font-family: 'Creepster', cursive;
-    font-size: 2rem; /* 🔧 ALTERADO: Fonte um pouco maior */
-    font-weight: normal;
-    color: rgba(255, 255, 255, 0.9); /* 🔧 ALTERADO: Cor bem mais forte e visível */
-    /* ✨ NOVO: Efeito de brilho vermelho, combinando com o tema */
-    text-shadow: 0 0 12px var(--cor-principal);
-}
-
-#chat-placeholder p {
-    margin: 8px 0;
-    font-size: 0.95rem; /* 🔧 ALTERADO: Fonte um pouco maior para ler melhor */
-    color: rgba(255, 255, 255, 0.8); /* ✨ NOVO: Cor dedicada para os parágrafos, bem mais clara */
-     /* ✨ NOVO: Sombra escura sutil para destacar o texto do fundo */
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
-}
-
-#chat-placeholder code {
-    background-color: rgba(0,0,0,0.6); /* 🔧 ALTERADO: Fundo um pouco mais escuro */
-    padding: 3px 6px;
-    border-radius: 4px;
-    font-family: monospace;
-    color: #ffc107; /* ✨ NOVO: Cor amarelada para destacar os comandos */
-    font-weight: bold; /* ✨ NOVO: Deixa o comando em negrito */
-}
-
-/* --- FIM: ESTILOS DO PLACEHOLDER DO CHAT --- */
-#chat-messages::-webkit-scrollbar { width: 8px; }
-#chat-messages::-webkit-scrollbar-track { background: #1a1a1a; }
-#chat-messages::-webkit-scrollbar-thumb { background: var(--cor-borda-forte); border-radius: 4px; }
-.chat-message { margin-bottom: 12px; line-height: 1.4; word-wrap: break-word; }
-.chat-message .name { 
-    font-weight: bold; 
-    /* color: var(--cor-principal); -- REMOVIDO DAQUI */
-    margin-right: 8px; 
-}
-/* Adicione isso ao seu CSS */
-.feedback-popup .form-group input:focus, 
-.feedback-popup .form-group textarea:focus,
-#chat-form input:focus {
-    border-color: var(--cor-principal);
-    box-shadow: 0 0 10px rgba(255, 77, 77, 0.5);
-}
-/* NOVO: Estilo para menções no chat */
-.chat-message .mention {
-    background-color: var(--cor-principal);
-    color: white;
-    padding: 2px 5px;
-    border-radius: 4px;
-    font-weight: bold;
-}
-
-#chat-form .form-group {
-    display: flex;
-    gap: 15px;
-}
-#chat-form input {
-    flex-grow: 1;
-    padding: 12px;
-    border-radius: 5px;
-    border: 1px solid #555;
-    background-color: #1a1a1a;
-    color: #f0f0f0;
-    font-size: 1rem;
-    box-sizing: border-box;
-}
-#chat-form button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    background-color: var(--cor-borda-forte);
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    font-size: 1rem;
-}
-#chat-form button:hover { background-color: var(--cor-principal); }
-        #message-group {
-    position: relative;
-}
-
-/* NOVO: Estilos para a caixa de sugestões de menção */
-.suggestions-box {
-    position: absolute;
-    bottom: 100%; /* Aparece acima do campo de input */
-    left: 0;
-    right: 0;
-    background-color: #1f1f1f;
-    border: 1px solid var(--cor-borda);
-    border-bottom: none;
-    border-radius: 5px 5px 0 0;
-    max-height: 160px;
-    overflow-y: auto;
-    z-index: 10; /* Garante que fique sobre outros elementos */
-    box-shadow: 0 -5px 15px rgba(0,0,0,0.3);
-}
-
-.suggestion-item {
-    padding: 10px 15px;
-    color: var(--cor-texto);
-    cursor: pointer;
-    border-bottom: 1px solid #333;
-    font-size: 0.9rem;
-}
-.suggestion-item:last-child {
-    border-bottom: none;
-}
-.suggestion-item:hover {
-    background-color: var(--cor-borda-forte);
-}
-/* --- FIM: ESTILOS DO CHAT AO VIVO --- */
-        /* ✨ INÍCIO: NOVOS ESTILOS PARA O SELETOR DE EMOJIS ✨ */
-
-/* Posiciona o painel de emojis de forma absoluta */
-#emoji-picker {
-    position: absolute;
-    bottom: 110%; /* Aparece acima do campo de input */
-    right: 0;
-    width: 300px;
-    max-height: 200px;
-    overflow-y: auto;
-    background-color: #1f1f1f;
-    border: 1px solid var(--cor-borda);
-    border-radius: 8px;
-    box-shadow: 0 -5px 20px rgba(0,0,0,0.4);
-    padding: 10px;
-    z-index: 15;
-    display: grid; /* Organiza os emojis em uma grade */
-    grid-template-columns: repeat(auto-fill, minmax(30px, 1fr));
-    gap: 5px;
-}
-
-/* Estilo para cada emoji dentro do painel */
-.emoji-item {
-    padding: 5px;
-    font-size: 1.5rem;
-    text-align: center;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.2s;
-}
-.emoji-item:hover {
-    background-color: var(--cor-borda-forte);
-}
-
-/* Estilo do botão que abre o painel de emojis */
-#emoji-toggle-btn {
-    padding: 0 12px;
-    background-color: #2a2a2a;
-    border: 1px solid #555;
-    border-radius: 5px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-#emoji-toggle-btn:hover {
-    background-color: #444;
-}
-/* Quando o botão está desativado (antes de entrar no chat) */
-#emoji-toggle-btn:disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-}
-
-/* Scrollbar do painel de emojis */
-#emoji-picker::-webkit-scrollbar { width: 6px; }
-#emoji-picker::-webkit-scrollbar-track { background: #2a2a2a; }
-#emoji-picker::-webkit-scrollbar-thumb { background: var(--cor-borda-forte); border-radius: 3px; }
-
-/* --- FIM DOS ESTILOS --- */
-        /* NOVO: Estilo para mensagens do sistema no chat */
-.chat-system-message {
-    color: #a0a0a0;
-    font-style: italic;
-    text-align: center;
-    margin: 8px 0;
-    font-size: 0.9em;
-}
-        /* --- INÍCIO: ESTILOS DE MENSAGENS PRIVADAS --- */
-
-/* Indicador que aparece acima do campo de texto */
-#private-message-indicator {
-    background-color: rgba(139, 0, 0, 0.3);
-    border: 1px solid var(--cor-borda-forte);
-    padding: 8px 12px;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.9rem;
-    animation: fadeIn 0.3s ease;
-}
-
-#private-message-indicator span {
-    font-style: italic;
-}
-
-#private-message-indicator button {
-    background: var(--cor-principal);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 4px 8px;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-#private-message-indicator button:hover {
-    background-color: #ff2d2d;
-}
-
-/* Menu que aparece ao clicar no nome de um usuário */
-.context-menu {
-    position: absolute;
-    background-color: #2a2a2a;
-    border: 1px solid var(--cor-borda);
-    border-radius: 5px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-    z-index: 1000;
-    padding: 5px;
-}
-
-.context-menu-item {
-    padding: 8px 15px;
-    color: var(--cor-texto);
-    cursor: pointer;
-    font-size: 0.9rem;
-}
-
-.context-menu-item:hover {
-    background-color: var(--cor-borda-forte);
-}
-
-/* Estilo para o nome clicável */
-.chat-message .name {
-    cursor: pointer;
-    transition: text-shadow 0.2s;
-}
-.chat-message .name:hover {
-    text-shadow: 0 0 5px var(--cor-texto);
-}
-
-/* Estilo para a mensagem privada */
-.private-message {
-    background-color: rgba(112, 12, 12, 0.2);
-    border-left: 3px solid #FFC107; /* Amarelo para destacar */
-    padding: 10px;
-    border-radius: 5px;
-}
-
-.private-message .pm-header {
-    font-size: 0.8em;
-    font-style: italic;
-    color: #FFC107;
-    margin-bottom: 5px;
-}
-
-/* --- FIM: ESTILOS DE MENSAGENS PRIVADAS --- */
-      /* --- INÍCIO: Estilos para troca de transmissão --- */
-#stream-switcher {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 20px; /* Espaçamento acima dos botões */
-}
-
-.stream-btn {
-    font-weight: bold;
-    text-decoration: none;
-    color: var(--cor-texto);
-    background-color: var(--cor-cinza-botao); /* Cor padrão */
-    padding: 10px 20px;
-    border-radius: 5px;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    border: 1px solid var(--cor-borda);
-    font-size: 0.9rem;
-    cursor: pointer;
-}
-
-.stream-btn:hover {
-    background-color: #555;
-    transform: translateY(-2px);
-}
-
-/* Estilo do botão ativo (transmissão selecionada) */
-.stream-btn.active {
-    background-color: var(--cor-principal);
-    box-shadow: 0 4px 15px rgba(255, 0, 0, 0.4);
-    border-color: var(--cor-principal);
-}
-/* --- FIM: Estilos para troca de transmissão --- */
-        /* --- INÍCIO: Estilos do Placar Atualizado --- */
-
-/* ✨ NOVO: Estilo para o texto de data/hora da atualização */
-#last-updated-timestamp {
-    color: #4CAF50; /* Um tom de verde */
-    font-size: 0.9rem;
-    font-style: italic;
-    text-align: center;
-    margin-top: -15px; /* Puxa para mais perto do título */
-    margin-bottom: 25px;
-}
-
-/* 🔧 ALTERADO: Força o placar a ter sempre uma coluna, já que agora é uma lista só */
-.score-display { 
-    grid-template-columns: 1fr; 
-}
-
-/* Ajusta a altura mínima para a nova lista única */
-#teams-leaderboard {
-    min-height: 400px;
-}
-/* --- FIM: Estilos do Placar Atualizado --- */
-        /* ============================================= */
-/* ✨ INÍCIO: NOVOS ESTILOS DO GRIMÓRIO FLUTUANTE (COM POSICIONAMENTO CORRIGIDO) ✨ */
-/* ================================================================================= */
-
-/* O contêiner que flutua */
-#grimorio-container {
-    position: fixed;
-    top: 810px;      /* ✨ CORRIGIDO: Ancorado no topo da tela */
-    left: 280px;
-    z-index: 1050;
-    
-    animation: flutuar 3s ease-in-out infinite;
-    transition: transform 0.5s ease, filter 0.5s ease;
-}
-
-#grimorio-container:hover {
-    transform: scale(1.1);
-    filter: drop-shadow(0 0 15px var(--cor-principal));
-    animation-play-state: paused;
-}
-
-/* Estilos para CADA item (livro) dentro do contêiner */
-.grimorio-item {
-    position: absolute; 
-    top: 0;
-    left: 0;
-    transition: opacity 0.8s ease-in-out;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-decoration: none;
-    color: var(--cor-texto);
-}
-
-.grimorio-item img {
-    width: 80px;
-    height: auto;
-    margin-bottom: 5px;
-}
-
-.grimorio-item span {
-    font-family: 'Creepster', cursive;
-    font-size: 1.1rem;
-    background-color: rgba(10, 10, 10, 0.7);
-    padding: 5px 10px;
-    border-radius: 5px;
-    text-shadow: 0 0 5px black;
-    text-align: center;
-    width: 150px;
-}
-
-/* Classes de controle de visibilidade */
-.grimorio-visible {
-    opacity: 1;
-    pointer-events: auto;
-}
-.grimorio-hidden {
-    opacity: 0;
-    pointer-events: none;
-}
-
-@keyframes flutuar {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-    100% { transform: translateY(0px); }
-}
-
-@media (max-width: 768px) {
-    #grimorio-container {
-        /* ✨ VALORES EXATOS RESTAURADOS DO SEU CÓDIGO ORIGINAL PARA MOBILE ✨ */
-         top: auto;
-        bottom: 220px;
-        left: 15px;
-    }
-    .grimorio-item img {
-        width: 60px;
-    }
-    .grimorio-item span {
-        font-size: 0.8rem;
-        width: 120px;
-    }
-}
-/* --- FIM DOS NOVOS ESTILOS --- */
-        /* SUBSTITUA TODO O CSS DO SEU RODAPÉ POR ESTE BLOCO */
-
-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background-color: rgba(15, 15, 15, 0.2); /* Um pouco mais escuro para contraste */
-    backdrop-filter: blur(15px);
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 10px 5%; /* Diminuí um pouco a altura */
-    z-index: 100;
-    box-sizing: border-box;
-}
-
-.footer-content {
-    display: grid; /* Mude de flex para grid */
-    grid-template-columns: 1fr auto 1fr; /* Cria 3 colunas: esquerda | centro | direita */
-    align-items: center;
-    max-width: 1400px;
-    margin: 0 auto;
-    width: 100%;
-    gap: 20px; /* Espaçamento entre as colunas */
-}
-
-/* Esquerda: Imagem */
-.footer-logo img {
-    height: 40px; /* Tamanho da imagem */
-    width: auto;
-    vertical-align: middle; /* Alinha verticalmente com o texto */
-}
-
-/* Centro: Texto de Copyright */
-.footer-copyright {
-    color: #ccc;
-    font-size: 0.9rem;
-    margin: 0;
-    text-align: center; /* Garante que o texto fique centralizado em sua coluna */
-}
-
-/* Direita: Links */
-.footer-links {
-    display: flex;
-    gap: 20px;
-    justify-self: end; /* Alinha os links à DIREITA de sua coluna */
-}
-
-.footer-links a, .footer-links button {
-    color: #ccc;
-    text-decoration: none;
-    transition: color 0.3s ease;
-    background: none;
+    justify-content: space-around;
+    width: 35px;
+    height: 35px;
+    background: transparent;
     border: none;
     cursor: pointer;
-    font-size: 0.9rem;
     padding: 0;
-    font-family: 'Roboto', sans-serif; /* Garante a mesma fonte */
+    z-index: 2010; /* Garante que fique acima de outros elementos */
 }
 
-.footer-links a:hover, .footer-links button:hover {
-    color: var(--cor-principal);
+.menu-mobile-btn span {
+    width: 100%;
+    height: 3px;
+    background-color: var(--cor-principal);
+    border-radius: 5px;
+    transition: all 0.3s linear;
+    position: relative;
+    transform-origin: 1px;
 }
 
-/* Media Query para telas pequenas */
-@media (max-width: 850px) {
-    .footer-content {
-        flex-direction: column;
-        gap: 10px;
-    }
-    .footer-copyright {
-        /* Coloca o copyright no topo em telas pequenas */
-        order: -1; 
-    }
+/* Animação do ícone para virar um "X" */
+header.menu-aberto .menu-mobile-btn span:nth-child(1) {
+    transform: rotate(45deg);
+}
+
+header.menu-aberto .menu-mobile-btn span:nth-child(2) {
+    opacity: 0;
+    transform: translateX(20px);
+}
+
+header.menu-aberto .menu-mobile-btn span:nth-child(3) {
+    transform: rotate(-45deg);
 }
         /* =================================================== */
-/* --- INÍCIO: ESTILOS PARA DISPOSITIVOS MÓVEIS --- */
-/* =================================================== */
-/* ================================================================= */
-/* --- INÍCIO: ESTILOS PARA DISPOSITIVOS MÓVEIS (VERSÃO CORRIGIDA) --- */
-/* ================================================================= */
+        /* --- ESTILOS PARA DISPOSITIVOS MÓVEIS --- */
+        /* =================================================== */
 
-/* Regras para telas de até 800px de largura */
-@media (max-width: 800px) {
-    /* Ajustes Gerais */
-    main {
-        padding: 20px 15px; 
-    }
-    .section-container {
-        padding: 20px;
-    }
-    header,
-    footer {
-        position: static;
-    }
-    footer {
-        margin-top: 30px; 
-    }
+        /* Regras para telas médias (tablets e celulares grandes) */
+        @media (max-width: 850px) {
+            body {
+                /* Garante que o conteúdo não fique escondido atrás do footer fixo */
+                padding-bottom: 80px; 
+            }
+            main {
+                padding: 20px 15px;
+            }
+            .section-container {
+                padding: 20px;
+            }
+            .section-title {
+                font-size: 2.5rem;
+            }
 
-    /* Cabeçalho */
-    header {
-        flex-direction: column;
-        gap: 15px;
-    }
-    .logo h1 {
-        font-size: 2rem;
-    }
-    
-    /* Contador de visitantes e Contagem regressiva */
-    #countdown-container,
-    #visitor-counter {
-        display: flex;
-    }
-    #countdown-container {
-        display: none; /* Mantendo escondido em mobile como no código original */
-    }
-
-    /* Rodapé */
-    .footer-content {
-        grid-template-columns: 1fr;
-        justify-items: center;
-        gap: 15px;
-    }
-
-    /* Seções específicas */
-    #regras.section-container {
-        padding-left: 0;
-        padding-right: 0;
-        border-left: none;
-        border-right: none;
-    }
-    #transmissao {
-        padding-left: 0;
-        padding-right: 0;
-        border-left: none;
-        border-right: none;
-    }
-    #transmissao .section-title,
-    #transmissao #stream-switcher {
-        padding-left: 15px;
-        padding-right: 15px;
-    }
-
-    /* Títulos e Contagem Regressiva */
-    .section-title {
-        font-size: 2.2rem;
-    }
-    .time-value {
-        font-size: 1.4rem;
-    }
-    .time-label {
-        font-size: 0.5rem;
-    }
-    #timer {
-        gap: 7px;
-    }
-
-    /* Botão de Tela Cheia */
-    #custom-fullscreen-btn {
-        display: block; 
-    }
+            /* --- Header e Navegação --- */
+            .scoreboard-fab {
+    /* PAINEL DE CONTROLE FINO (SOMENTE MOBILE) */
+    bottom: 900px;  /* Distância de baixo para cima */
+    right: 5px;   /* Distância da direita para a esquerda */
 }
-
-/* Regras para telas de até 768px de largura */
-@media (max-width: 768px) {
-    #countdown-container {
-        display: none !important;
-    }
-    .grimorio-flutuante {
-        bottom: 155px;
-        left: 15px;
-    }
-    /* Estilo de moderador (já estava aqui) */
-    .moderator-message {
-        background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0) 70%);
-        border-left: 4px solid #FFD700;
-        padding-left: 15px;
-        border-radius: 4px;
-    }
-    .moderator-message .name {
-        color: #FFD700;
-        text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
-    }
-    .moderator-message .name::before {
-        content: '🛡️';
-        margin-right: 6px;
-    }
-}
-
-/* Regras para telas de até 480px de largura */
-@media (max-width: 480px) {
-    /* Seções e Títulos */
-    .section-container {
-        padding: 20px;
-    }
-    .section-title {
-        font-size: 2rem;
-        margin-bottom: 20px;
-    }
-    .logo h1 {
-        font-size: 1.8rem;
-    }
-    .scoreboard-popup h2,
-    .feedback-popup h2 {
-        font-size: 2rem;
-    }
-
-    /* Cabeçalho */
-    header {
-        flex-direction: column;
-        gap: 15px;
-        padding: 15px;
-    }
-    #visitor-counter {
-        margin-top: 0;
-        transform: translateX(0);
-        order: 3;
-    }
-    .nav-buttons {
-        width: 100%;
-        justify-content: center;
-    }
-
-    /* Formulários e Botões */
-    #chat-form .form-group {
-        flex-direction: column;
-        gap: 10px;
-    }
-    #chat-form button {
-        width: 100%;
-    }
-    #stream-switcher {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-    }
-    .feedback-popup .form-row {
-        flex-direction: column;
-        gap: 0;
-    }
-    .feedback-popup .form-row .form-group {
-        margin-bottom: 20px;
-    }
-
-    /* Pop-ups e Placar */
-    .scoreboard-popup,
-    .feedback-popup {
-        padding: 25px 15px;
-        width: 95%;
-        box-sizing: border-box;
-    }
-    .leaderboard-list {
-        min-height: 250px;
-    }
-    .scoreboard-fab {
-        right: -5px;
-        bottom: -90px;
-        padding: 8px 15px;
-        font-size: 0.9rem;
-    }
-    .scoreboard-fab img {
-        width: 40px;
-        height: 40px;
-    }
-
-    /* Regras */
-    #regras li {
-        padding: 15px;
-        font-size: 0.9rem;
-    }
-    #regras li::before {
-        margin-right: 10px;
-    }
-
-    /* Rodapé */
-    .footer-content {
-        grid-template-columns: 1fr;
-        justify-items: center;
-        gap: 15px;
-    }
-    .footer-logo {
-        grid-row: 2;
-    }
-    .footer-copyright {
-        order: 0;
-        grid-row: 1;
-    }
-    .footer-links {
-        justify-self: center;
-        grid-row: 3;
-    }
-}
-
-
-/* --- INÍCIO: ESTILOS DO BOTÃO DE REGRAS (VERSÃO FINAL) --- */
-
-/* 1. O botão volta a ter o estilo de container que você gostava */
-.dropdown-toggle {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-    width: 100%;
-    max-width: 90%;
-    margin: 0 auto; /* Centraliza o botão */
-    
-    font-family: 'Creepster', cursive;
-    font-size: 1.2rem;
-    color: var(--cor-principal);
-    text-shadow: 0 0 5px black;
-    
-    background-color: rgba(10, 10, 10, 0.7);
-    border: 2px solid var(--cor-borda-forte);
-    border-radius: 8px;
-    padding: 8px 16px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    
-    /* Adiciona uma margem inferior para quando a lista estiver fechada */
-    margin-bottom: 30px;
-}
-
-.dropdown-toggle:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 20px rgba(255, 77, 77, 0.4);
-    border-color: var(--cor-principal);
-    color: #fff;
-    text-shadow: 0 0 10px #fff;
-}
-
-.dropdown-icon {
-    font-size: 1.5rem;
-    transition: transform 0.4s ease;
-}
-
-.dropdown-icon.rotated {
-    transform: rotate(180deg);
-}
-
-/* 2. A LISTA de regras agora tem seu PRÓPRIO fundo */
-.rules-list {
-    /* Estilos do container aplicados diretamente na lista */
-    background-color: var(--cor-fundo-container);
-    border: 2px solid var(--cor-borda);
-    border-radius: 10px;
-    padding: 30px;
-    box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
-
-    /* Animação para aparecer e desaparecer */
-    overflow: hidden;
-    max-height: 5000px;
-    transition: max-height 0.7s ease-in-out, opacity 0.5s ease, margin-top 0.7s ease;
-    opacity: 1;
-    margin-top: -20px; /* Puxa a lista para perto do botão */
-}
-
-/* 3. Esconde a lista de forma suave */
-.rules-list.hidden {
-    max-height: 0;
-    opacity: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    border-width: 0;
-    margin-top: 0;
-}
-
-/* 4. Ajustes para PC */
-@media (min-width: 769px) {
-    .dropdown-toggle {
-        max-width: 700px;
-        font-size: 2rem;
-    }
-}
-
-/* --- FIM: ESTILOS DO BOTÃO DE REGRAS --- */
-        @media (max-width: 768px) {
-    .rules-list {
-        padding: 25px 15px; /* Diminui o espaçamento lateral */
-    }
-}
-        /* =================================================================== */
-/* ✨ ESTILO PARA MENSAGENS DE ADMINISTRADOR ✨ */
-/* =================================================================== */
-
-@keyframes admin-glow-animation {
-    0%   { border-color: #ff4d4d; box-shadow: 0 0 15px #ff4d4d; }
-    33%  { border-color: #ffffff; box-shadow: 0 0 20px #ffffff; }
-    66%  { border-color: #ffc800; box-shadow: 0 0 25px #ffc800; }
-    100% { border-color: #ff4d4d; box-shadow: 0 0 15px #ff4d4d; }
-}
-
-.admin-message {
-    background: linear-gradient(90deg, rgba(139, 0, 0, 0.3), rgba(10, 10, 10, 0.1) 80%);
-    border: 2px solid;
-    border-radius: 6px;
-    padding: 10px 15px;
-    animation: admin-glow-animation 4s linear infinite;
-}
-
-.admin-message .name {
-    font-weight: 900;
-    font-size: 0.9em;
-    color: #fff !important; /* Força a cor branca */
-    text-shadow: 0 0 5px #ff4d4d, 0 0 10px #ff4d4d;
-}
-
-.admin-message .name::before {
-    content: '';
-    display: inline-block;
-    width: 50px;
-    height: 50px;
-    margin-right: 10px;
-    vertical-align: -20px;
-    background-image: url('https://i.imgur.com/j5tjs8P.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-        /* --- ESTILOS DA NOVA NAVEGAÇÃO --- */
-
-/* Ajustes no Header para comportar o novo menu */
-header {
-    display: flex;             /* MUDOU DE 'grid' PARA 'flex' */
-    justify-content: space-between; /* MANDA CADA ITEM PARA UMA PONTA */
-    align-items: center;       /* ALINHA VERTICALMENTE */
-    padding: 15px 5%;
-    position: sticky;
-    top: 0;
-    z-index: 2000;
-    background-color: rgba(10, 10, 10, 0.8);
-    border-bottom: 2px solid var(--cor-borda);
-    backdrop-filter: blur(10px);
-}
-
-.logo {
-    display: flex;
+            header {
     flex-direction: column;
-    align-items: center;
-    /* A linha 'justify-self' foi removida pois não se aplica ao flexbox aqui */
+    gap: 15px;
+    position: relative; /* Alterado de static para relative */
+}
+            .logo h1 {
+                font-size: 2rem;
+            }
+            #countdown-container {
+    display: none !important; /* Esconde o contador e impede o JS de mostrá-lo */
+}
+            .menu-mobile-btn {
+    display: flex;  /* Mostra o botão hambúrguer no mobile */
+    margin-top: 15px;
 }
 
-/* 2. Mantém os contadores perfeitamente no centro */
-#header-center-content {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 40px;
-}
-
-/* 3. Coloca a navegação no final da terceira coluna */
 .main-nav {
-    justify-self: end;
+     display: none; /* Esconde a navegação por padrão no mobile */
+     width: 100%;
+}
+
+header.menu-aberto .main-nav {
+    display: flex; /* Mostra a navegação quando o menu estiver aberto */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: rgba(10, 10, 10, 0.98);
+    width: 100%;
+    padding: 20px 0;
+    border-bottom: 2px solid var(--cor-principal);
+    z-index: 2005;
 }
 
 .main-nav ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    display: flex;
-    align-items: center;
-    gap: 25px;
-}
-
-.main-nav a, .main-nav .nav-button {
-    color: var(--cor-texto);
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 1rem;
-    padding: 10px 5px; /* Ajuste no padding para dar mais espaço */
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-family: 'Roboto', sans-serif;
-    position: relative; /* Essencial para a linha animada */
-    transition: color 0.3s ease, text-shadow 0.3s ease; /* Transição suave para a cor e brilho */
-}
-
-/* A linha animada que aparece sob o texto */
-.main-nav a::after, .main-nav .nav-button::after {
-    content: '';
-    position: absolute;
+    flex-direction: column; /* Itens um abaixo do outro */
     width: 100%;
-    height: 2px;
-    background: var(--cor-principal);
-    left: 0;
-    bottom: 0;
-    transform: scaleX(0); /* Começa invisível (largura zero) */
-    transform-origin: center; /* A animação cresce a partir do centro */
-    transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1); /* Transição suave */
-}
-
-/* Efeito ao passar o mouse nos links normais */
-.main-nav a:hover, .main-nav .nav-button:hover {
-    color: #fff;
-    text-shadow: 0 0 10px var(--cor-principal); /* Efeito de brilho (glow) no texto */
-}
-
-/* Faz a linha aparecer ao passar o mouse */
-.main-nav a:hover::after, .main-nav .nav-button:hover::after {
-    transform: scaleX(1); /* Expande a linha para 100% da largura */
-}
-
-/* Estilo específico para o botão "Inscrever-se" */
-.main-nav .btn {
-    background-color: var(--cor-borda-forte);
-    padding: 10px 20px;
-    border-radius: 5px;
-    border: 2px solid transparent; /* Borda inicial transparente */
-    transition: all 0.3s ease;
-}
-
-/* Efeito aprimorado para o botão "Inscrever-se" */
-.main-nav .btn:hover {
-    background-color: var(--cor-principal);
-    transform: translateY(-3px) scale(1.05); /* Efeito de elevação e crescimento */
-    box-shadow: 0 0 25px rgba(255, 77, 77, 0.7); /* Brilho mais intenso */
-    border-color: rgba(255, 255, 255, 0.5); /* Borda sutil que acende */
-    color: #fff; /* Garante que o texto fique branco */
-    text-shadow: none; /* Remove o brilho do texto para focar no botão */
-}
-
-/* Remove a linha animada do botão principal, pois ele já tem outros efeitos */
-.main-nav .btn::after {
-    display: none;
-}
-        /* ========================================================= */
-/* ✨ ESTILOS SOFISTICADOS PARA O POP-UP DE REGRAS ✨ */
-/* ========================================================= */
-
-/* O Fundo Desfocado (Overlay) */
-.popup-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Fundo escuro */
-    backdrop-filter: blur(8px); /* O efeito de desfoque principal */
-    -webkit-backdrop-filter: blur(8px);
-    z-index: 4000;
-    display: flex;
-    justify-content: center;
     align-items: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.4s ease;
+    gap: 20px;
 }
 
-.popup-overlay.active {
-    opacity: 1;
-    pointer-events: auto;
-}
+            /* --- Banner --- */
+            #campeonato-banner {
+                padding: 15px;
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+            .banner-conteudo {
+                flex-direction: column;
+                gap: 10px;
+            }
+            #close-banner-btn {
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                font-size: 2rem;
+            }
 
-/* A Caixa de Vidro Principal (Pop-up) */
-.rules-popup {
-    width: 90%;
-    max-width: 800px; /* Um pouco mais largo para as regras */
-    max-height: 85vh; /* Ocupa até 85% da altura da tela */
+            /* --- Popups --- */
+            .score-display {
+                grid-template-columns: 1fr; /* Coluna única no placar */
+            }
+            .feedback-popup, .scoreboard-popup, .rules-popup {
+                padding: 30px 20px;
+                width: 95%;
+                margin-top: 5vh;
+                max-height: 85vh;
+            }
+            .feedback-popup .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            .feedback-popup .form-row .form-group {
+                margin-bottom: 20px;
+            }
 
-    /* O EFEITO DE VIDRO ESCURO */
-    background: rgba(15, 15, 15, 0.7); /* Cor de fundo escura e semitransparente */
-    border: 1px solid rgba(255, 77, 77, 0.3); /* Borda vermelha sutil */
-    border-radius: 12px;
+            /* --- Footer --- */
+            footer {
+                position: static; /* Footer também deixa de ser fixo */
+                margin-top: 30px;
+            }
+            .footer-content {
+                grid-template-columns: 1fr; /* Coluna única */
+                justify-items: center; /* Centraliza tudo */
+                gap: 15px;
+            }
+            .footer-logo { order: 2; }
+            .footer-copyright { order: 3; }
+            .footer-links { order: 1; justify-self: center; } /* Links vêm primeiro */
+        }
 
-    /* Brilho e Sombra para dar profundidade */
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5), 
-                0 0 25px var(--cor-principal); /* Brilho vermelho ao redor */
-
-    /* Organização interna */
-    display: flex;
-    flex-direction: column; /* Organiza o cabeçalho e o conteúdo um sobre o outro */
-
-    /* Animação de entrada */
-    transform: scale(0.95);
-    transition: transform 0.4s ease;
-    position: relative; /* Necessário para o botão de fechar */
-}
-
-.popup-overlay.active .rules-popup {
-    transform: scale(1);
-}
-
-/* Cabeçalho do Pop-up */
-.popup-header {
-    text-align: center;
-    padding: 25px 30px;
-    border-bottom: 1px solid var(--cor-borda);
-    flex-shrink: 0; /* Impede que o cabeçalho encolha */
-}
-
-.popup-header .header-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 2px solid var(--cor-principal);
-    margin-bottom: 10px;
-}
-
-.popup-header h2 {
-    font-family: 'Creepster', cursive;
-    color: var(--cor-principal);
-    font-size: 2.8rem;
-    margin: 0;
-    text-shadow: 0 0 10px var(--cor-principal);
-}
-
-.popup-header p {
-    margin: 5px 0 0 0;
-    color: #ccc;
-    font-style: italic;
-}
-
-/* Área de Conteúdo Rolável */
-.popup-scrollable-content {
-    padding: 10px 30px 30px 30px;
-    overflow-y: auto; /* Adiciona barra de rolagem se o conteúdo for grande */
-}
-
-/* Estilo da Lista de Regras */
-#rules-popup-content ul {
-    list-style: none;
-    padding: 0;
-    counter-reset: rules-counter; /* Inicia um contador */
-}
-
-#rules-popup-content li {
-    font-family: 'Roboto', sans-serif;
-    color: var(--cor-texto);
-    font-size: 1rem;
-    line-height: 1.6;
-    padding: 15px;
-    padding-left: 55px; /* Espaço para o número */
-    margin-bottom: 10px;
-    position: relative;
-    background-color: rgba(0, 0, 0, 0.2);
-    border-left: 3px solid transparent;
-    transition: all 0.3s ease;
-}
-
-#rules-popup-content li:hover {
-    background-color: rgba(0, 0, 0, 0.4);
-    border-left-color: var(--cor-principal);
-    transform: translateX(5px);
-}
-
-/* Estilo dos Números das Regras */
-#rules-popup-content li::before {
-    counter-increment: rules-counter; /* Incrementa o contador a cada 'li' */
-    content: counter(rules-counter); /* Mostra o número do contador */
-
-    position: absolute;
-    left: 15px;
-    top: 15px;
-
-    font-family: 'Creepster', cursive;
-    font-size: 1.8rem;
-    color: var(--cor-principal);
-    text-shadow: 0 0 5px black;
-    line-height: 1;
-}
-
-/* Botão de Fechar 'X' */
-.close-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 35px;
-    height: 35px;
-    background-color: rgba(0, 0, 0, 0.3);
-    color: #aaa;
-    border: 1px solid var(--cor-borda);
-    border-radius: 50%;
-    font-size: 1.5rem;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: all 0.3s ease;
-}
-
-.close-btn:hover {
-    background-color: var(--cor-principal);
-    color: white;
-    transform: rotate(90deg);
-    border-color: var(--cor-borda-forte);
-}
-
-/* Barra de Rolagem Personalizada */
-.popup-scrollable-content::-webkit-scrollbar {
-    width: 8px;
-}
-.popup-scrollable-content::-webkit-scrollbar-track {
-    background: rgba(0,0,0,0.2);
-    border-radius: 10px;
-}
-.popup-scrollable-content::-webkit-scrollbar-thumb {
-    background-color: var(--cor-borda-forte);
-    border-radius: 10px;
-}
-.popup-scrollable-content::-webkit-scrollbar-thumb:hover {
-    background-color: var(--cor-principal);
-}
+        /* Regras para telas pequenas (celulares) */
+        @media (max-width: 480px) {
+            .section-title {
+                font-size: 2rem;
+            }
+            .logo h1 {
+                font-size: 1.8rem;
+            }
+            .scoreboard-popup h2, .feedback-popup h2, .rules-popup h2 {
+                font-size: 2.2rem;
+            }
+            
+            /* --- Formulários e Botões --- */
+            #chat-form .form-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+            #chat-form button {
+                width: 100%;
+            }
+            #stream-switcher {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+            
+            /* --- Placar FAB e Popups --- */
+            .scoreboard-fab {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+            .scoreboard-fab img {
+                width: 40px;
+                height: 40px;
+            }
+            .score-card h3 img {
+                height: 60px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -2045,7 +517,11 @@ header {
             <span class="text"></span>
         </div>
     </div>
-
+<button id="menu-mobile-btn" class="menu-mobile-btn">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
     <div id="countdown-container">
         <p class="countdown-title">A Caçada Começa Em...</p>
         <div id="timer">
@@ -2306,6 +782,14 @@ window.onYouTubeIframeAPIReady = function() {
     // Se isLiveNow for false, nada acontece, e a imagem offline continua visível por padrão.
 };
     document.addEventListener('DOMContentLoaded', function() {
+        const menuBtn = document.getElementById('menu-mobile-btn');
+    const header = document.querySelector('header');
+
+    if (menuBtn && header) {
+        menuBtn.addEventListener('click', () => {
+            header.classList.toggle('menu-aberto');
+        });
+    }
         // --- INÍCIO: LÓGICA DO POP-UP DE MEMBROS DA EQUIPE ---
 
 // Referências aos elementos do pop-up
