@@ -53,6 +53,98 @@
     margin-left: 8px;
 }
 /* ✨ FIM: ESTILOS DO MENU DE OPÇÕES ✨ */
+        /* ESTILOS PARA O CAMPEÃO E PARTIDAS ESPELHADAS */
+#champion-container {
+    text-align: center;
+    padding: 15px;
+    background: linear-gradient(160deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.05) 100%);
+    border: 2px solid #FFD700;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3), inset 0 0 10px rgba(255, 215, 0, 0.2);
+}
+.champion-title {
+    font-family: 'Creepster', cursive;
+    color: #FFD700;
+    margin: 0;
+    font-size: 1.8rem;
+    text-shadow: 0 0 10px #000;
+}
+#champion-name {
+    font-family: 'Roboto', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 0 15px #FFD700, 0 0 5px #000;
+    margin: 8px 0 0 0;
+}
+
+/* Container de cada fase (Grupos, Semis, Final) */
+.fase-container {
+    margin-top: 25px;
+    border-top: 2px solid var(--cor-borda);
+    padding-top: 20px;
+}
+.fase-titulo {
+    font-family: 'Creepster', cursive;
+    text-align: center;
+    color: var(--cor-principal);
+    font-size: 1.6rem;
+    margin: 0 0 15px 0;
+    text-shadow: 0 0 8px var(--cor-principal);
+}
+
+/* Bloco de um único confronto (Ex: Time A vs Time B) */
+.confronto-bloco {
+    background-color: rgba(0,0,0,0.3);
+    border-radius: 6px;
+    margin-bottom: 15px;
+    border: 1px solid var(--cor-borda);
+    overflow: hidden; /* Garante que os cantos fiquem arredondados */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+.confronto-bloco-titulo {
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+    padding: 10px;
+    background-color: rgba(0,0,0,0.4);
+    color: #ddd;
+    border-bottom: 1px solid var(--cor-borda);
+}
+
+/* Cada partida individual dentro de um confronto */
+.match-pair-placar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    font-size: 0.9rem;
+    border-bottom: 1px dashed rgba(255,255,255,0.1);
+}
+.match-pair-placar:last-child {
+    border-bottom: none;
+}
+
+/* Lado de cada time na partida */
+.team-side-placar {
+    width: 45%;
+    text-align: center;
+}
+.team-name-placar {
+    font-weight: bold;
+    font-size: 1rem;
+    color: #fff;
+}
+.team-role-placar {
+    color: #aaa;
+    font-style: italic;
+    font-size: 0.8rem;
+}
+.vs-separator {
+    color: var(--cor-principal);
+    font-weight: bold;
+}
         /* ✨ INÍCIO: ESTILOS DO BANNER DE CAMPEONATO ✨ */
 #campeonato-banner {
     position: sticky; /* Fica fixo no topo ao rolar a página */
@@ -320,6 +412,65 @@
     transform: scale(0.9); 
     transition: transform 0.4s ease;
     margin-top: 15vh; /* ✨ ADICIONE ESTA LINHA ✨ */
+}
+        /* ESTILO PARA A LISTA DE CONFRONTOS */
+.scoreboard-popup {
+    background-color: #110e0e; 
+    border: 1px solid var(--cor-borda);
+    box-shadow: 0 0 40px rgba(0,0,0,0.8); 
+    border-radius: 10px; 
+    padding: 30px 40px;
+    width: 90%; 
+    max-width: 800px; 
+    position: relative;
+    transform: scale(0.9); 
+    transition: transform 0.4s ease;
+    margin-top: 10vh; /* Reduz a margem para dar mais espaço */
+    
+    /* --- ✨ NOVIDADES AQUI ✨ --- */
+    max-height: 80vh; /* 1. NUNCA passará de 80% da altura da tela */
+    display: flex;       /* 2. Ativa o layout flexível para controlar o espaço interno */
+    flex-direction: column; /* 3. Organiza os itens (título, cards) em uma coluna */
+}
+
+/* A área que contém os cards de Equipes e Chaveamento */
+.score-display { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 30px;
+    
+    /* --- ✨ NOVIDADES AQUI ✨ --- */
+    flex-grow: 1;         /* 4. Faz esta área ocupar todo o espaço vertical que sobrar */
+    overflow-y: auto;     /* 5. A MÁGICA: Adiciona rolagem SÓ quando o conteúdo for grande */
+    padding-right: 15px;  /* 6. Um espacinho para a barra de rolagem não colar no texto */
+}
+
+/* O placar das equipes */
+#teams-leaderboard {
+    list-style: none; 
+    padding: 0; 
+    margin: 0;
+    min-height: 0; /* ANTES: Tinha 400px. Agora a altura é flexível */
+}
+
+/* --- ✨ ESTILO SOFISTICADO DA BARRA DE ROLAGEM ✨ --- */
+.score-display::-webkit-scrollbar {
+  width: 8px; /* Largura da barra */
+}
+
+.score-display::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3); /* Fundo da barra (trilho) */
+  border-radius: 10px;
+}
+
+.score-display::-webkit-scrollbar-thumb {
+  background-color: var(--cor-borda-forte); /* Cor da barra de rolagem */
+  border-radius: 10px;
+  border: 2px solid #110e0e; /* Borda da cor do fundo do pop-up */
+}
+
+.score-display::-webkit-scrollbar-thumb:hover {
+  background-color: var(--cor-principal); /* Cor ao passar o mouse */
 }
         .feedback-popup .close-btn {
             position: absolute; top: 15px; right: 20px;
@@ -1160,7 +1311,7 @@
 }
 /* --- FIM DOS NOVOS ESTILOS --- */
         footer {
-    position: fixed;
+    position: static;
     bottom: 0;
     left: 0;
     width: 100%;
@@ -1172,6 +1323,7 @@
     color: #ddd; /* Cor do texto */
     font-size: 0.8rem;
              box-sizing: border-box; /* Isso resolve o problema da largura */
+            margin-top: 40px;
 }
 
 .footer-content {
@@ -1788,7 +1940,21 @@ footer {
     </a>
 </div>
 </main>
-
+<footer>
+    <div class="footer-content">
+        <div class="footer-logo">
+            <img src="https://i.imgur.com/ElV8c5i.png" alt="Ícone da Entidade">
+        </div>
+        
+        <p class="footer-copyright">© 2025 Torneio da Entidade. Todos os direitos reservados.</p>
+        
+        <nav class="footer-links">
+            <a href="admin.html" target="_blank">Administrador</a>
+            <a href="resultados.html" target="_blank">Sorteios</a>
+            <a href="niveis.html" target="_blank">Grimório</a>
+        </nav>
+    </div>
+</footer>
    <div id="scoreboard-overlay" class="popup-overlay align-top">
     <div class="scoreboard-popup">
         <button id="close-scoreboard-btn" class="close-btn">×</button>
@@ -1801,9 +1967,32 @@ footer {
                 <h3><img src="https://i.postimg.cc/YCSyWS5y/Gemini-Generated-Image-vpc766vpc766vpc7-Photoroom.png" alt="Ícone Troféu"> Placar das Equipes</h3>
                 <ol id="teams-leaderboard" class="leaderboard-list"></ol>
             </div>
-        </div>
+            <div class="score-card">
+    <h3><img src="https://i.imgur.com/83ClgCU.png" alt="Ícone de Confronto"> Chaveamento do Torneio</h3>
+
+    <div id="champion-container" class="hidden">
+        <h4 class="champion-title">👑 GRANDE CAMPEÃO 👑</h4>
+        <p id="champion-name"></p>
     </div>
+
+    <div id="grupos-container" class="fase-container hidden">
+        <h4 class="fase-titulo">⚔️ Fase de Grupos ⚔️</h4>
+        <div id="grupos-lista"></div>
+    </div>
+
+    <div id="semis-container" class="fase-container hidden">
+        <h4 class="fase-titulo">💥 Semifinais 💥</h4>
+        <div id="semis-lista"></div>
+    </div>
+
+    <div id="final-container" class="fase-container hidden">
+        <h4 class="fase-titulo">🏆 Grande Final 🏆</h4>
+        <div id="final-lista"></div>
+    </div>
+
+    <p id="sem-confrontos-msg">Nenhum sorteio foi realizado ainda.</p>
 </div>
+        </div>
     
     <div id="feedback-popup-overlay" class="popup-overlay align-top">
         <div class="feedback-popup">
@@ -2858,6 +3047,75 @@ const teamsRef = database.ref('teams');
 teamsRef.on('value', (snapshot) => {
     updateLeaderboard(snapshot, teamsList, timestampElement);
 });
+        // --- INÍCIO: LÓGICA PARA MOSTRAR OS CONFRONTOS SORTEADOS ---
+
+// 1. Apontamos para o local no "quadro de avisos" onde os confrontos serão guardados.
+const tournamentResultsRef = database.ref('tournamentResults');
+const championContainer = document.getElementById('champion-container');
+const championNameEl = document.getElementById('champion-name');
+const gruposContainer = document.getElementById('grupos-container');
+const semisContainer = document.getElementById('semis-container');
+const finalContainer = document.getElementById('final-container');
+const gruposLista = document.getElementById('grupos-lista');
+const semisLista = document.getElementById('semis-lista');
+const finalLista = document.getElementById('final-lista');
+const semConfrontosMsg = document.getElementById('sem-confrontos-msg');
+
+function criarBlocoDeConfrontoHTML(confronto) {
+    const { id, title, teamA, teamB } = confronto;
+    // O título principal do bloco não precisa mais do "vs" pois já está no título da fase
+    const mainTitle = title.includes(":") ? title.split(":")[1].trim() : `${teamA} vs ${teamB}`;
+
+    let html = `<div class="confronto-bloco">`;
+    html += `<div class="confronto-bloco-titulo">${id}. ${mainTitle}</div>`;
+
+    // Partida 1: A escolhe killer
+    html += `<div class="match-pair-placar"><div class="team-side-placar"><span class="team-name-placar">${teamA}</span><br><span class="team-role-placar">(Escolhe Killer)</span></div> <span class="vs-separator">vs</span> <div class="team-side-placar"><span class="team-name-placar">${teamB}</span><br><span class="team-role-placar">(Sobrevivente)</span></div></div>`;
+    // Partida 2: B espelha
+    html += `<div class="match-pair-placar"><div class="team-side-placar"><span class="team-name-placar">${teamB}</span><br><span class="team-role-placar">(Espelha Killer)</span></div> <span class="vs-separator">vs</span> <div class="team-side-placar"><span class="team-name-placar">${teamA}</span><br><span class="team-role-placar">(Sobrevivente)</span></div></div>`;
+    // Partida 3: B escolhe killer
+    html += `<div class="match-pair-placar"><div class="team-side-placar"><span class="team-name-placar">${teamB}</span><br><span class="team-role-placar">(Escolhe Killer)</span></div> <span class="vs-separator">vs</span> <div class="team-side-placar"><span class="team-name-placar">${teamA}</span><br><span class="team-role-placar">(Sobrevivente)</span></div></div>`;
+    // Partida 4: A espelha
+    html += `<div class="match-pair-placar"><div class="team-side-placar"><span class="team-name-placar">${teamA}</span><br><span class="team-role-placar">(Espelha Killer)</span></div> <span class="vs-separator">vs</span> <div class="team-side-placar"><span class="team-name-placar">${teamB}</span><br><span class="team-role-placar">(Sobrevivente)</span></div></div>`;
+
+    html += `</div>`;
+    return html;
+}
+
+
+tournamentResultsRef.on('value', (snapshot) => {
+    const results = snapshot.val();
+
+    // 1. Esconde tudo para começar
+    championContainer.classList.add('hidden');
+    gruposContainer.classList.add('hidden');
+    semisContainer.classList.add('hidden');
+    finalContainer.classList.add('hidden');
+    semConfrontosMsg.classList.remove('hidden'); // Começa mostrando a msg padrão
+
+    if (results && results.currentStage) {
+        const stage = results.currentStage;
+        semConfrontosMsg.classList.add('hidden'); // Esconde a msg padrão pois algo existe
+
+        if (stage === 'faseDeGrupos' && results.faseDeGrupos) {
+            gruposLista.innerHTML = results.faseDeGrupos.map(criarBlocoDeConfrontoHTML).join('');
+            gruposContainer.classList.remove('hidden');
+        } 
+        else if (stage === 'semifinais' && results.semifinais) {
+            semisLista.innerHTML = results.semifinais.map(criarBlocoDeConfrontoHTML).join('');
+            semisContainer.classList.remove('hidden');
+        } 
+        else if (stage === 'final' && results.final) {
+            finalLista.innerHTML = results.final.map(criarBlocoDeConfrontoHTML).join('');
+            finalContainer.classList.remove('hidden');
+        } 
+        else if (stage === 'campeao' && results.campeao) {
+            championNameEl.textContent = results.campeao;
+            championContainer.classList.remove('hidden');
+        }
+    }
+});
+// --- FIM: LÓGICA PARA MOSTRAR OS CONFRONTOS SORTEADOS ---
 // ADICIONE ESTE NOVO BLOCO
 fullscreenBtn.addEventListener('click', () => {
     // Verifica se JÁ existe um elemento em tela cheia no documento
@@ -2907,21 +3165,6 @@ fullscreenBtn.addEventListener('click', () => {
         </div>
     </div>
 </div>
-    <footer>
-    <div class="footer-content">
-        <div class="footer-logo">
-            <img src="https://i.imgur.com/ElV8c5i.png" alt="Ícone da Entidade">
-        </div>
-        
-        <p class="footer-copyright">© 2025 Torneio da Entidade. Todos os direitos reservados.</p>
-        
-        <nav class="footer-links">
-            <a href="admin.html" target="_blank">Administrador</a>
-            <a href="resultados.html" target="_blank">Sorteios</a>
-            <a href="niveis.html" target="_blank">Grimório</a>
-        </nav>
-    </div>
-</footer>
     <div id="team-info-overlay" class="popup-overlay align-top">
     <div id="team-info-popup" class="scoreboard-popup"> <button id="close-team-info-btn" class="close-btn">×</button>
         <h2 id="team-info-name">Nome da Equipe</h2>
