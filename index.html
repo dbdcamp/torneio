@@ -583,10 +583,42 @@ header.menu-aberto .menu-mobile-btn span:nth-child(3) {
     }
 
     #hall-of-fame .player-card {
-        flex-shrink: 0; /* Garante que os cards não encolham */
-        width: 220px; /* Um pouco menor para caber melhor na tela */
-    }
+    flex-shrink: 0;
+    width: 200px; /* << Reduzimos a largura de 220px para 180px */
+    padding: 15px; /* << Um pouco menos de preenchimento interno */
+}
+
+/* Adicione estas novas regras para ajustar o conteúdo do card: */
+#hall-of-fame .player-image img {
+    width: 80px; /* << Diminui a imagem */
+    height: 80px;
+}
+
+#hall-of-fame .player-name {
+    font-size: 1.2rem; /* << Diminui a fonte do nome */
+    margin-bottom: 5px;
+}
+
+#hall-of-fame .player-stats,
+#hall-of-fame .player-highlight {
+    font-size: 0.85rem; /* << Diminui as fontes menores */
+}
+
+#hall-of-fame .player-highlight {
+    min-height: 35px; /* << Reduz a altura mínima */
+}
     /* ▲▲▲ FIM DO CÓDIGO DO CARROSSEL ▲▲▲ */
+            #hall-of-fame.section-container {
+    /* Remove o padding lateral original do container */
+    padding-left: 0;
+    padding-right: 0;
+
+    /* Usa margens negativas para "puxar" a seção para as bordas da tela,
+       anulando o padding de 15px que existe no elemento <main> */
+    margin-left: -15px;
+    margin-right: -15px;
+    width: auto; /* Garante que a largura se ajuste corretamente */
+}
             /* DENTRO de @media (max-width: 850px) */
 
 /* Restaura a aparência original do popup de regras no mobile */
