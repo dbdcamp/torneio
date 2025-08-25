@@ -343,16 +343,29 @@
 /* ========================================== */
 
 /* Animação de brilho para a borda da seção */
-@keyframes gold-glow-animation {
-    0%   { border-color: #FFD700; box-shadow: 0 0 15px #FFD700, inset 0 0 10px rgba(255, 215, 0, 0.2); }
-    50%  { border-color: #ffec8a; box-shadow: 0 0 25px #ffec8a, inset 0 0 15px rgba(255, 236, 138, 0.3); }
-    100% { border-color: #FFD700; box-shadow: 0 0 15px #FFD700, inset 0 0 10px rgba(255, 215, 0, 0.2); }
+@keyframes red-glow-animation {
+    0%, 100% { border-color: #8B0000; box-shadow: 0 0 15px #8B0000, inset 0 0 10px rgba(139, 0, 0, 0.3); }
+    50% { border-color: #ff4d4d; box-shadow: 0 0 25px #ff4d4d, inset 0 0 15px rgba(255, 77, 77, 0.4); }
+}
+@keyframes slideDownFadeIn {
+    from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); }
+}
+@keyframes animated-blood-gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
-/* Estilo principal da seção */
+/* Estilo principal da seção com fundo de metal enferrujado */
 #hall-of-fame {
     border: 2px solid;
-    animation: gold-glow-animation 4s linear infinite;
+    animation: red-glow-animation 4s linear infinite;
+    background-image: linear-gradient(rgba(10, 10, 12, 0.85), rgba(10, 10, 12, 0.85)), url('https://www.transparenttextures.com/patterns/cracked-wall.png');
+    padding-top: 50px;
+    padding-bottom: 50px;
 }
 
 /* Mensagem de "carregando" */
@@ -363,83 +376,79 @@
     font-size: 1.2rem;
 }
 
-@keyframes animated-gradient {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-/* Substitua a regra .winner-team-name por esta */
+/* Nome da equipe campeã com gradiente de sangue animado */
 .winner-team-name {
     font-family: 'Creepster', cursive;
     text-align: center;
-    font-size: 3.5rem;
+    font-size: 3.8rem;
     margin-bottom: 40px;
-    
-    /* A Mágica do Gradiente */
-    background: linear-gradient(90deg, #ffd700, #ffec8a, #fdf5d3, #ffec8a, #ffd700);
-    background-size: 200% 200%;
+    background: linear-gradient(90deg, #ff4d4d, #c9c9d1, #ff0d0d, #c9c9d1, #ff4d4d);
+    background-size: 300% 300%;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    
-    /* A Animação */
-    animation: animated-gradient 5s ease-in-out infinite;
+    animation: animated-blood-gradient 6s ease-in-out infinite, slideDownFadeIn 0.8s ease-out;
 }
 
 /* Contêiner para os cards dos jogadores */
 .player-cards-container {
     display: flex;
-    flex-wrap: wrap; /* Permite que os cards quebrem a linha em telas menores */
+    flex-wrap: wrap; 
     justify-content: center;
-    gap: 25px; /* Espaço entre os cards */
+    gap: 30px;
 }
 
-/* O card de cada jogador */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Substitua a regra .player-card por esta (para adicionar a animação) */
+/* O card de cada jogador com visual de metal arranhado */
 .player-card {
-    background-color: rgba(20, 20, 20, 0.5);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 215, 0, 0.3);
-    border-radius: 10px;
-    width: 240px;
+    background-color: #111;
+    border: 2px solid #333;
+    border-radius: 8px;
+    width: 250px;
     padding: 20px;
     text-align: center;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    box-shadow: 0 5px 25px rgba(0,0,0,0.7);
     transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-    
-    /* Configuração da animação de entrada */
-    opacity: 0; /* Começa invisível */
-    animation: fadeInUp 0.5s ease-out forwards; /* 'forwards' mantém o estado final */
+    position: relative; /* Para o efeito de arranhão */
+    overflow: hidden; /* Para o efeito de arranhão */
+    opacity: 0; 
+    animation: fadeInUp 0.5s ease-out forwards;
 }
 
-/* Substitua a regra .player-card:hover por esta (para o efeito melhorado) */
+/* Efeito de arranhão no card */
+.player-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.02) 2px, rgba(255,255,255,0.02) 4px);
+    opacity: 0.5;
+}
+
+/* Efeito de hover melhorado */
 .player-card:hover {
-    transform: translateY(-10px) scale(1.03);
-    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
-    border-color: rgba(255, 215, 0, 0.8); /* Borda mais brilhante */
+    transform: translateY(-10px) scale(1.05);
+    box-shadow: 0 10px 40px rgba(139, 0, 0, 0.5);
+    border-color: var(--cor-vermelho-brilho);
 }
 
-/* Imagem do personagem/jogador */
+/* Imagem do personagem/jogador com filtro sombrio */
 .player-image img {
     width: 120px;
     height: 120px;
-    border-radius: 50%; /* Imagem redonda */
+    border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #FFD700;
+    border: 3px solid #444;
     margin-bottom: 15px;
     background-color: #000;
+    filter: grayscale(30%) contrast(110%);
+    transition: filter 0.3s ease, border-color 0.3s ease;
+}
+
+.player-card:hover .player-image img {
+    filter: grayscale(0%) contrast(120%);
+    border-color: var(--cor-vermelho-sangue);
 }
 
 /* Nome do jogador */
@@ -448,30 +457,33 @@
     font-weight: bold;
     color: #fff;
     margin-bottom: 10px;
+    text-shadow: 0 0 5px black;
 }
 
-/* Ícone de Destaque (Killer/Survivor) */
+/* Ícone de Destaque */
 .player-role-icon {
     font-size: 1.8rem;
-    filter: drop-shadow(0 0 5px var(--cor-principal));
+    color: var(--cor-vermelho-sangue);
+    text-shadow: 0 0 8px var(--cor-vermelho-brilho);
 }
 
-/* Estatísticas (Escapes/Mortes) */
+/* Estatísticas */
 .player-stats {
     font-size: 1rem;
     color: #ccc;
     margin-bottom: 15px;
-    background-color: rgba(0,0,0,0.3);
+    background-color: rgba(0,0,0,0.5);
     padding: 5px 10px;
     border-radius: 5px;
+    border: 1px solid #333;
 }
 
 /* Destaque de Desempenho */
 .player-highlight {
-    font-size: 0.9rem;
-    color: #FFD700;
-    font-style: italic;
-    min-height: 40px; /* Garante altura consistente */
+    font-family: 'Special Elite', monospace;
+    font-size: 1rem;
+    color: var(--cor-texto-fantasma);
+    min-height: 45px;
 }
 
 /* ========================================== */
