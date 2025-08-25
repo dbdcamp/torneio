@@ -35,7 +35,15 @@
             margin: 0 auto;
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
+@keyframes carousel-scroll {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        /* Move para a esquerda em 50% da largura total, que é exatamente o tamanho da primeira leva de cards */
+        transform: translateX(-50%);
+    }
+}
         /* --- BANNER DE CAMPEONATO --- */
         #campeonato-banner {
             position: sticky;
@@ -546,6 +554,38 @@ header.menu-aberto .menu-mobile-btn span:nth-child(3) {
             }
 
             /* --- Header e Navegação --- */
+            /* ▼▼▼ ADICIONE ESTA NOVA REGRA AQUI ▼▼▼ */
+    /* Pausa a animação quando o usuário interage com o carrossel */
+    .carousel-viewport:hover .player-cards-container {
+        animation-play-state: paused;
+    }
+    /* ▲▲▲ FIM DA NOVA REGRA ▲▲▲ */
+            /* ▼▼▼ COLE O NOVO CÓDIGO DO CARROSSEL AQUI DENTRO ▼▼▼ */
+    .carousel-viewport {
+        width: 100%;
+        overflow: hidden; /* Esconde os cards que estão fora da tela */
+        -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+        mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    }
+
+    #hall-of-fame .player-cards-container {
+        display: flex;
+        flex-wrap: nowrap; /* Impede que os cards quebrem a linha */
+        width: max-content; /* Faz o container ter a largura de todos os cards juntos */
+        justify-content: flex-start;
+        
+        /* Aplica a animação que criamos */
+        animation-name: carousel-scroll;
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+        /* A duração da animação será definida pelo JavaScript */
+    }
+
+    #hall-of-fame .player-card {
+        flex-shrink: 0; /* Garante que os cards não encolham */
+        width: 220px; /* Um pouco menor para caber melhor na tela */
+    }
+    /* ▲▲▲ FIM DO CÓDIGO DO CARROSSEL ▲▲▲ */
             /* DENTRO de @media (max-width: 850px) */
 
 /* Restaura a aparência original do popup de regras no mobile */
@@ -1022,7 +1062,7 @@ function renderHallOfFame() {
     hallOfFameDataRef.once('value', (snapshot) => {
         const data = snapshot.val();
 
-        if (!data || !data.teamName || !data.members) {
+        if (!data || !data.teamName || !data.members || data.members.length === 0) {
             winnerContainer.innerHTML = '<p class="loading-winners">Dados dos campeões ainda não foram registrados.</p>';
             return;
         }
@@ -1032,13 +1072,15 @@ function renderHallOfFame() {
         
         // Adiciona o nome da equipe
         html += `<h3 class="winner-team-name">${data.teamName}</h3>`;
+
+        // ADICIONADO: Wrapper para o carrossel (viewport)
+        html += '<div class="carousel-viewport">'; 
         html += '<div class="player-cards-container">';
 
-        // Cria um card para cada membro da equipe
-        data.members.forEach(member => {
+        // Função para gerar um card
+        const createCardHTML = member => {
             const roleIcon = member.role === 'Killer' ? '🔪' : '🏃‍♂️';
-            
-            html += `
+            return `
                 <div class="player-card">
                     <div class="player-image">
                         <img src="${member.characterImage}" alt="${member.name}">
@@ -1049,12 +1091,27 @@ function renderHallOfFame() {
                     <p class="player-highlight">“${member.highlight}”</p>
                 </div>
             `;
+        };
+
+        // ALTERADO: Cria os cards uma vez
+        data.members.forEach(member => {
+            html += createCardHTML(member);
         });
 
+
         html += '</div>'; // Fecha o player-cards-container
+        html += '</div>'; // ADICIONADO: Fecha o carousel-viewport
 
         // Insere o HTML gerado na página
         winnerContainer.innerHTML = html;
+        
+        // ADICIONADO: Ajusta a duração da animação com base no número de cards
+        const numMembers = data.members.length;
+        const animationDuration = numMembers * 4; // 4 segundos por card
+        const cardsContainer = winnerContainer.querySelector('.player-cards-container');
+        if (cardsContainer) {
+            cardsContainer.style.animationDuration = `${animationDuration}s`;
+        }
     });
 }
 // --- FIM: LÓGICA DO HALL DA FAMA ---
