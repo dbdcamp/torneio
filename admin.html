@@ -224,7 +224,20 @@
             background-color: var(--cor-vermelho-brilho);
             border-color: var(--cor-vermelho-brilho);
         }
-
+/* --- PAINEL HALL DA FAMA --- */
+.hof-member-fieldset {
+    border: 1px solid var(--cor-borda-energia);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+}
+.hof-member-fieldset legend {
+    font-family: 'Creepster', cursive;
+    color: var(--cor-texto-titulo);
+    padding: 0 10px;
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+}
         /* --- LISTA DE EQUIPES --- */
         .entry-list { list-style: none; }
         .entry-list li {
@@ -477,6 +490,32 @@
             <h3>Almas atuais</h3>
             <ul id="equipes-list" class="entry-list"></ul>
         </div>
+    <div class="panel-section" data-permission="admin">
+    <h2>Hall da Fama dos Campeões</h2>
+    
+    <div class="form-group switch-container">
+        <label for="hof-active-toggle">Exibir Seção na Página Inicial</label>
+        <div>
+            <input type="checkbox" id="hof-active-toggle" class="switch-checkbox" disabled>
+            <label for="hof-active-toggle" class="switch-label"></label>
+        </div>
+    </div>
+
+    <hr>
+
+    <form id="hof-form">
+        <h3>Dados da Equipe Campeã</h3>
+        <div class="form-group">
+            <label for="hof-team-name">Nome da Equipe</label>
+            <input type="text" id="hof-team-name" placeholder="Nome da equipe vencedora" disabled>
+        </div>
+
+        <div id="hof-members-inputs">
+            </div>
+
+        <button type="submit" id="hof-save-btn" disabled>Salvar Campeões</button>
+    </form>
+</div>
 
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
@@ -519,6 +558,13 @@ const firebaseConfig = {
         const moderatorsRef = database.ref('moderators');
         const chatStatusRef = database.ref('config/chatEnabled');
         const adminNameRef = database.ref('config/administratorName'); // NOVO
+        // (continuação das referências...)
+// ▼▼▼ COLE AS NOVAS REFERÊNCIAS AQUI ▼▼▼
+const hofActiveToggle = document.getElementById('hof-active-toggle');
+const hofForm = document.getElementById('hof-form');
+const hofMembersInputs = document.getElementById('hof-members-inputs');
+const hofSaveBtn = document.getElementById('hof-save-btn');
+// ▲▲▲ FIM DAS NOVAS REFERÊNCIAS ▲▲▲
         // ===================================================================
 // ✨ FUNÇÃO DE FEEDBACK VISUAL PARA BOTÕES ✨
 // ===================================================================
@@ -841,6 +887,123 @@ addEquipeBtn.addEventListener('click', () => {
         alert('Por favor, preencha pelo menos o Nome da Equipe, o Capitão e o Assassino.');
     }
 });
+        // --- LÓGICA DO PAINEL HALL DA FAMA ---
+
+// Referência principal para os dados do Hall da Fama no Firebase
+const hallOfFameRef = database.ref('hallOfFame');
+
+// Gera os 5 campos de input para os membros da equipe
+function generateMemberInputs() {
+    let inputsHTML = '';
+    for (let i = 1; i <= 5; i++) {
+        const role = (i === 5) ? 'Killer' : 'Sobrevivente'; // Assume que o 5º é o Killer
+        inputsHTML += `
+            <fieldset class="hof-member-fieldset">
+                <legend>Membro ${i} (${role})</legend>
+                <div class="form-group">
+                    <label for="hof-member-${i}-name">Nome do Jogador</label>
+                    <input type="text" id="hof-member-${i}-name" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="hof-member-${i}-image">URL da Imagem do Personagem</label>
+                    <input type="text" id="hof-member-${i}-image" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="hof-member-${i}-stats">Estatísticas (Ex: 5 Escapes | 2 Mortes)</label>
+                    <input type="text" id="hof-member-${i}-stats" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="hof-member-${i}-highlight">Destaque (Ex: Especialista em geradores)</label>
+                    <input type="text" id="hof-member-${i}-highlight" disabled>
+                </div>
+                <input type="hidden" id="hof-member-${i}-role" value="${role}">
+            </fieldset>
+        `;
+    }
+    hofMembersInputs.innerHTML = inputsHTML;
+}
+
+// 1. Carrega os dados atuais e preenche o formulário
+function loadHallOfFameData() {
+    // Carrega o status do interruptor (Ativo/Inativo)
+    configRef.child('hallOfFameAtivo').on('value', snapshot => {
+        hofActiveToggle.checked = snapshot.val() === true;
+    });
+
+    // Carrega os dados dos vencedores
+    hallOfFameRef.on('value', snapshot => {
+        const data = snapshot.val();
+        if (data) {
+            document.getElementById('hof-team-name').value = data.teamName || '';
+            if (data.members && data.members.length === 5) {
+                for (let i = 0; i < 5; i++) {
+                    document.getElementById(`hof-member-${i+1}-name`).value = data.members[i].name || '';
+                    document.getElementById(`hof-member-${i+1}-image`).value = data.members[i].characterImage || '';
+                    document.getElementById(`hof-member-${i+1}-stats`).value = data.members[i].stats || '';
+                    document.getElementById(`hof-member-${i+1}-highlight`).value = data.members[i].highlight || '';
+                }
+            }
+        }
+    });
+}
+
+// 2. Lógica do interruptor para ativar/desativar
+hofActiveToggle.addEventListener('change', () => {
+    if (hofActiveToggle.disabled) return;
+    configRef.child('hallOfFameAtivo').set(hofActiveToggle.checked);
+});
+
+// 3. Lógica para salvar os dados do formulário
+hofForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (hofSaveBtn.disabled) return;
+
+    const membersArray = []; // Array que guardará apenas os membros válidos
+    
+    // Loop para verificar cada um dos 5 possíveis membros
+    for (let i = 1; i <= 5; i++) {
+        const memberName = document.getElementById(`hof-member-${i}-name`).value.trim();
+
+        // ✨ A MÁGICA ACONTECE AQUI: SÓ ADICIONA O MEMBRO SE O NOME EXISTIR ✨
+        if (memberName !== "") {
+            membersArray.push({
+                name: memberName,
+                characterImage: document.getElementById(`hof-member-${i}-image`).value.trim(),
+                role: document.getElementById(`hof-member-${i}-role`).value,
+                stats: document.getElementById(`hof-member-${i}-stats`).value.trim(),
+                highlight: document.getElementById(`hof-member-${i}-highlight`).value.trim()
+            });
+        }
+    }
+
+    // Verifica se a equipe tem um nome e pelo menos um membro
+    const teamName = document.getElementById('hof-team-name').value.trim();
+    if (!teamName || membersArray.length === 0) {
+        alert('Por favor, preencha o nome da equipe e os dados de pelo menos um jogador.');
+        return;
+    }
+
+    const hallOfFameData = {
+        teamName: teamName,
+        members: membersArray
+    };
+
+    // Salva o objeto completo no Firebase
+    hallOfFameRef.set(hallOfFameData)
+        .then(() => {
+            showButtonFeedback(hofSaveBtn, 'Campeões Salvos!', 'Salvar Campeões');
+        })
+        .catch(error => {
+            console.error("Erro ao salvar Hall da Fama: ", error);
+            alert("Ocorreu um erro ao salvar os dados.");
+        });
+});
+
+// Inicializa o painel
+generateMemberInputs();
+loadHallOfFameData();
+
+// ▲▲▲ FIM DA LÓGICA DO HALL DA FAMA ▲▲▲
         // Inicia com tudo desabilitado
         setControlPermissions('none');
     });
