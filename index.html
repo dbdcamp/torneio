@@ -578,6 +578,7 @@ header.menu-aberto .menu-mobile-btn span:nth-child(3) {
         animation-name: carousel-scroll;
         animation-timing-function: linear;
         animation-iteration-count: infinite;
+        animation-direction: alternate;
         /* A duração da animação será definida pelo JavaScript */
     }
 
@@ -1094,9 +1095,11 @@ function renderHallOfFame() {
         };
 
         // ALTERADO: Cria os cards uma vez
-        data.members.forEach(member => {
-            html += createCardHTML(member);
-        });
+         data.members.forEach(member => {
+            html += createCardHTML(member);
+        });
+
+        
 
 
         html += '</div>'; // Fecha o player-cards-container
