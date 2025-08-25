@@ -258,7 +258,7 @@
         .feedback-success h3 { font-family: 'Creepster', cursive; font-size: 2.5rem; margin: 15px 0 10px 0; }
         
         /* --- SCOREBOARD POP-UP --- */
-        .scoreboard-fab { position: fixed; bottom: 720px; right: 280px; z-index: 1000; background: radial-gradient(circle, rgba(255, 77, 77, 0.15) 0%, rgba(139, 0, 0, 0.1) 100%); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35); border-radius: 50px; padding: 10px 20px; display: flex; align-items: center; gap: 10px; cursor: pointer; color: var(--cor-texto); font-weight: bold; font-size: 1rem; transition: all 0.3s ease; }
+        .scoreboard-fab { position: absolute; bottom: 20px; right: 60px; z-index: 1000; background: radial-gradient(circle, rgba(255, 77, 77, 0.15) 0%, rgba(139, 0, 0, 0.1) 100%); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35); border-radius: 50px; padding: 10px 20px; display: flex; align-items: center; gap: 10px; cursor: pointer; color: var(--cor-texto); font-weight: bold; font-size: 1rem; transition: all 0.3s ease; }
         .scoreboard-fab:hover { transform: scale(1.05) translateY(-5px); background: radial-gradient(circle, rgba(255, 77, 77, 0.25) 0%, rgba(139, 0, 0, 0.2) 100%); border: 1px solid var(--cor-principal); box-shadow: 0 0 25px rgba(255, 77, 77, 0.6); }
         .scoreboard-fab img { width: 50px; height: 50px; }
         #last-updated-timestamp { color: #4CAF50; font-size: 0.9rem; font-style: italic; text-align: center; margin-top: -15px; margin-bottom: 25px; }
@@ -338,6 +338,141 @@
         .footer-links { display: flex; gap: 20px; justify-self: end; }
         .footer-links a, .footer-links button { color: #ccc; text-decoration: none; transition: color 0.3s ease; background: none; border: none; cursor: pointer; font-size: 0.9rem; padding: 0; font-family: 'Roboto', sans-serif; }
         .footer-links a:hover, .footer-links button:hover { color: var(--cor-principal); }
+        /* ========================================== */
+/* --- HALL DA FAMA --- */
+/* ========================================== */
+
+/* Animação de brilho para a borda da seção */
+@keyframes gold-glow-animation {
+    0%   { border-color: #FFD700; box-shadow: 0 0 15px #FFD700, inset 0 0 10px rgba(255, 215, 0, 0.2); }
+    50%  { border-color: #ffec8a; box-shadow: 0 0 25px #ffec8a, inset 0 0 15px rgba(255, 236, 138, 0.3); }
+    100% { border-color: #FFD700; box-shadow: 0 0 15px #FFD700, inset 0 0 10px rgba(255, 215, 0, 0.2); }
+}
+
+/* Estilo principal da seção */
+#hall-of-fame {
+    border: 2px solid;
+    animation: gold-glow-animation 4s linear infinite;
+}
+
+/* Mensagem de "carregando" */
+.loading-winners {
+    text-align: center;
+    font-style: italic;
+    color: #aaa;
+    font-size: 1.2rem;
+}
+
+@keyframes animated-gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Substitua a regra .winner-team-name por esta */
+.winner-team-name {
+    font-family: 'Creepster', cursive;
+    text-align: center;
+    font-size: 3.5rem;
+    margin-bottom: 40px;
+    
+    /* A Mágica do Gradiente */
+    background: linear-gradient(90deg, #ffd700, #ffec8a, #fdf5d3, #ffec8a, #ffd700);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    
+    /* A Animação */
+    animation: animated-gradient 5s ease-in-out infinite;
+}
+
+/* Contêiner para os cards dos jogadores */
+.player-cards-container {
+    display: flex;
+    flex-wrap: wrap; /* Permite que os cards quebrem a linha em telas menores */
+    justify-content: center;
+    gap: 25px; /* Espaço entre os cards */
+}
+
+/* O card de cada jogador */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Substitua a regra .player-card por esta (para adicionar a animação) */
+.player-card {
+    background-color: rgba(20, 20, 20, 0.5);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 10px;
+    width: 240px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    
+    /* Configuração da animação de entrada */
+    opacity: 0; /* Começa invisível */
+    animation: fadeInUp 0.5s ease-out forwards; /* 'forwards' mantém o estado final */
+}
+
+/* Substitua a regra .player-card:hover por esta (para o efeito melhorado) */
+.player-card:hover {
+    transform: translateY(-10px) scale(1.03);
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+    border-color: rgba(255, 215, 0, 0.8); /* Borda mais brilhante */
+}
+
+/* Imagem do personagem/jogador */
+.player-image img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%; /* Imagem redonda */
+    object-fit: cover;
+    border: 3px solid #FFD700;
+    margin-bottom: 15px;
+    background-color: #000;
+}
+
+/* Nome do jogador */
+.player-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+/* Ícone de Destaque (Killer/Survivor) */
+.player-role-icon {
+    font-size: 1.8rem;
+    filter: drop-shadow(0 0 5px var(--cor-principal));
+}
+
+/* Estatísticas (Escapes/Mortes) */
+.player-stats {
+    font-size: 1rem;
+    color: #ccc;
+    margin-bottom: 15px;
+    background-color: rgba(0,0,0,0.3);
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+/* Destaque de Desempenho */
+.player-highlight {
+    font-size: 0.9rem;
+    color: #FFD700;
+    font-style: italic;
+    min-height: 40px; /* Garante altura consistente */
+}
 
 /* ========================================== */
 /* --- ESTILOS DO MENU MOBILE (NOVO) --- */
@@ -409,8 +544,8 @@ header.menu-aberto .menu-mobile-btn span:nth-child(3) {
 }
             .scoreboard-fab {
     /* PAINEL DE CONTROLE FINO (SOMENTE MOBILE) */
-    bottom: 770px;  /* Distância de baixo para cima */
-    right: 13px;   /* Distância da direita para a esquerda */
+    bottom: -93px;  /* Distância de baixo para cima */
+    right: 0px;   /* Distância da direita para a esquerda */
 }
             header {
     flex-direction: column;
@@ -676,6 +811,12 @@ header.menu-aberto .main-nav {
             </div>
         </form>
     </section>
+         <section id="hall-of-fame" class="section-container hidden">
+    <h2 class="section-title">Hall da Fama</h2>
+    <div id="winner-info-container">
+        <p class="loading-winners">Aguardando os ecos da última caçada...</p>
+    </div>
+</section>
 
     <section id="regras">
         
@@ -841,6 +982,70 @@ window.onYouTubeIframeAPIReady = function() {
             header.classList.toggle('menu-aberto');
         });
     }
+        // ▼▼▼ COLE O CÓDIGO DO HALL DA FAMA AQUI ▼▼▼
+
+// --- INÍCIO: LÓGICA DO HALL DA FAMA ---
+
+const hallOfFameSection = document.getElementById('hall-of-fame');
+const winnerContainer = document.getElementById('winner-info-container');
+
+// 1. O "VIGIA" que obedece seu comando do painel de admin
+const hallOfFameStatusRef = database.ref('config/hallOfFameAtivo');
+hallOfFameStatusRef.on('value', (snapshot) => {
+    const isAtivo = snapshot.val();
+
+    if (isAtivo === true) {
+        // Se estiver ativo, mostra a seção e busca os dados dos vencedores
+        hallOfFameSection.classList.remove('hidden');
+        renderHallOfFame();
+    } else {
+        // Se não, garante que a seção esteja escondida
+        hallOfFameSection.classList.add('hidden');
+    }
+});
+
+// 2. A FUNÇÃO que busca os dados no Firebase e "desenha" o Hall da Fama
+function renderHallOfFame() {
+    const hallOfFameDataRef = database.ref('hallOfFame');
+    hallOfFameDataRef.once('value', (snapshot) => {
+        const data = snapshot.val();
+
+        if (!data || !data.teamName || !data.members) {
+            winnerContainer.innerHTML = '<p class="loading-winners">Dados dos campeões ainda não foram registrados.</p>';
+            return;
+        }
+
+        // Começa a construir o HTML dinâmico
+        let html = '';
+        
+        // Adiciona o nome da equipe
+        html += `<h3 class="winner-team-name">${data.teamName}</h3>`;
+        html += '<div class="player-cards-container">';
+
+        // Cria um card para cada membro da equipe
+        data.members.forEach(member => {
+            const roleIcon = member.role === 'Killer' ? '🔪' : '🏃‍♂️';
+            
+            html += `
+                <div class="player-card">
+                    <div class="player-image">
+                        <img src="${member.characterImage}" alt="${member.name}">
+                    </div>
+                    <p class="player-name">${member.name}</p>
+                    <p class="player-role-icon" title="Destaque como ${member.role}">${roleIcon}</p>
+                    <p class="player-stats">${member.stats}</p>
+                    <p class="player-highlight">“${member.highlight}”</p>
+                </div>
+            `;
+        });
+
+        html += '</div>'; // Fecha o player-cards-container
+
+        // Insere o HTML gerado na página
+        winnerContainer.innerHTML = html;
+    });
+}
+// --- FIM: LÓGICA DO HALL DA FAMA ---
         // --- INÍCIO: LÓGICA DO POP-UP DE MEMBROS DA EQUIPE ---
 
 // Referências aos elementos do pop-up
