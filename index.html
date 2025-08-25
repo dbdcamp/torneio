@@ -41,7 +41,7 @@
     }
     to {
         /* Move para a esquerda em 50% da largura total, que é exatamente o tamanho da primeira leva de cards */
-        transform: translateX(-50%);
+        transform: translateX(-62%);
     }
 }
         /* --- BANNER DE CAMPEONATO --- */
@@ -583,9 +583,8 @@ header.menu-aberto .menu-mobile-btn span:nth-child(3) {
     }
 
     #hall-of-fame .player-card {
-    flex-shrink: 0;
-    width: 200px; /* << Reduzimos a largura de 220px para 180px */
-    padding: 15px; /* << Um pouco menos de preenchimento interno */
+    flex-shrink: 0; /* Garante que os cards não encolham */
+    width: 220px; /* Um pouco menor para caber melhor na tela */
 }
 
 /* Adicione estas novas regras para ajustar o conteúdo do card: */
